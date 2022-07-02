@@ -1,0 +1,57 @@
+We yield raw score data from \href{https://data.ppy.sh/}{osu! Database}.
+For this project, we download
+
+\verb+2022_04_01_performance_mania_top_10000.tar.bz2+
+
+This contains high score data from the top 10,000 players.
+
+\begin{itemize}
+    \item \verb+osu_beatmaps.sql+ Contains map info
+    \item \verb+osu_scores_mania_high.sql+ Contains score info
+    \item \ldots
+\end{itemize}
+
+However, it's in \verb+.sql+, to make it easier downstream, we convert to \verb+.csv+
+
+\subsubsection*{Conversion of SQL to CSV}
+
+Luckily, Google Cloud (GC) has capabilities on converting it, albeit roundabout.
+
+\begin{enumerate}
+    \item Upload \verb+.sql+ files to GC Storage
+    \item Migrate \verb+.sql+ files from GC Storage into GC SQL
+    \item Query data using BigQuery into \verb+.csv+
+\end{enumerate}
+
+We queries as follows
+
+\begin{figure}[H]
+    \centering
+    \begin{minted}{sql}
+    SELECT * FROM EXTERNAL_QUERY(
+        "projects/project-name/...",
+        "SELECT * FROM osu_beatmaps WHERE playmode = 3;"
+    );
+    \end{minted}
+    \caption{Beatmap Info Query}
+    \label{fig:map_query}
+\end{figure}
+
+We selected \verb+playmode = 3+ to avoid machine generated beatmaps, which are not representative
+of our true user-made map population.
+
+\begin{figure}[H]
+    \centering
+    \begin{minted}{sql}
+    SELECT * FROM EXTERNAL_QUERY(
+        "projects/project-name/...",
+        "SELECT * FROM osu_scores_mania_high;"
+    );
+    \end{minted}
+    \caption{Score Info Query}
+    \label{fig:score_query}
+\end{figure}
+
+We yield 11,453,737 million scores alongside 10,766 beatmaps from this dataset.
+
+

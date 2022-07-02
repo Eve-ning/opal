@@ -1,0 +1,111 @@
+If we are able to yield every players' score from every map, we can predict how difficult every map is.
+
+E.g.\ If a map has a low median score, we know that it's harder, vice versa.
+
+\subsection{Null Scores}\label{subsec:null-scores}
+
+However, there isn't a score from every player on every map, i.e.\ not all players have played all maps.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{llll}
+        \toprule
+        \textbf{} & \textbf{Map 1} & \textbf{Map 2} & \textbf{Map 3} \\
+        \midrule
+        Player A & 600K &  & \\
+        Player B & 800K & 900K & 700K  \\
+        Player C &  & 950K &  \\
+        \bottomrule
+    \end{tabular}
+    \caption{Example Player Scores for Maps}
+    \label{tab:eg_scores}
+\end{table}
+
+By observation we estimate Player A's score on Map 2 to be $>600,000$ and $<900,000$
+This is because Player B is better than A by observation of Map 1
+
+The same observation can be made for Player C on Map 1.
+
+We may continue on the predictions for Map 3, we ultimately yield a filled matrix.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{llll}
+        \toprule
+        \textbf{} & \textbf{Map 1} & \textbf{Map 2} & \textbf{Map 3} \\
+        \midrule
+        Player A & 600K & 850K* & 500K* \\
+        Player B & 800K & 900K & 700K \\
+        Player C & 900K* & 950K & 800K* \\
+        \bottomrule
+    \end{tabular}
+    \caption{Example Player Scores for Maps, *: Estimated}
+    \label{tab:eg_scores_est}
+\end{table}
+
+We can deduce the difficulty of the maps $\text{Map}_3 > \text{Map}_1 > \text{Map}_2$.
+
+\subsection{Insufficient Supports}
+
+We may estimate map difficulty through Player B's score, however, do we have sufficient evidence that
+Map 3 is truly the hardest, just based on Player B?
+
+A reasonable doubt: what if Player B's score on Map 3 was badly done?
+
+Consider Map 2, we have 2 players' score, this is more convincing, the chances of both players unintentionally
+doing badly is lower.
+
+The idea of supports is simply the number of non-estimated values, higher support implies more evidence.
+
+The supports can come from 2 sides:
+
+\begin{itemize}
+    \item Number of scores per map.
+    \item Number of scores per player.
+\end{itemize}
+
+Insufficient support for each category implies low evidence of reliability of estimation.
+Thus, we simply removed them if they are below a certain threshold.
+
+\subsection{Analogy of Score Estimation}
+
+In section~\ref{subsec:null-scores}, we discussed score estimation, a popular, similar problem is
+recommendation systems.
+Think movie recommendations.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lllll}
+        \toprule
+        \textbf{} & \textbf{Movie A} & \textbf{Movie B} & \textbf{Movie C} & \textbf{Movie D} \\
+        \midrule
+        User A & 5 & 4 &  &  \\
+        User B & 5 & 4.5 & 5 & 3  \\
+        User C & 2 & 2 & 3 & 5 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Example Movie Scores by Users}
+    \label{tab:eg_movie_scores}
+\end{table}
+
+Observe the movie ratings in Table~\ref{tab:eg_movie_scores}.
+
+Would you recommend Movie C or D to User A?
+By averaging scores, we see that Movie C and D are equally good.
+However, movie tastes are not one-dimensional.
+A better way is to weigh opinions of users with similar tastes higher.
+
+Based on Movie A and B, we observe User B have \textbf{similar tastes} to A, while User C doesn't.
+Thus, User A would likely enjoy Movie C as B enjoyed it too.
+
+This problem is solved using \textbf{Collaborative Filtering}.
+
+With this, we can estimate User A's rating of Movie C and D, thus recommending the better movies.
+
+\subsection{Method of Score Estimation}
+
+Thus, similarly, we estimate scores with \textbf{Collaborative Filtering}.
+
+\begin{quote}
+    @Prof Though we have some initial results, we'll hold onto it until it's more finalized/
+\end{quote}

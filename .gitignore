@@ -1,0 +1,16 @@
+.idea/*
+*.osu
+*.bz2
+*.zip
+*.csv
+*.rar
+*.pygtex
+*.pygstyle
+*.bbl
+*.bcf
+*.blg
+*.aux
+*.gz
+
+.run/
+__pycache__/
