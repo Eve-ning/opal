@@ -9,12 +9,13 @@ The dataset dir must contain
   - ...
 """
 
+from opal.conf import OSU_DS_2022_04
 from opal.dataset import Dataset
 from opal.preprocessing_static import classify_sv_maps, filter_scores, \
     remove_non_mania, filter_beatmaps, join_score_beatmaps
-from opal.conf import OSU_DS_2022_04
 
-if __name__ == '__main__':
+
+def test_preprocessing_static():
     ds = Dataset(OSU_DS_2022_04, score_set="scores_top10k")
     print("Removing Non Mania Maps")
     remove_non_mania(ds)
