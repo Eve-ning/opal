@@ -11,6 +11,7 @@
 *.blg
 *.aux
 *.gz
+*.osr
 
 .run/
 __pycache__/
