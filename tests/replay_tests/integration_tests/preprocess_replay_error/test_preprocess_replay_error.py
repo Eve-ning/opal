@@ -1,20 +1,14 @@
 import numpy as np
 import pandas as pd
-import pytest as pytest
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import KFold
 
-from opal.conf.conf import OSU_REPLAYS_DIR
+from opal.conf.conf import PUBLIC_OSU_REPLAYS_DIR
 from opal.replay.preprocess_replay_error import preprocess_replay_error
 
 
-@pytest.mark.parametrize(
-    "maps",
-    [2]
-)
-def test_preprocess_replay_error(maps):
-    map_dirs = [d for d in OSU_REPLAYS_DIR.iterdir() if d.is_dir()]
-    map_dirs = np.random.choice(map_dirs, maps, replace=False)
+def test_preprocess_replay_error():
+    map_dirs = [d for d in PUBLIC_OSU_REPLAYS_DIR.iterdir() if d.is_dir()]
     df = pd.concat([preprocess_replay_error(d) for d in map_dirs])
 
     y = df['error']
