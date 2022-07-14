@@ -1,7 +1,7 @@
 from opal.score.dataset import Dataset
 from opal.score.preprocessing_static.conf import SCORE_MOD_DOUBLE, SCORE_FILTER, \
     MOD_DT, MOD_HT, MOD_EZ
-from opal.score.conf.mods import OsuMod
+from opal.conf.mods import OsuMod
 
 
 def filter_scores(ds: Dataset):
