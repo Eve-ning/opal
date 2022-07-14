@@ -3,7 +3,7 @@ from typing import Tuple
 import numpy as np
 import pandas as pd
 
-from opal.collaborative_filtering.conf import PRED_VARIABLE
+from opal.score.collaborative_filtering.conf import PRED_VARIABLE
 
 
 def train_na_pivot(df: pd.DataFrame) \

@@ -1,5 +1,5 @@
-from opal.dataset import Dataset
-from opal.preprocessing_static.conf import BEATMAP_KEYS
+from opal.score.dataset import Dataset
+from opal.score.preprocessing_static.conf import BEATMAP_KEYS
 
 
 def filter_beatmaps(ds: Dataset):

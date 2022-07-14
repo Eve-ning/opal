@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pandas as pd
 
-from opal.dataset import Dataset
-from opal.preprocessing_static.conf import RENAME_MAPPING
+from opal.score.dataset import Dataset
+from opal.score.preprocessing_static.conf import RENAME_MAPPING
 
 
 def join_score_beatmaps(ds: Dataset) -> None:

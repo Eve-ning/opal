@@ -1,4 +1,4 @@
-from opal.conf.mods import OsuMod
+from opal.score.conf.mods import OsuMod
 
 SCORE_FILTER = (600000, 1000000)
 SCORE_MOD_DOUBLE = (OsuMod.EASY, OsuMod.NO_FAIL, OsuMod.HALF_TIME)

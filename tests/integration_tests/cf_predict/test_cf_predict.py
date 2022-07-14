@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from opal.collaborative_filtering.predict import predict
-from opal.conf import OSU_DS_2022_04
-from opal.dataset import Dataset
-from opal.preprocessing_dynamic import PreprocessingDynamic
+from opal.score.collaborative_filtering.predict import predict
+from opal.score.conf import OSU_DS_2022_04
+from opal.score.dataset import Dataset
+from opal.score.preprocessing_dynamic import PreprocessingDynamic
 
 
 def test_cf_predict():
