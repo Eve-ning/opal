@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from opal.conf.conf import OSU_DATA_PATH
+from opal.conf.conf import DATA_DIR
 from opal.data import Dataset
 
 
@@ -9,7 +9,7 @@ class Beatmaps:
     data: Dataset
 
 
-b = Beatmaps(Dataset(OSU_DATA_PATH))
+b = Beatmaps(Dataset(DATA_DIR))
 #%%
 df = b.data.beatmaps_df
 #%%

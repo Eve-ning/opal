@@ -1,5 +1,6 @@
 from pathlib import Path
 
-OSU_DATA_PATH = Path(__file__).parents[2]
-OSU_DS_2022_04 = OSU_DATA_PATH / "data/osu/2022_04_top_1000/"
+DATA_DIR = Path(__file__).parents[2] / "data"
+OSU_DS_2022_04 = DATA_DIR / "osu/2022_04_top_1000/"
+OSU_REPLAYS_DIR = DATA_DIR / "osu/replays/"
 
