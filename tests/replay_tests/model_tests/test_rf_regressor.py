@@ -17,8 +17,8 @@ def test_cases():
     'n_estimators',
     (5, 15, 35)
 )
-def test_rf_regressor(train_test_data, validation_data, n_estimators,
-                      test_cases):
+def test_rf_regressor(train_test_data, validation_data,
+                      n_estimators, test_cases):
     X, y = train_test_data
     X_val, y_val = validation_data
     skf = KFold(n_splits=5, shuffle=True, random_state=0)
@@ -35,3 +35,4 @@ def test_rf_regressor(train_test_data, validation_data, n_estimators,
             f'{rfg.score(X_val, y_val):.3f}',
             classname=f"RF Regressor Model",
         ))
+        break
