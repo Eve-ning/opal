@@ -20,11 +20,10 @@ def test_rf_regressor(rep_data, n_estimators):
         rfg = RandomForestRegressor(verbose=1, n_estimators=n_estimators)
         rfg.fit(X_train, y_train)
         test_cases.append(TestCase(
-            f'RF Regressor Model ({e}):',
-            classname=f"{n_estimators} Estimators",
-            stdout=f'Score: {rfg.score(X_test, y_test)}'
+            f'{n_estimators} Estimators ({e}): {rfg.score(X_test, y_test)}',
+            classname=f"RF Regressor Model",
         ))
 
     ts = TestSuite("RF Regressor Suite", test_cases)
-    with open('score.xml', 'w') as f:
+    with open('score.xml', 'a+') as f:
         TestSuite.to_file(f, [ts])
