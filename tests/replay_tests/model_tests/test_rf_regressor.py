@@ -8,7 +8,7 @@ def test_cases():
     tests = []
     yield tests
     ts = TestSuite("RF Regressor Suite", test_cases)
-    with open('rf_regressor_score.xml', 'a+') as f:
+    with open('rf_regressor_score.xml', 'w+') as f:
         TestSuite.to_file(f, [ts])
 
 @pytest.mark.parametrize(
