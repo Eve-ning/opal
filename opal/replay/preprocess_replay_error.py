@@ -86,7 +86,7 @@ class PreprocessReplayError:
             df['is_held'].apply(pd.Series, dtype=int).stack()).groupby(
             level=0
         ).sum()
-        df_hold.columns = [f'hold_{c}' for c in range(len(df_hold.columns))]
+        df_hold.columns = [f'is_held_{c}' for c in range(len(df_hold.columns))]
         return (
             pd.merge(
                 df['offset'], df_cols, how='left', left_index=True,
