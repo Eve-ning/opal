@@ -1,0 +1,4 @@
+reamber==0.1.6
+scikit-learn
+junit_xml
+pandas

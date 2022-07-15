@@ -1,6 +1,5 @@
 .idea/*
 *.osu
-*.bz2
 *.zip
 *.csv
 *.rar
@@ -10,8 +9,10 @@
 *.bcf
 *.blg
 *.aux
-*.gz
+*.synctex.gz
 *.osr
+
+data/
 
 .run/
 __pycache__/

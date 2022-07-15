@@ -6,7 +6,7 @@ from surprise.dataset import DatasetAutoFolds
 from surprise.model_selection import GridSearchCV
 from tqdm import tqdm
 
-from opal.collaborative_filtering.conf import PRED_VARIABLE
+from opal.score.collaborative_filtering.conf import PRED_VARIABLE
 
 
 class CFModel:

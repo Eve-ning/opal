@@ -5,10 +5,10 @@ from pathlib import Path
 import pandas as pd
 from surprise import KNNWithMeans
 
-from opal.collaborative_filtering.cf_model import CFModel
-from opal.collaborative_filtering.conf import SEARCH_KS, SEARCH_MIN_SUPPORTS, \
+from opal.score.collaborative_filtering.cf_model import CFModel
+from opal.score.collaborative_filtering.conf import SEARCH_KS, SEARCH_MIN_SUPPORTS, \
     SEARCH_NAMES, SEARCH_USER_BASEDS, PRED_VARIABLE
-from opal.collaborative_filtering.utils import train_na_pivot
+from opal.score.collaborative_filtering.utils import train_na_pivot
 
 
 def predict(df: pd.DataFrame, save_path: Path):

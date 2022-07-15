@@ -9,9 +9,9 @@ The dataset dir must contain
   - ...
 """
 
-from opal.conf import OSU_DS_2022_04
-from opal.dataset import Dataset
-from opal.preprocessing_static import classify_sv_maps, filter_scores, \
+from opal.score.conf import OSU_DS_2022_04
+from opal.score.dataset import Dataset
+from opal.score.preprocessing_static import classify_sv_maps, filter_scores, \
     remove_non_mania, filter_beatmaps, join_score_beatmaps
 
 

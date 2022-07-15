@@ -6,7 +6,7 @@ from reamber.osu import OsuMap
 from reamber.osu.OsuMapMeta import OsuMapMode
 from tqdm import tqdm
 
-from opal.dataset import Dataset
+from opal.score.dataset import Dataset
 
 
 def remove_non_mania(ds: Dataset) -> None:

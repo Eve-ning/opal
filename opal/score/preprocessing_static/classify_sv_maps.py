@@ -8,7 +8,7 @@ import pandas as pd
 from reamber.osu import OsuMap
 from tqdm import tqdm
 
-from opal.dataset import Dataset
+from opal.score.dataset import Dataset
 
 ACCEPTABLE_SV_MIN = 0.95
 ACCEPTABLE_SV_MAX = 1.05
