@@ -19,7 +19,7 @@ class PreprocessReplayError:
     map_dir: Path
 
     @staticmethod
-    def get_errors(osu: OsuMap, rep_paths: List[str]) -> pd.DataFrame:
+    def get_errors(osu: OsuMap, rep_paths: List[Path]) -> pd.DataFrame:
         """ Gets the errors of the replays.
 
         Args:
@@ -27,6 +27,7 @@ class PreprocessReplayError:
             osu: Path of the osu! map
 
         """
+        rep_paths = [p for p in rep_paths if Path(p).stat().st_size > 1000]
         errors = osu_replay_error(rep_paths, osu)
         rep_count = len(rep_paths)
         df_map_offset = pd.DataFrame.from_records(
