@@ -3,7 +3,7 @@ from junit_xml import TestSuite, TestCase
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import KFold
 
-@pytest.fixture()
+@pytest.fixture(scope='session')
 def test_cases():
     tests = []
     yield tests

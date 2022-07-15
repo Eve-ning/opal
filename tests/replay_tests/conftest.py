@@ -13,7 +13,7 @@ def unpack_tarfile(tar_path, extract_path):
         tar.extractall(extract_path)
 
 
-@pytest.fixture()
+@pytest.fixture(scope='session')
 def rep_data() -> Tuple[pd.DataFrame, pd.DataFrame]:
     tar_path = DATA_PUBLIC_DIR / "osu.tar.gz"
     unpack_tarfile(tar_path, DATA_PUBLIC_DIR)
