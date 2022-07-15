@@ -14,7 +14,7 @@ def pickled_data(pkl_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame]:
 
 @pytest.fixture
 def train_test_data() -> Tuple[pd.DataFrame, pd.DataFrame]:
-    return pickled_data(THIS_DIR / "train.pkl")
+    return pickled_data(THIS_DIR / "train_test.pkl")
 
 
 @pytest.fixture
