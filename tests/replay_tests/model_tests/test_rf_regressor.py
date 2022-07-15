@@ -7,7 +7,7 @@ from sklearn.model_selection import KFold
 def test_cases():
     tests = []
     yield tests
-    ts = TestSuite("RF Regressor Suite", test_cases)
+    ts = TestSuite("RF Regressor Suite", tests)
     with open('rf_regressor_score.xml', 'w+') as f:
         TestSuite.to_file(f, [ts])
 
