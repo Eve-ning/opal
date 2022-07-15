@@ -36,11 +36,11 @@ jobs:
       run: |
         pytest tests/replay_tests/
 
-    - name: Test Report
+    - name: Show RF Regoressor Report
       uses: dorny/test-reporter@v1.5.0
-      id: test-report               # Set ID reference for step
-      if: success() || failure()    # run this step even if previous step failed
+      id: test-report                  # Set ID reference for step
+      if: success() || failure()       # run this step even if previous step failed
       with:
-        name: RF Tests              # Name of the check run which will be created
-        path: score.xml             # Path to test results
-        reporter: jest-junit        # Format of test results
+        name: RF Tests                 # Name of the check run which will be created
+        path: rf_regressor_score.xml   # Path to test results
+        reporter: jest-junit           # Format of test results
