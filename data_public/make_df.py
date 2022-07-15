@@ -15,7 +15,7 @@ def make_df(path: Path, pkl_name: str):
     df = pd.concat(dfs)
 
     df: pd.DataFrame
-    df.to_pickle(f"{pkl_name}.pkl")
+    df.to_pickle(pkl_name)
 
 
 if __name__ == '__main__':
