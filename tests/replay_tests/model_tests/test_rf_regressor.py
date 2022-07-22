@@ -26,11 +26,11 @@ def roll_x(X: pd.DataFrame, window_size: int):
 
 @pytest.mark.parametrize(
     'window_size',
-    (1, 3, 5, 9, 15)
+    (1, 3, 5)
 )
 @pytest.mark.parametrize(
     'n_estimators',
-    (5, 15, 35)
+    (5, 15)
 )
 def test_rf_regressor(train_test_data, validation_data,
                       n_estimators, window_size, test_cases):
