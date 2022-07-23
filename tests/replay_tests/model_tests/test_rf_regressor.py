@@ -26,7 +26,7 @@ def roll_x(X: pd.DataFrame, window_size: int, agg_func: str):
 
 @pytest.mark.parametrize(
     'window_size',
-    (1,)#, 3, 5)
+    (1, 3, 5)
 )
 @pytest.mark.parametrize(
     'n_estimators',
