@@ -40,9 +40,9 @@ def test_rf_regressor(train_test_data, validation_data,
                       n_estimators, window_size, agg_func, test_cases):
     SPLITS = 5
     X, y = train_test_data
-    X = roll_x(X, window_size)
+    X = roll_x(X, window_size, agg_func)
     X_val, y_val = validation_data
-    X_val = roll_x(X_val, window_size)
+    X_val = roll_x(X_val, window_size, agg_func)
     skf = KFold(n_splits=SPLITS, shuffle=True, random_state=0)
     for e, (train_index, test_index) in enumerate(skf.split(X, y)):
         X_train, X_test = X.iloc[train_index], X.iloc[test_index]
