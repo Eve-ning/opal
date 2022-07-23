@@ -15,12 +15,12 @@ def test_cases():
         TestSuite.to_file(f, [ts])
 
 
-def roll_x(X: pd.DataFrame, window_size: int):
+def roll_x(X: pd.DataFrame, window_size: int, agg_func: str):
     X_ohe = X.drop('diff', axis=1)
     X_ohe = X_ohe.multiply(X['diff'], axis='index')
     X_ohe: pd.DataFrame = 1 / X_ohe
     X_ohe = X_ohe.replace(np.inf, np.nan)
-    X_ohe = X_ohe.rolling(window_size, min_periods=1).max()
+    X_ohe = X_ohe.rolling(window_size, min_periods=1).agg(agg_func)
     return X_ohe.fillna(0)
 
 
@@ -32,13 +32,18 @@ def roll_x(X: pd.DataFrame, window_size: int):
     'n_estimators',
     (5, 15)
 )
+@pytest.mark.parametrize(
+    'agg_func',
+    ('sum', 'max')
+)
 def test_rf_regressor(train_test_data, validation_data,
-                      n_estimators, window_size, test_cases):
+                      n_estimators, window_size, agg_func, test_cases):
+    SPLITS = 5
     X, y = train_test_data
-    X = roll_x(X, window_size)
+    X = roll_x(X, window_size, agg_func)
     X_val, y_val = validation_data
-    X_val = roll_x(X_val, window_size)
-    skf = KFold(n_splits=5, shuffle=True, random_state=0)
+    X_val = roll_x(X_val, window_size, agg_func)
+    skf = KFold(n_splits=SPLITS, shuffle=True, random_state=0)
     for e, (train_index, test_index) in enumerate(skf.split(X, y)):
         X_train, X_test = X.iloc[train_index], X.iloc[test_index]
         y_train, y_test = y.iloc[train_index], y.iloc[test_index]
@@ -46,9 +51,11 @@ def test_rf_regressor(train_test_data, validation_data,
         rfg.fit(X_train, y_train)
 
         test_cases.append(TestCase(
-            f'{n_estimators} Estimators {window_size} W Size ({e}): '
+            f'{n_estimators} Estimators '
+            f'{window_size} W Size '
+            f'({e}/{SPLITS}): '
             f'{rfg.score(X_train, y_train):.3f}/'
             f'{rfg.score(X_test, y_test):.3f}/'
             f'{rfg.score(X_val, y_val):.3f}',
-            classname=f"RF Regressor Model w/ Rolling Min",
+            classname=f"RF Regressor Model w/ Rolling {agg_func}",
         ))
