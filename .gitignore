@@ -12,7 +12,7 @@
 *.synctex.gz
 *.osr
 
-data/
+.data/
 
 .run/
 __pycache__/
