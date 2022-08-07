@@ -1,7 +1,8 @@
+import pickle
 from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Generator
 
 import numpy as np
 import pandas as pd
@@ -12,14 +13,23 @@ from reamber.osu.OsuHit import OsuHit
 from reamber.osu.OsuHold import OsuHold
 from reamber.osu.OsuMap import OsuMap
 
+from opal.conf import DATA_DIR
 
-def load_map(map_dir: Path) -> Tuple[pd.DataFrame, OsuMap]:
-    return MapLoader(map_dir).load()
+
+def load_maps(cache_reset=False) -> Generator[
+    Tuple[pd.DataFrame, OsuMap], None, None]:
+    for d in filter(lambda d_: d_.is_dir(), DATA_DIR.iterdir()):
+        yield load_map(d, cache_reset)
+
+
+def load_map(map_dir: Path, cache_reset=False) -> Tuple[pd.DataFrame, OsuMap]:
+    return MapLoader(map_dir).load(cache_reset)
 
 
 @dataclass
 class MapLoader:
     map_dir: Path
+    cache_name: str = "cache.pkl"
 
     @staticmethod
     def get_errors(osu: OsuMap, rep_paths: List[Path]) -> pd.DataFrame:
@@ -41,7 +51,7 @@ class MapLoader:
         df_map_offset = pd.DataFrame.from_records(
             [(o,)
              for _, k_o in [*errors.map_offsets.hits.items(),
-                          *errors.map_offsets.releases.items()]
+                            *errors.map_offsets.releases.items()]
              for o in k_o],
             columns=["offset"]
         )
@@ -51,7 +61,7 @@ class MapLoader:
             [(r_id, k, o)
              for r_id, rep_offset in enumerate(errors.errors)
              for k, k_o in [*rep_offset.hits.items(),
-                          *rep_offset.releases.items()]
+                            *rep_offset.releases.items()]
              for o in k_o],
             columns=["r_id", "column", "error"]
         )
@@ -124,16 +134,42 @@ class MapLoader:
             )[:-1]
         )
 
-    def load(self) -> Tuple[pd.DataFrame, OsuMap]:
+    def load(self, cache_reset: bool = False) -> Tuple[pd.DataFrame, OsuMap]:
         """ Prepare the data for the model """
-        map_path = self.map_dir / (self.map_dir.name + ".osu")
-        osu = OsuMap.read_file(map_path.as_posix())
-        rep_dir = self.map_dir / "rep"
-        rep_paths = [p for p in rep_dir.iterdir() if p.is_file()]
+        if not cache_reset and self.cache_exists:
+            return self.cache_get()
 
-        return pd.merge(
-            self.get_pattern(osu),
-            self.get_errors(osu, rep_paths),
-            how='left',
-            on='offset'
-        ).drop(['offset'], axis=1), osu
+        else:
+            map_path = self.map_dir / (self.map_dir.name + ".osu")
+            osu = OsuMap.read_file(map_path.as_posix())
+            rep_dir = self.map_dir / "rep"
+            rep_paths = [p for p in rep_dir.iterdir() if p.is_file()]
+
+            data = pd.merge(
+                self.get_pattern(osu),
+                self.get_errors(osu, rep_paths),
+                how='left',
+                on='offset'
+            ).drop(['offset'], axis=1), osu
+
+            self.cache_set(data)
+
+        return data
+
+    @property
+    def cache_path(self) -> Path:
+        return self.map_dir / self.cache_name
+
+    def cache_set(self, data):
+        with open(self.cache_path, "wb+") as f:
+            pickle.dump(data, f)
+
+    @property
+    def cache_exists(self) -> bool:
+        return self.cache_path.exists()
+
+    def cache_get(self) -> Tuple[pd.DataFrame, OsuMap]:
+        with open(self.cache_path, "rb+") as f:
+            data = pickle.load(f)
+
+        return data
