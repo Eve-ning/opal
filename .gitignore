@@ -3,6 +3,7 @@
 *.zip
 *.csv
 *.rar
+data/**/*.pkl
 *.pygtex
 *.pygstyle
 *.bbl
