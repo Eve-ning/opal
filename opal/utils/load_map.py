@@ -1,14 +1,17 @@
+from __future__ import annotations
+
 import pickle
 from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Tuple, Generator
+from typing import List, Tuple, Generator, Sequence
 
 import numpy as np
 import pandas as pd
 from reamber.algorithms.osu.OsuReplayError import osu_replay_error
 from reamber.algorithms.pattern import Pattern
 from reamber.base.Hold import HoldTail
+from reamber.base.lists.notes.NoteList import NoteList
 from reamber.osu.OsuHit import OsuHit
 from reamber.osu.OsuHold import OsuHold
 from reamber.osu.OsuMap import OsuMap
@@ -29,7 +32,6 @@ def load_map(map_dir: Path, cache_reset=False) -> Tuple[pd.DataFrame, OsuMap]:
 @dataclass
 class MapLoader:
     map_dir: Path
-    cache_name: str = "cache.pkl"
 
     @staticmethod
     def get_errors(osu: OsuMap, rep_paths: List[Path]) -> pd.DataFrame:
@@ -82,10 +84,10 @@ class MapLoader:
         ).median().reset_index()
 
     @staticmethod
-    def get_pattern(osu: OsuMap) -> pd.DataFrame:
+    def get_pattern(nls: Sequence[NoteList]) -> pd.DataFrame:
         """ Gets the pattern of the map. """
 
-        grps = Pattern.from_note_lists([osu.hits, osu.holds]).group()
+        grps = Pattern.from_note_lists(nls).group()
 
         # Manually extract if columns are held
         is_held = []
@@ -146,7 +148,7 @@ class MapLoader:
             rep_paths = [p for p in rep_dir.iterdir() if p.is_file()]
 
             data = pd.merge(
-                self.get_pattern(osu),
+                self.get_pattern([osu.hits, osu.holds]),
                 self.get_errors(osu, rep_paths),
                 how='left',
                 on='offset'
