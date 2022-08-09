@@ -3,6 +3,7 @@
 *.zip
 *.csv
 *.rar
+data/**/*.pkl
 *.pygtex
 *.pygstyle
 *.bbl
@@ -12,7 +13,7 @@
 *.synctex.gz
 *.osr
 
-data/
+.data/
 
 .run/
 __pycache__/
