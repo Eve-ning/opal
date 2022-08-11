@@ -1,4 +1,4 @@
-from .load_map import load_map, load_maps
+from .load_map import load_replay, load_replays
 from .ecdf import ecdf
 
-__all__ = ['load_map', 'load_maps']
+__all__ = ['load_replay', 'load_replays']
