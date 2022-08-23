@@ -10,7 +10,7 @@ import pandas as pd
 @dataclass
 class Dataset:
     data_path: str | Path
-    score_set: str = "scores_top1k"
+    score_set: str = "top1k"
 
     @property
     def files_path(self) -> Path:
@@ -26,11 +26,11 @@ class Dataset:
 
     @property
     def scores_filtered_csv_path(self) -> Path:
-        return self.data_path / f"{self.score_set}_filtered.csv"
+        return self.data_path / self.score_set / f"filtered.csv"
 
     @property
     def joined_filtered_csv_path(self) -> Path:
-        return self.data_path / f"{self.score_set}_joined_filtered.csv"
+        return self.data_path / self.score_set / f"joined_filtered.csv"
 
     @property
     def nsv_ids(self) -> List[int]:
@@ -38,11 +38,11 @@ class Dataset:
 
     @property
     def beatmaps_csv_path(self) -> Path:
-        return self.data_path / "beatmaps.csv"
+        return self.data_path / "beatmaps/raw.csv"
 
     @property
     def beatmaps_filtered_csv_path(self) -> Path:
-        return self.data_path / "beatmaps_filtered.csv"
+        return self.data_path / "beatmaps/filtered.csv"
 
     @property
     def beatmaps_df(self) -> pd.DataFrame:
@@ -54,7 +54,7 @@ class Dataset:
 
     @property
     def scores_csv_path(self) -> Path:
-        return self.data_path / f"{self.score_set}.csv"
+        return self.data_path / self.score_set / f"raw.csv"
 
     @property
     def scores_df(self) -> pd.DataFrame:
