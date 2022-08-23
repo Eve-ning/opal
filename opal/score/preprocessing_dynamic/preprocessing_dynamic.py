@@ -9,9 +9,9 @@ import pandas as pd
 
 def report(f):
     def report_wrapper(self=None):
-        print(f"{f.__name__} {len(self.load)} -> ", end="")
+        print(f"{f.__name__} {len(self.df)} -> ", end="")
         f(self)
-        print(len(self.load))
+        print(len(self.df))
 
     return report_wrapper
 
