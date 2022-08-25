@@ -1,8 +1,10 @@
 from itertools import combinations
+from typing import Tuple
 
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
+from sklearn.preprocessing import QuantileTransformer
 from tqdm import tqdm
 
 
@@ -21,8 +23,10 @@ def fit_sigma(score_x: pd.Series, score_y: pd.Series) -> float:
     return curve_fit(curve_fn, score_x, score_y)[0]
 
 
-def similarity_pair(df: pd.DataFrame,
-                    min_pair_plays: int = 40) -> pd.DataFrame:
+def similarity_pair(
+    df: pd.DataFrame,
+    min_pair_plays: int = 40
+) -> Tuple[pd.DataFrame, pd.DataFrame, QuantileTransformer]:
     """ Finds the similarity pair within the score df.
 
     Notes:
@@ -36,6 +40,15 @@ def similarity_pair(df: pd.DataFrame,
     Returns:
         The Similarity DataFrame
     """
+
+    # Yield necessary columns only
+    df = df[['map_id', 'user_id', 'accuracy', 'year']]
+    df = df.groupby(['user_id', 'year', 'map_id']).agg('mean').reset_index()
+
+    # Uniformize score
+    qt = QuantileTransformer()
+    # to_numpy: to avoid restricting to a column name
+    df['accuracy_qt'] = qt.fit_transform(df[['accuracy']].to_numpy())
 
     # We group by the Year & User ID
     # A Group will thus contain a user's score for a year
@@ -72,4 +85,58 @@ def similarity_pair(df: pd.DataFrame,
     # Reflect on diagonal
     df_sim[df_sim.isna()] = df_sim.T
 
-    return df_sim
+    df = df.set_index(['user_id', 'year'])
+
+    return df_sim, df, qt
+
+
+def similarity_predict(df: pd.DataFrame,
+                       df_sim: pd.DataFrame,
+                       qt: QuantileTransformer,
+                       sim_weight_pow: float = 8) -> pd.DataFrame:
+    dfs_user = []
+    for ix, sim in tqdm(df_sim.iterrows(), total=len(df_sim)):
+        df_user = df.loc[ix].set_index('map_id')
+        # Adds similarity as a column to the df
+        #                        vvvv
+        # +--------+--------+------------+
+        # | map_id | acc_qt | similarity |
+        # +--------+--------+------------+
+        df_sim_user = pd.merge(
+            df,
+            sim.dropna().rename('similarity'),
+            left_index=True, right_index=True
+        )
+
+        # Within each map, we find weighted average (weighted by similarity)
+        # +--------+--------+------------+
+        # | map_id | acc_qt | similarity |
+        # +--------+---^----+------^-----+
+        #     (target) |           | (weights)
+        #              +-----------+
+        df_sim_user_g = df_sim_user.groupby('map_id')
+        df_pred = df_sim_user_g.apply(
+            lambda g: np.average(
+                g['accuracy_qt'],
+                weights=g['similarity'] ** sim_weight_pow
+            )
+        )
+        # This will yield us a SINGLE prediction per map_id
+
+        # We also COUNT the number of supports
+        df_supp = df_sim_user_g.agg('count').iloc[:, 0]
+
+        # Join the prediction & support to the user df
+        df_user = df_user.merge(df_pred.rename('predict_qt'),
+                                left_index=True, right_index=True)
+        df_user = df_user.merge(df_supp.rename('support'),
+                                left_index=True, right_index=True)
+
+        # Inverse transform the prediction_qt
+        df_user['predict'] = qt.inverse_transform(
+            df_user[['predict_qt']].to_numpy()
+        )
+
+        dfs_user.append(df_user)
+
+    return pd.concat(dfs_user)
