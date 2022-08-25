@@ -1,9 +1,12 @@
+from collections import namedtuple
+from dataclasses import dataclass
 from itertools import combinations
-from typing import Tuple
 
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import r2_score
 from sklearn.preprocessing import QuantileTransformer
 from tqdm import tqdm
 
@@ -23,10 +26,16 @@ def fit_sigma(score_x: pd.Series, score_y: pd.Series) -> float:
     return curve_fit(curve_fn, score_x, score_y)[0]
 
 
+SimilarityPairResult = namedtuple(
+    'SimilarityPairResult',
+    ['df', 'df_sim', 'df_support', 'qt']
+)
+
+
 def similarity_pair(
     df: pd.DataFrame,
-    min_pair_plays: int = 40
-) -> Tuple[pd.DataFrame, pd.DataFrame, QuantileTransformer]:
+    min_support: int = 40
+) -> SimilarityPairResult:
     """ Finds the similarity pair within the score df.
 
     Notes:
@@ -34,11 +43,11 @@ def similarity_pair(
 
     Args:
         df: DataFrame that includes, accuracy, year, user_id & beatmap_id
-        min_pair_plays: Minimum number of common players the pair must have.
+        min_support: Minimum number of common players the pair must have.
             If less than min_common_plays, similarity will be NaN
 
     Returns:
-        The Similarity DataFrame
+        Similarity, Support, Score DFs and the fitted QuantileTransformer
     """
 
     # Yield necessary columns only
@@ -61,9 +70,10 @@ def similarity_pair(
     # Prep the similarity array to be filled
     ix = pd.MultiIndex.from_tuples(ixs, names=["user_id", "year"])
     ar_sim = np.empty([ix_n, ix_n], dtype=float)
-    ar_sim[:] = np.nan
     df_sim = pd.DataFrame(columns=ix, index=ix, data=ar_sim)
     df_sim.index.set_names(['user_id', 'year'])
+    df_support = df_sim.copy(deep=True).astype(int)
+    df_sim[:] = np.nan
 
     gb_pair = combinations(gb, 2)
     pair_n = int(ix_n * (ix_n - 1) / 2)
@@ -71,9 +81,9 @@ def similarity_pair(
     for (pxi, df_px), (pyi, df_py) in tqdm(gb_pair, total=pair_n):
         # Find common maps played
         df_p = df_px.merge(df_py, on='map_id')
-
-        # If common maps < MIN_COMMON_PLAYS
-        if len(df_p) < min_pair_plays:
+        support = len(df_p)
+        df_support.loc[pxi, pyi] = support
+        if support < min_support:
             continue
 
         acc_x, acc_y = df_p['accuracy_qt_x'], df_p['accuracy_qt_y']
@@ -84,10 +94,9 @@ def similarity_pair(
 
     # Reflect on diagonal
     df_sim[df_sim.isna()] = df_sim.T
+    df_support += df_support.T
 
-    df = df.set_index(['user_id', 'year'])
-
-    return df_sim, df, qt
+    return SimilarityPairResult(df, df_sim, df_support, qt)
 
 
 def similarity_predict(df: pd.DataFrame,
@@ -124,12 +133,12 @@ def similarity_predict(df: pd.DataFrame,
         # This will yield us a SINGLE prediction per map_id
 
         # We also COUNT the number of supports
-        df_supp = df_sim_user_g.agg('count').iloc[:, 0]
+        df_support = df_sim_user_g.agg('count').iloc[:, 0]
 
         # Join the prediction & support to the user df
         df_user = df_user.merge(df_pred.rename('predict_qt'),
                                 left_index=True, right_index=True)
-        df_user = df_user.merge(df_supp.rename('support'),
+        df_user = df_user.merge(df_support.rename('support'),
                                 left_index=True, right_index=True)
 
         # Inverse transform the prediction_qt
@@ -140,3 +149,35 @@ def similarity_predict(df: pd.DataFrame,
         dfs_user.append(df_user)
 
     return pd.concat(dfs_user)
+
+
+@dataclass
+class PredCorrectionTransformer:
+    a: float = None
+    b: float = None
+    c: float = None
+
+    def fit(self, actual, pred):
+        self.a, self.b, self.c = np.polyfit(actual, pred - actual, deg=2)
+
+    def transform(self, actual, pred):
+        if self.a is None:
+            raise Exception("Not yet fit")
+        return pred - (self.a + self.b * actual + self.c * actual ** 2)
+
+    def fit_transform(self, actual, pred):
+        self.fit(actual, pred)
+        return self.transform(actual, pred)
+
+    def inverse_transform(self, actual, pred):
+        if self.a is None:
+            raise Exception("Not yet fit")
+        return pred + (self.a + self.b * actual + self.c * actual ** 2)
+
+
+Evaluation = namedtuple('Evaluation', ['mse', 'r2'])
+
+
+def evaluate(pred, actual) -> Evaluation:
+    return Evaluation(mean_squared_error(actual, pred, squared=False),
+                      r2_score(actual, pred))
