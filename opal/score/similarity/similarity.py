@@ -34,7 +34,7 @@ SimilarityPairResult = namedtuple(
 
 def similarity_pair(
     df: pd.DataFrame,
-    min_support: int = 40
+    min_support: int = 2
 ) -> SimilarityPairResult:
     """ Finds the similarity pair within the score df.
 
