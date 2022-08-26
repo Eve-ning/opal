@@ -101,8 +101,11 @@ def similarity_pair(
 
 def similarity_predict(df: pd.DataFrame,
                        df_sim: pd.DataFrame,
+                       df_support: pd.DataFrame,
                        qt: QuantileTransformer,
-                       sim_weight_pow: float = 8) -> pd.DataFrame:
+                       sim_weight_pow: float = 8,
+                       min_support: int = 50) -> pd.DataFrame:
+    df_sim = df_sim[df_support >= min_support]
     dfs_user = []
     for ix, sim in tqdm(df_sim.iterrows(), total=len(df_sim)):
         df_user = df.loc[ix].set_index('map_id')
