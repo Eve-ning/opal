@@ -117,6 +117,10 @@ def similarity_predict(df: pd.DataFrame,
             left_index=True, right_index=True
         )
 
+        # If there are no similarities
+        if df_sim_user.empty:
+             continue
+
         # Within each map, we find weighted average (weighted by similarity)
         # +--------+--------+------------+
         # | map_id | acc_qt | similarity |
