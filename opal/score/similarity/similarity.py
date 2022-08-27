@@ -75,7 +75,7 @@ class SimilarityModel:
 
         # Prep the similarity array to be filled
         ix = pd.MultiIndex.from_tuples(ixs, names=["user_id", "year"])
-        ar_sim = np.empty([ix_n, ix_n], dtype=float)
+        ar_sim = np.zeros([ix_n, ix_n], dtype=float)
         df_sim = pd.DataFrame(columns=ix, index=ix, data=ar_sim)
         df_sim.index.set_names(['user_id', 'year'])
         df_support = df_sim.copy(deep=True).astype(int)
