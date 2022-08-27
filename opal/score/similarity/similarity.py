@@ -130,13 +130,11 @@ class SimilarityModel:
         # user_id & year
         df = pd.merge(
             # User Scores
-            self.params.df_scores,
+            self.params.df_scores.loc[:, :, map_id],
             # Similarities associated with ix
             self.params.df_sim.loc[ix].dropna().rename('similarity'),
+            on=['user_id', 'year']
         )
-
-        # Get only map_id
-        df = df[df['map_id'] == map_id]
 
         if df.empty:
             raise Exception("Not enough supports to infer score")
