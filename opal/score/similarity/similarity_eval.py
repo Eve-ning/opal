@@ -5,10 +5,10 @@ from tqdm import tqdm
 from opal.score.similarity import SimilarityModel
 
 
-def evaluate(df_score,
-             k_folds: int = 5,
-             k_fold_seed: int = 0,
-             **sim_kwargs) -> pd.DataFrame:
+def similarity_model_eval(df_score,
+                          k_folds: int = 5,
+                          k_fold_seed: int = 0,
+                          **sim_kwargs) -> pd.DataFrame:
     """ Evaluates the score df on the similarity model.
 
     Args:
