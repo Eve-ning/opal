@@ -89,7 +89,7 @@ class SimilarityModel:
             desc="Fitting Similarity Pair"
         ):
             # Find common maps played
-            df_p = df_px.merge(df_py)
+            df_p = df_px.merge(df_py, on='map_id')
             support = len(df_p)
             if support < self.min_pair_support:
                 continue
