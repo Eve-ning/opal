@@ -84,7 +84,10 @@ class SimilarityModel:
         gb_pair = combinations(gb, 2)
         pair_n = int(ix_n * (ix_n - 1) / 2)
 
-        for (pxi, df_px), (pyi, df_py) in tqdm(gb_pair, total=pair_n):
+        for (pxi, df_px), (pyi, df_py) in tqdm(
+            gb_pair, total=pair_n,
+            desc="Fitting Similarity Pair"
+        ):
             # Find common maps played
             df_p = df_px.merge(df_py, on='map_id')
             support = len(df_p)
