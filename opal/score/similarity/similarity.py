@@ -67,8 +67,8 @@ class SimilarityModel:
 
         # We group by the Year & User ID
         # A Group will thus contain a user's score for a year
-        df = df.set_index(['user_id', 'year'])
-        gb = df.groupby(df.index)
+        df = df.set_index(['user_id', 'year', 'map_id'])
+        gb = df.groupby(['user_id', 'year'])
 
         ixs = [g[0] for g in gb]
         ix_n = len(ixs)
@@ -89,11 +89,11 @@ class SimilarityModel:
             desc="Fitting Similarity Pair"
         ):
             # Find common maps played
-            df_p = df_px.merge(df_py, on='map_id')
+            df_p = df_px.merge(df_py)
             support = len(df_p)
-            df_support.loc[pxi, pyi] = support
             if support < self.min_pair_support:
                 continue
+            df_support.loc[pxi, pyi] = support
             acc_x, acc_y = df_p['accuracy_qt_x'], df_p['accuracy_qt_y']
 
             # Calculate Sigma & Similarity Score
@@ -133,7 +133,6 @@ class SimilarityModel:
             self.params.df_scores,
             # Similarities associated with ix
             self.params.df_sim.loc[ix].dropna().rename('similarity'),
-            left_index=True, right_index=True
         )
 
         # Get only map_id
