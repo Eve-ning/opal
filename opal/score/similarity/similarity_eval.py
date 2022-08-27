@@ -35,7 +35,7 @@ def similarity_model_eval(df_score,
                     test_score['year'],
                     test_score['map_id']
                 )
-            except ZeroDivisionError or Exception:
+            except (ZeroDivisionError, Exception):
                 continue
             actuals.append(test_score['accuracy'])
             preds.append(pred)
