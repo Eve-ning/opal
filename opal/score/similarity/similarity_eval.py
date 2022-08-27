@@ -31,9 +31,9 @@ def similarity_model_eval(df_score,
         sim = SimilarityModel(**sim_kwargs).fit(train_df)
 
         actuals, preds = [], []
-        for _, test_score in tqdm(test_df.itertuples(),
-                                  total=len(test_df),
-                                  desc="Predicting Scores"):
+        for test_score in tqdm(test_df.itertuples(),
+                               total=len(test_df),
+                               desc="Predicting Scores"):
             try:
                 pred = sim.predict(
                     test_score.user_id,
