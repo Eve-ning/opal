@@ -2,6 +2,8 @@
 *.osu
 *.zip
 *.csv
+*.pkl
+
 *.rar
 data/**/*.pkl
 *.pygtex
@@ -12,6 +14,7 @@ data/**/*.pkl
 *.aux
 *.synctex.gz
 *.osr
+lightning_logs/**/*
 
 .data/
 
