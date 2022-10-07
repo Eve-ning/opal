@@ -30,6 +30,9 @@ def fit_sigma(score_x: pd.Series, score_y: pd.Series) -> float:
 
     return curve_fit(curve_fn, score_x, score_y)[0]
 
+def fit_sim(score_x: pd.Series, score_y: pd.Series) -> float:
+    return sigma_to_sim(fit_sigma(score_x, score_y))
+
 
 SimilarityPairResult = namedtuple(
     'SimilarityPairResult',
