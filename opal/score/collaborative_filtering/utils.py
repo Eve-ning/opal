@@ -1,43 +1,15 @@
-from typing import Tuple
-
-import numpy as np
-import pandas as pd
-
-from opal.score.collaborative_filtering.conf import PRED_VARIABLE
+import torch
 
 
-def train_na_pivot(df: pd.DataFrame) \
-    -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """ Creates the train test and NA dataframes.
+# SEE Desmos: https://www.desmos.com/calculator/f7tlysna7c
+def adj_inv_sigmoid(x):
+    """ Adjusts the accuracy such that it's more linear for smoother learning """
+    return -torch.log(1 / ((x / 2.5) + 0.5) - 1)
 
-    Notes:
-        The train comes from non NA scores.
-        NA are scores that aren't set.
 
-    """
+def adj_sigmoid(x):
+    """ Inverses the accuracy adjustment """
+    return -(0.5 * torch.exp(-x) - 0.5) / (0.4 * (torch.exp(-x) + 1))
 
-    df_pivot = df.pivot_table(
-        index=['user_id', 'year', 'mod'],
-        columns='map_id',
-        values=PRED_VARIABLE,
-        aggfunc=np.max
-    )
 
-    # We unpivot to yield the multi index
-    df_unpivot = df_pivot.reset_index().melt(
-        id_vars=['user_id', 'year', 'mod'],
-        value_name=PRED_VARIABLE
-    )
-
-    # We generate a user from the multiindex (id + mod)
-    df_unpivot['user'] = (df_unpivot['user_id'].astype(str)) + "/" + \
-                         (df_unpivot['year'].astype(str))
-    df_unpivot['map'] = (df_unpivot['map_id'].astype(str)) + "/" + \
-                        (df_unpivot['mod'].astype(str))
-
-    # Create the surprise acceptable df
-    df_surprise = df_unpivot[['user', 'map', PRED_VARIABLE]]
-    df_na = df_surprise[df_surprise.isna().any(axis=1)]
-    df_train = df_surprise.dropna()
-
-    return df_train, df_na
+# assert adj_inv_sigmoid(adj_sigmoid(torch.ones([1]))).item() - 1 < 1e-5
