@@ -15,6 +15,7 @@ from opal.score.preprocessing_dynamic import PreprocessingDynamic
 @dataclass
 class CFDataset:
     data_path: Path = SCORES_DIR
+    score_set: str = "top1k"
     acc_filter: Tuple = (0.8, 1)
     uid_support: int = 25
     mid_support: int = 25
@@ -27,12 +28,13 @@ class CFDataset:
 
     def __post_init__(self):
         df: pd.DataFrame = PreprocessingDynamic(
-            Dataset(self.data_path, "top1k").joined_filtered_df,
+            Dataset(self.data_path, self.score_set).joined_filtered_df,
             unpopular_maps_thres=None,
             unpopular_plays_thres=None,
             sr_min_thres=0,
             acc_filter=self.acc_filter,
-            score_filter=None
+            score_filter=None,
+            acc_filter_300g_weight=320
         ).filter(calc_acc=True)
 
         df = df.rename({'accuracy': 'acc', 'map_id': 'mid'}, axis=1)
