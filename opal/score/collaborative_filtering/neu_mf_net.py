@@ -53,5 +53,3 @@ class NeuMFNet(nn.Module):
         pred = self.neu_mf_net(torch.concat([mf_out, mlp_out], dim=-1))
 
         return pred[:, :, 0]
-
-assert NeuMFNet(128, 128, 16, 16, 16)(torch.randint(0, 100, [1, 1]), torch.randint(0, 100, [1, 1]))
