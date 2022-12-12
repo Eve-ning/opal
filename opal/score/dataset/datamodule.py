@@ -26,6 +26,9 @@ class ScoreDataModule(pl.LightningDataModule):
     ss_score: StandardScaler = StandardScaler()
 
     batch_size: int = 8
+    debug_score_sample: int = None
+    debug_map_sample: int = None
+
     def __post_init__(self):
         super().__init__()
         ds_str = f"{self.ds_yyyy_mm}_01_performance_{self.ds_mode}_top_{self.ds_set}"
@@ -36,7 +39,8 @@ class ScoreDataModule(pl.LightningDataModule):
         csv_map = csv_dir / "osu_beatmaps.csv"
 
         logging.info("Preparing Score DF")
-        df_score = pd.read_csv(csv_score)
+        df_score = pd.read_csv(csv_score, nrows=self.debug_score_sample)
+
         df_score = self.prep_score(df_score)
 
         logging.info("Preparing Map DF")
