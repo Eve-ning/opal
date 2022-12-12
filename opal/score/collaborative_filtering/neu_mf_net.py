@@ -42,7 +42,7 @@ class NeuMFNet(nn.Module):
         )
 
     def forward(self, x):
-        uid, mid = x
+        uid, mid = x.T
         u_mf_emb = self.u_mf_emb(uid)
         m_mf_emb = self.m_mf_emb(mid)
         mf_out = self.mf_net(torch.mul(u_mf_emb, m_mf_emb))
@@ -53,4 +53,4 @@ class NeuMFNet(nn.Module):
 
         pred = self.neu_mf_net(torch.concat([mf_out, mlp_out], dim=-1))
 
-        return pred[:, :, 0]
+        return pred[:, 0]
