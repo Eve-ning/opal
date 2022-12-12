@@ -1,5 +1,4 @@
 import logging
-import sys
 from dataclasses import dataclass, field
 from typing import Sequence
 
@@ -9,15 +8,13 @@ import torch
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from torch.utils.data import DataLoader, TensorDataset, random_split
 
-sys.path.append("data_ppy_sh_to_csv/")
-
 from data_ppy_sh_to_csv.main import get_dataset, default_sql_names
 from opal.conf.conf import DATA_DIR
 from opal.conf.mods import OsuMod
 
 
 @dataclass
-class ScoreDataset(pl.LightningDataModule):
+class ScoreDataModule(pl.LightningDataModule):
     ds_yyyy_mm: str = "2022_10"
     ds_mode: str = "mania"
     ds_set: str = "1000"
@@ -29,8 +26,8 @@ class ScoreDataset(pl.LightningDataModule):
     ss_score: StandardScaler = StandardScaler()
 
     def __post_init__(self):
-        ds_str = f"{self.ds_yyyy_mm}_01_performance_{self.ds_mode}_top_{self.ds_set}"
         super().__init__()
+        ds_str = f"{self.ds_yyyy_mm}_01_performance_{self.ds_mode}_top_{self.ds_set}"
         assert sum(self.train_test_val) == 1, "Train Test Validation must sum to 1."
 
         csv_dir = DATA_DIR / ds_str / "csv"
@@ -119,9 +116,16 @@ class ScoreDataset(pl.LightningDataModule):
 
     def prepare_data(self) -> None:
         """ Downloads data via data_ppy_sh_to_csv submodule """
-        get_dataset(self.ds_yyyy_mm, self.ds_mode, self.ds_set,
-                    DATA_DIR, 'Y', default_sql_names[:4],
-                    cleanup='N', zip_csv_files='N')
+        get_dataset(
+            year_month=self.ds_yyyy_mm,
+            mode=self.ds_mode,
+            set=self.ds_set,
+            dl_dir=DATA_DIR,
+            bypass_confirm='Y',
+            sql_names=",".join(default_sql_names[:4]),
+            cleanup='N',
+            zip_csv_files='N'
+        )
 
     def train_dataloader(self):
         return DataLoader(self.train_ds, shuffle=True)
@@ -134,3 +138,11 @@ class ScoreDataset(pl.LightningDataModule):
 
     def predict_dataloader(self):
         return DataLoader(self.val_ds, shuffle=False)
+
+    @property
+    def n_uid(self):
+        return len(self.le_uid.classes_)
+
+    @property
+    def n_mid(self):
+        return len(self.le_mid.classes_)
