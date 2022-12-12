@@ -18,7 +18,7 @@ class LitNeuMFNet(pl.LightningModule):
 
     def training_step(self, batch: Any, batch_idx: int, dataloader_idx: int = 0) -> torch.Tensor:
         x, y = batch
-        y_hat = self(*x)
+        y_hat = self(x)
         y_adj = adj_inv_sigmoid(y)
 
         # We use an inv. sigmoid to make the model learn from a more linear accuracy curve.
