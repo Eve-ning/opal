@@ -13,12 +13,12 @@ class LitNeuMFNet(pl.LightningModule):
         super().__init__()
         self.model = NeuMFNet(n_uid, n_mid, mf_emb_dim, mlp_emb_dim, mlp_chn_out)
 
-    def forward(self, uid, mid):
-        return self.model(uid, mid)
+    def forward(self, x):
+        return self.model(x)
 
     def training_step(self, batch: Any, batch_idx: int, dataloader_idx: int = 0) -> torch.Tensor:
-        x_uid, x_mid, y = batch
-        y_hat = self(x_uid, x_mid)
+        x, y = batch
+        y_hat = self(*x)
         y_adj = adj_inv_sigmoid(y)
 
         # We use an inv. sigmoid to make the model learn from a more linear accuracy curve.
@@ -32,14 +32,14 @@ class LitNeuMFNet(pl.LightningModule):
         return loss
 
     def validation_step(self, batch: Any, batch_idx: int, dataloader_idx: int = 0):
-        x_uid, x_mid, y = batch
+        x, y = batch
 
-        y_hat = self(x_uid, x_mid)
+        y_hat = self(x)
         self.log("val_mae", torch.abs(adj_sigmoid(y_hat) - y).mean())
 
     def predict_step(self, batch: Any, batch_idx: int, dataloader_idx: int = 0) -> torch.Tensor:
-        x_uid, x_mid, y = batch
-        return adj_sigmoid(self(x_uid, x_mid))
+        x, y = batch
+        return adj_sigmoid(self(x))
 
     def configure_optimizers(self):
         optim = torch.optim.Adam(self.parameters(), lr=0.0005, weight_decay=0.001)

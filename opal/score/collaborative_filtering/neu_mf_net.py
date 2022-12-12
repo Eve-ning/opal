@@ -41,7 +41,8 @@ class NeuMFNet(nn.Module):
             nn.Softplus(),
         )
 
-    def forward(self, uid, mid):
+    def forward(self, x):
+        uid, mid = x
         u_mf_emb = self.u_mf_emb(uid)
         m_mf_emb = self.m_mf_emb(mid)
         mf_out = self.mf_net(torch.mul(u_mf_emb, m_mf_emb))
