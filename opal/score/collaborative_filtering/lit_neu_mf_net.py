@@ -17,25 +17,25 @@ class LitNeuMFNet(pl.LightningModule):
         return self.model(x)
 
     def training_step(self, batch: Any, batch_idx: int, dataloader_idx: int = 0) -> torch.Tensor:
-        x, y = batch
-        y_hat = self(x)
-        y_adj = adj_inv_sigmoid(y)
+        x, y_true = batch
+        y_pred_learn = self(x)
+        y_pred = adj_sigmoid(y_pred_learn)
+        y_true_learn = adj_inv_sigmoid(y_true)
 
-        # We use an inv. sigmoid to make the model learn from a more linear accuracy curve.
-        # Here, we measure the loss of the pred - linearized acc
-        loss = torch.sqrt(((y_hat - y_adj) ** 2).mean())
+        # The inv. sigmoid transforms y_true into the learning space to make learning more linear
+        # The loss is thus calculated in the learning space.
+        loss = torch.sqrt(((y_pred_learn - y_true_learn) ** 2).mean())
 
-        # As we learnt the linearized acc, we need to transform it back to something interpretable
-        # We sigmoid it to make it the actual curved acc.
-        self.log("train_mae", torch.abs(adj_sigmoid(y_hat) - adj_sigmoid(y_adj)).mean())
+        # The sigmoid transforms predictions from learning to real space
+        self.log("train_mae", torch.abs(y_pred - y_true).mean())
 
         return loss
 
     def validation_step(self, batch: Any, batch_idx: int, dataloader_idx: int = 0):
-        x, y = batch
-
-        y_hat = self(x)
-        self.log("val_mae", torch.abs(adj_sigmoid(y_hat) - y).mean())
+        x, y_true = batch
+        y_pred_learn = self(x)
+        y_pred = adj_sigmoid(y_pred_learn)
+        self.log("val_mae", torch.abs(y_pred - y_true).mean())
 
     def predict_step(self, batch: Any, batch_idx: int, dataloader_idx: int = 0) -> torch.Tensor:
         x, y = batch
