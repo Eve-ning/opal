@@ -25,6 +25,7 @@ class ScoreDataModule(pl.LightningDataModule):
     le_mid: LabelEncoder = LabelEncoder()
     ss_score: StandardScaler = StandardScaler()
 
+    batch_size: int = 8
     def __post_init__(self):
         super().__init__()
         ds_str = f"{self.ds_yyyy_mm}_01_performance_{self.ds_mode}_top_{self.ds_set}"
@@ -117,27 +118,27 @@ class ScoreDataModule(pl.LightningDataModule):
     def prepare_data(self) -> None:
         """ Downloads data via data_ppy_sh_to_csv submodule """
         get_dataset(
-            year_month=self.ds_yyyy_mm,
-            mode=self.ds_mode,
-            set=self.ds_set,
-            dl_dir=DATA_DIR,
-            bypass_confirm='Y',
-            sql_names=",".join(default_sql_names[:4]),
-            cleanup='N',
-            zip_csv_files='N'
+            self.ds_yyyy_mm,  # year_month=
+            self.ds_mode,  # mode=
+            self.ds_set,  # set=
+            DATA_DIR,  # dl_dir=
+            'Y',  # bypass_confirm=
+            ",".join(default_sql_names[:4]),  # sql_names=
+            'N',  # cleanup=
+            'N'  # zip_csv_files=
         )
 
     def train_dataloader(self):
-        return DataLoader(self.train_ds, shuffle=True)
+        return DataLoader(self.train_ds, shuffle=True, batch_size=8)
 
     def test_dataloader(self):
-        return DataLoader(self.test_ds, shuffle=False)
+        return DataLoader(self.test_ds, shuffle=False, batch_size=8)
 
     def val_dataloader(self):
-        return DataLoader(self.val_ds, shuffle=False)
+        return DataLoader(self.val_ds, shuffle=False, batch_size=8)
 
     def predict_dataloader(self):
-        return DataLoader(self.val_ds, shuffle=False)
+        return DataLoader(self.val_ds, shuffle=False, batch_size=8)
 
     @property
     def n_uid(self):
