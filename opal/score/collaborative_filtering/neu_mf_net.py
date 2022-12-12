@@ -1,13 +1,13 @@
-import torch
 import torch.nn as nn
+import torch
 
 
 class NeuMFNet(nn.Module):
-    def __init__(self, n_uid, n_mid, mf_emb_dim, mlp_emb_dim, mlp_chn_out):
+    def __init__(self, uid_no, mid_no, mf_emb_dim, mlp_emb_dim, mlp_chn_out):
         super(NeuMFNet, self).__init__()
 
-        self.u_mf_emb = nn.Embedding(n_uid, mf_emb_dim)
-        self.m_mf_emb = nn.Embedding(n_mid, mf_emb_dim)
+        self.u_mf_emb = nn.Embedding(uid_no, mf_emb_dim)
+        self.m_mf_emb = nn.Embedding(mid_no, mf_emb_dim)
         self.mf_net = nn.Sequential(
             nn.Linear(mlp_emb_dim, mlp_emb_dim),
             nn.ReLU(),
@@ -16,8 +16,8 @@ class NeuMFNet(nn.Module):
             nn.ReLU(),
             nn.Dropout(0.1),
         )
-        self.u_mlp_emb = nn.Embedding(n_uid, mlp_emb_dim)
-        self.m_mlp_emb = nn.Embedding(n_mid, mlp_emb_dim)
+        self.u_mlp_emb = nn.Embedding(uid_no, mlp_emb_dim)
+        self.m_mlp_emb = nn.Embedding(mid_no, mlp_emb_dim)
         self.mlp_net = nn.Sequential(
             nn.Linear(mlp_emb_dim * 2, 512),
             nn.ReLU(),
@@ -41,8 +41,7 @@ class NeuMFNet(nn.Module):
             nn.Softplus(),
         )
 
-    def forward(self, x):
-        uid, mid = x.T
+    def forward(self, uid, mid):
         u_mf_emb = self.u_mf_emb(uid)
         m_mf_emb = self.m_mf_emb(mid)
         mf_out = self.mf_net(torch.mul(u_mf_emb, m_mf_emb))
@@ -53,4 +52,4 @@ class NeuMFNet(nn.Module):
 
         pred = self.neu_mf_net(torch.concat([mf_out, mlp_out], dim=-1))
 
-        return pred[:, 0]
+        return pred[:, :, 0]
