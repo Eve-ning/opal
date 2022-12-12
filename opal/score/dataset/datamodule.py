@@ -5,7 +5,7 @@ from typing import Sequence
 import pandas as pd
 import pytorch_lightning as pl
 import torch
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from torch.utils.data import DataLoader, TensorDataset, random_split
 
 from data_ppy_sh_to_csv.main import get_dataset, default_sql_names
@@ -23,7 +23,7 @@ class ScoreDataModule(pl.LightningDataModule):
 
     le_uid: LabelEncoder = LabelEncoder()
     le_mid: LabelEncoder = LabelEncoder()
-    ss_score: StandardScaler = StandardScaler()
+    mms_score: MinMaxScaler = MinMaxScaler()
 
     batch_size: int = 8
     debug_score_sample: int = None
@@ -52,6 +52,8 @@ class ScoreDataModule(pl.LightningDataModule):
 
         logging.info("Creating IDs")
         df = self.prep_ids(df)
+
+        self.df = df
 
         x = torch.Tensor(df.loc[:, ['uid', 'mid']].values).to(torch.int)
         y = torch.Tensor(df['score'].values)
@@ -115,7 +117,7 @@ class ScoreDataModule(pl.LightningDataModule):
         )[['uid', 'mid', 'score']].assign(
             uid=lambda x: self.le_uid.fit_transform(x.uid),
             mid=lambda x: self.le_mid.fit_transform(x.mid),
-            score=lambda x: self.ss_score.fit_transform(x[['score']]),
+            score=lambda x: self.mms_score.fit_transform(x[['score']]),
         )
         return df
 
