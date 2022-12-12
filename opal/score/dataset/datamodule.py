@@ -6,7 +6,8 @@ import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
 import torch
-from sklearn.preprocessing import LabelEncoder, MinMaxScaler
+from sklearn.base import TransformerMixin
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler, QuantileTransformer
 from torch.utils.data import DataLoader, TensorDataset, random_split
 
 from data_ppy_sh_to_csv.main import get_dataset, default_sql_names
@@ -24,8 +25,8 @@ class ScoreDataModule(pl.LightningDataModule):
 
     le_uid: LabelEncoder = LabelEncoder()
     le_mid: LabelEncoder = LabelEncoder()
-    mms_score: MinMaxScaler = MinMaxScaler()
-    mms_accuracy: MinMaxScaler = MinMaxScaler()
+    scaler_score: TransformerMixin = QuantileTransformer(output_distribution="normal")
+    scaler_accuracy: TransformerMixin = QuantileTransformer(output_distribution="normal")
 
     batch_size: int = 8
     m_min_support: int = 50
@@ -121,8 +122,8 @@ class ScoreDataModule(pl.LightningDataModule):
 
     def scale_metric(self, df: pd.DataFrame):
         return df.assign(
-            score=lambda x: self.mms_score.fit_transform(x[['score']]),
-            accuracy=lambda x: self.mms_accuracy.fit_transform(x[['accuracy']])
+            score=lambda x: self.scaler_score.fit_transform(x[['score']].values),
+            accuracy=lambda x: self.scaler_accuracy.fit_transform(x[['accuracy']].values)
         )
 
     def prep_map(self, df: pd.DataFrame):
