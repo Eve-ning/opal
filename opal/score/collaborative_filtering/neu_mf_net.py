@@ -1,5 +1,6 @@
-import torch.nn as nn
 import torch
+import torch.nn as nn
+from torch.nn.functional import tanh
 
 
 class NeuMFNet(nn.Module):
@@ -38,7 +39,7 @@ class NeuMFNet(nn.Module):
         )
         self.neu_mf_net = nn.Sequential(
             nn.Linear(mlp_chn_out + mf_emb_dim, 1),
-            nn.Softplus(),
+            nn.Tanh(),
         )
 
     def forward(self, uid, mid):
@@ -50,6 +51,6 @@ class NeuMFNet(nn.Module):
         m_mlp_emb = self.m_mlp_emb(mid)
         mlp_out = self.mlp_net(torch.concat([u_mlp_emb, m_mlp_emb], dim=-1))
 
-        pred = self.neu_mf_net(torch.concat([mf_out, mlp_out], dim=-1))
+        pred = self.neu_mf_net(torch.concat([mf_out, mlp_out], dim=-1)) * 2
 
-        return pred[:, :, 0]
+        return torch.tanh(pred)[:, :, 0] * 5
