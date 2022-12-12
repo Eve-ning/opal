@@ -48,7 +48,7 @@ class ScoreDataModule(pl.LightningDataModule):
         logging.info("Creating IDs")
         df = self.prep_ids(df)
 
-        x = torch.Tensor(df.loc[:, ['uid', 'mid']].values)
+        x = torch.Tensor(df.loc[:, ['uid', 'mid']].values).to(torch.int)
         y = torch.Tensor(df['score'].values)
         ds = TensorDataset(x, y)
 
