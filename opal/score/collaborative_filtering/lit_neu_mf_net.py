@@ -9,9 +9,9 @@ from opal.score.collaborative_filtering.utils import adj_inv_sigmoid, adj_sigmoi
 
 
 class LitNeuMFNet(pl.LightningModule):
-    def __init__(self, uid_no, mid_no, mf_emb_dim, mlp_emb_dim, mlp_chn_out):
+    def __init__(self, n_uid, n_mid, mf_emb_dim, mlp_emb_dim, mlp_chn_out):
         super().__init__()
-        self.model = NeuMFNet(uid_no, mid_no, mf_emb_dim, mlp_emb_dim, mlp_chn_out)
+        self.model = NeuMFNet(n_uid, n_mid, mf_emb_dim, mlp_emb_dim, mlp_chn_out)
 
     def forward(self, uid, mid):
         return self.model(uid, mid)
