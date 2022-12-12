@@ -1,22 +1,39 @@
 import logging
+import sys
+from dataclasses import dataclass, field
+from typing import Sequence
 
 import pandas as pd
 import pytorch_lightning as pl
+import torch
 from sklearn.preprocessing import LabelEncoder, StandardScaler
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, TensorDataset, random_split
+
+sys.path.append("data_ppy_sh_to_csv/")
 
 from data_ppy_sh_to_csv.main import get_dataset, default_sql_names
 from opal.conf.conf import DATA_DIR
 from opal.conf.mods import OsuMod
 
 
+@dataclass
 class ScoreDataset(pl.LightningDataModule):
-    def __init__(self, train_test_val=(0.8, 0.1, 0.1)):
+    ds_yyyy_mm: str = "2022_10"
+    ds_mode: str = "mania"
+    ds_set: str = "1000"
+
+    train_test_val: Sequence[float] = field(default_factory=lambda: (0.8, 0.1, 0.1))
+
+    le_uid: LabelEncoder = LabelEncoder()
+    le_mid: LabelEncoder = LabelEncoder()
+    ss_score: StandardScaler = StandardScaler()
+
+    def __post_init__(self):
+        ds_str = f"{self.ds_yyyy_mm}_01_performance_{self.ds_mode}_top_{self.ds_set}"
         super().__init__()
-        assert sum(train_test_val) == 1, "Train Test Validation must sum to 1."
+        assert sum(self.train_test_val) == 1, "Train Test Validation must sum to 1."
 
-        csv_dir = DATA_DIR / "2022_12_01_performance_mania_top_1000" / "csv"
-
+        csv_dir = DATA_DIR / ds_str / "csv"
         csv_score = csv_dir / "osu_scores_mania_high.csv"
         csv_map = csv_dir / "osu_beatmaps.csv"
 
@@ -34,19 +51,15 @@ class ScoreDataset(pl.LightningDataModule):
         logging.info("Creating IDs")
         df = self.prep_ids(df)
 
-        self.df_map = df_map
-        self.df_score = df_score
-        self.df = df
+        x = torch.Tensor(df.loc[:, ['uid', 'mid']].values)
+        y = torch.Tensor(df['score'].values)
+        ds = TensorDataset(x, y)
 
-        # x = torch.Tensor(df.loc[:, ['user_id', 'beatmap_id']].values)
-        # y = torch.Tensor(df['score'].values)
-        # ds = TensorDataset(x, y)
-        #
-        # n_train = int(len(df) * train_test_val[0])
-        # n_test = int(len(df) * train_test_val[1])
-        # n_val = len(df) - (n_train + n_test)
-        #
-        # self.train_ds, self.test_ds, self.val_ds = random_split(ds, (n_train, n_test, n_val))
+        n_train = int(len(df) * self.train_test_val[0])
+        n_test = int(len(df) * self.train_test_val[1])
+        n_val = len(df) - (n_train + n_test)
+
+        self.train_ds, self.test_ds, self.val_ds = random_split(ds, (n_train, n_test, n_val))
 
     def prep_score(self, df: pd.DataFrame):
         """ Prepares the Score DF
@@ -59,16 +72,16 @@ class ScoreDataset(pl.LightningDataModule):
                 - DOUBLE_TIME: 1
             Adds Year column
         """
-        df.loc[(df['enabled_mods'] & OsuMod.EASY) > 0] *= 2
-        df.loc[(df['enabled_mods'] & OsuMod.NO_FAIL) > 0] *= 2
-        df.loc[(df['enabled_mods'] & OsuMod.HALF_TIME) > 0] *= 2
+
+        df.loc[((df['enabled_mods'] & OsuMod.EASY) > 0) |
+               ((df['enabled_mods'] & OsuMod.NO_FAIL) > 0) |
+               ((df['enabled_mods'] & OsuMod.HALF_TIME) > 0)] *= 2
 
         df['speed'] = 0
         df.loc[(df['enabled_mods'] & OsuMod.HALF_TIME) > 0, 'speed'] = -1
         df.loc[(df['enabled_mods'] & OsuMod.DOUBLE_TIME) > 0, 'speed'] = 1
 
         df['year'] = df['date'].str[:4]
-
         df = df[['user_id', 'beatmap_id', 'year', 'score', 'speed']]
         return df
 
@@ -78,10 +91,10 @@ class ScoreDataset(pl.LightningDataModule):
         Notes:
             Removes all non-mania maps
         """
-        df = df[df['playmode'] == 3]
-        df = df[
-            ['difficultyrating', 'diff_overall',
-             'diff_size', 'version', 'beatmap_id', 'filename']
+        df = df.loc[
+            df['playmode'] == 3,
+            ['difficultyrating', 'diff_overall', 'diff_size',
+             'version', 'beatmap_id', 'filename']
         ]
         return df
 
@@ -94,20 +107,19 @@ class ScoreDataset(pl.LightningDataModule):
             Label Encodes uid & mid.
             Standard Scales score.
         """
-        df['uid'] = df['user_id'].astype(str) + "/" + df['year']
-        df['mid'] = df['beatmap_id'].astype(str) + "/" + df['speed'].astype(str)
-        df = df[['uid', 'mid', 'score']]
-        self.le_uid = LabelEncoder()
-        self.le_mid = LabelEncoder()
-        self.ss_score = StandardScaler()
-        df.uid = self.le_uid.fit_transform(df.uid)
-        df.mid = self.le_mid.fit_transform(df.mid)
-        df.score = self.ss_score.fit_transform(df[['score']])
+        df = df.assign(
+            uid=lambda x: x.user_id.astype(str) + "/" + x.year,
+            mid=lambda x: x.beatmap_id.astype(str) + "/" + x.speed.astype(str)
+        )[['uid', 'mid', 'score']].assign(
+            uid=lambda x: self.le_uid.fit_transform(x.uid),
+            mid=lambda x: self.le_mid.fit_transform(x.mid),
+            score=lambda x: self.ss_score.fit_transform(x[['score']]),
+        )
         return df
 
     def prepare_data(self) -> None:
         """ Downloads data via data_ppy_sh_to_csv submodule """
-        get_dataset("2022_10", "mania", "1000",
+        get_dataset(self.ds_yyyy_mm, self.ds_mode, self.ds_set,
                     DATA_DIR, 'Y', default_sql_names[:4],
                     cleanup='N', zip_csv_files='N')
 
