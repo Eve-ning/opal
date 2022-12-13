@@ -20,7 +20,7 @@ jobs:
 
       - name: Add data_ppy_sh_to_csv submodule
         run: |
-          git submodule add https://github.com/Eve-ning/data_ppy_sh_to_csv.git opal/
+          git submodule add https://github.com/Eve-ning/data_ppy_sh_to_csv.git
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
