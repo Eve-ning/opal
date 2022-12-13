@@ -59,6 +59,7 @@ class ScoreDataModule(pl.LightningDataModule):
         )
 
     def setup(self, stage: str = "") -> None:
+        self.prepare_data()
         ds_str = f"{self.ds_yyyy_mm}_01_performance_{self.ds_mode}_top_{self.ds_set}"
 
         csv_dir = DATA_DIR / ds_str / "csv"
