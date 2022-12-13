@@ -21,6 +21,13 @@ jobs:
       - name: Add data_ppy_sh_to_csv init
         run: |
           touch opal/data_ppy_sh_to_csv/__init__.py
+
+      - name: Check dirs
+        run: |
+          ls
+      - name: Check dirs
+        run: |
+          ls data_ppy_sh_to_csv
         
 
       - name: Set up Python ${{ matrix.python-version }}
