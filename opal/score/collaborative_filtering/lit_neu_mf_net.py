@@ -3,17 +3,19 @@ import pytorch_lightning as pl
 import torch
 from sklearn.base import TransformerMixin
 from torch.nn import MSELoss
-from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch.optim.lr_scheduler import StepLR
 
 from opal.score.collaborative_filtering.neu_mf_net import NeuMFNet
 
 
 class LitNeuMFNet(pl.LightningModule):
-    def __init__(self, uid_no, mid_no, mf_emb_dim, mlp_emb_dim, mlp_chn_out, scaler: TransformerMixin):
+    def __init__(self, uid_no, mid_no, mf_emb_dim, mlp_emb_dim, mlp_chn_out, scaler: TransformerMixin,
+                 lr: float = 0.005):
         super().__init__()
         self.model = NeuMFNet(uid_no, mid_no, mf_emb_dim, mlp_emb_dim, mlp_chn_out)
         self.loss = MSELoss()
         self.scaler = scaler
+        self.lr = lr
 
     def forward(self, uid, mid):
         return self.model(uid, mid)
@@ -53,8 +55,12 @@ class LitNeuMFNet(pl.LightningModule):
             ).mean()
         )
 
+    def predict_step(self, batch, batch_idx, **kwargs):
+        x_uid, x_mid, y = batch
+        return self.scaler_inverse(self(x_uid, x_mid)), self.scaler_inverse(y)
+
     def configure_optimizers(self):
-        optim = torch.optim.Adam(self.parameters(), lr=0.005, weight_decay=0.001)
+        optim = torch.optim.Adam(self.parameters(), lr=self.lr, weight_decay=0.001)
 
         return {
             "optimizer": optim,
