@@ -10,7 +10,7 @@ from sklearn.base import TransformerMixin
 from sklearn.preprocessing import LabelEncoder, QuantileTransformer
 from torch.utils.data import DataLoader, TensorDataset, random_split
 
-from data_ppy_sh_to_csv.main import get_dataset, default_sql_names
+from opal.data_ppy_sh_to_csv.main import get_dataset, default_sql_names
 from opal.conf.conf import DATA_DIR
 from opal.conf.mods import OsuMod
 
