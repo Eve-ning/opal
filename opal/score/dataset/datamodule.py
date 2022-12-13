@@ -121,7 +121,7 @@ class ScoreDataModule(pl.LightningDataModule):
         ).assign(
             speed=lambda x: np.where(double_speed, 1, x.speed)
         )[['user_id', 'beatmap_id', 'year', 'score', 'accuracy', 'speed']]
-        return df[df['score'].isin(*score_bounds) & df['accuracy'].isin(*accuracy_bounds)]
+        return df[df['score'].between(*score_bounds) & df['accuracy'].between(*accuracy_bounds)]
 
     @staticmethod
     def scale_metric(df: pd.DataFrame,
