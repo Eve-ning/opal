@@ -8,7 +8,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from opal.score.collaborative_filtering.neu_mf_net import NeuMFNet
 
 
-class LitNet(pl.LightningModule):
+class LitNeuMFNet(pl.LightningModule):
     def __init__(self, uid_no, mid_no, mf_emb_dim, mlp_emb_dim, mlp_chn_out, scaler: TransformerMixin):
         super().__init__()
         self.model = NeuMFNet(uid_no, mid_no, mf_emb_dim, mlp_emb_dim, mlp_chn_out)
