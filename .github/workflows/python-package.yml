@@ -1,13 +1,10 @@
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Python package
+name: Test Neu MF Model
 
-on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+on: [ pull_request ]
+
 
 jobs:
   build:
@@ -16,31 +13,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8"]
+        python-version: [ "3.8" ]
 
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-        
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        
-    - name: Test with pytest
-      run: |
-        pytest tests/replay_tests/
+      - uses: actions/checkout@v3
 
-    - name: Show RF Regressor results
-      uses: dorny/test-reporter@v1.5.0
-      id: test-report                  # Set ID reference for step
-      if: success() || failure()       # run this step even if previous step failed
-      with:
-        name: RF Tests                 # Name of the check run which will be created
-        path: rf_regressor_score.xml   # Path to test results
-        reporter: jest-junit           # Format of test results
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install flake8 pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Test with pytest
+        run: |
+          pytest tests/score_tests/
