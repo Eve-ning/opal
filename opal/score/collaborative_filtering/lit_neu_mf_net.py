@@ -59,7 +59,8 @@ class LitNeuMFNet(pl.LightningModule):
         return {
             "optimizer": optim,
             "lr_scheduler": {
-                "scheduler": ReduceLROnPlateau(optim, mode='min', factor=0.2, patience=10, verbose=True),
-                "monitor": "train_mae",
+                "scheduler": StepLR(optim, step_size=1, gamma=0.2),
+                # "scheduler": ReduceLROnPlateau(optim, mode='min', factor=0.2, patience=10, verbose=True),
+                # "monitor": "train_mae",
             },
         }
