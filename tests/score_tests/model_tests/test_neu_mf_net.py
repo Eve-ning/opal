@@ -3,12 +3,12 @@ import logging
 import numpy as np
 import pytorch_lightning as pl
 
-from opal.conf.conf import MODEL_DIR
-from opal.score.collaborative_filtering.lit_neu_mf_net import LitNeuMFNet
-from opal.score.dataset.datamodule import ScoreDataModule
-
 
 def test_neu_mf_net():
+    from opal.conf.conf import MODEL_DIR
+    from opal.score.collaborative_filtering.lit_neu_mf_net import LitNeuMFNet
+    from opal.score.dataset.datamodule import ScoreDataModule
+
     dm = ScoreDataModule(
         ds_yyyy_mm="2022_11", batch_size=256, m_min_support=50, u_min_support=50,
         score_bounds=(7.5e5, 1e6)
