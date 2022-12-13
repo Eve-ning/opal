@@ -43,8 +43,23 @@ class ScoreDataModule(pl.LightningDataModule):
 
     def __post_init__(self):
         super().__init__()
-        ds_str = f"{self.ds_yyyy_mm}_01_performance_{self.ds_mode}_top_{self.ds_set}"
         assert sum(self.train_test_val) == 1, "Train Test Validation must sum to 1."
+
+    def prepare_data(self) -> None:
+        """ Downloads data via data_ppy_sh_to_csv submodule """
+        get_dataset(
+            self.ds_yyyy_mm,  # year_month=
+            self.ds_mode,  # mode=
+            self.ds_set,  # set=
+            DATA_DIR,  # dl_dir=
+            'Y',  # bypass_confirm=
+            ",".join(default_sql_names[:4]),  # sql_names=
+            'N',  # cleanup=
+            'N'  # zip_csv_files=
+        )
+
+    def setup(self, stage: str) -> None:
+        ds_str = f"{self.ds_yyyy_mm}_01_performance_{self.ds_mode}_top_{self.ds_set}"
 
         csv_dir = DATA_DIR / ds_str / "csv"
         csv_score = csv_dir / "osu_scores_mania_high.csv"
@@ -197,19 +212,6 @@ class ScoreDataModule(pl.LightningDataModule):
         return df.assign(
             uid_le=lambda x: self.uid_le.fit_transform(x.uid),
             mid_le=lambda x: self.mid_le.fit_transform(x.mid),
-        )
-
-    def prepare_data(self) -> None:
-        """ Downloads data via data_ppy_sh_to_csv submodule """
-        get_dataset(
-            self.ds_yyyy_mm,  # year_month=
-            self.ds_mode,  # mode=
-            self.ds_set,  # set=
-            DATA_DIR,  # dl_dir=
-            'Y',  # bypass_confirm=
-            ",".join(default_sql_names[:4]),  # sql_names=
-            'N',  # cleanup=
-            'N'  # zip_csv_files=
         )
 
     def train_dataloader(self):
