@@ -10,7 +10,7 @@ from opal.score.dataset.datamodule import ScoreDataModule
 
 def test_neu_mf_net():
     dm = ScoreDataModule(
-        ds_yyyy_mm="2022_12", batch_size=256, m_min_support=50, u_min_support=50,
+        ds_yyyy_mm="2022_11", batch_size=256, m_min_support=50, u_min_support=50,
         score_bounds=(7.5e5, 1e6)
     )
 
