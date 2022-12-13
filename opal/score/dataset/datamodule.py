@@ -29,14 +29,17 @@ class ScoreDataModule(pl.LightningDataModule):
     batch_size: int = 32
     m_min_support: int = 50
     u_min_support: int = 50
-    min_score: int = 700000
+    score_bounds: Tuple[float, float] = (5e5, 1e6)
+    accuracy_bounds: Tuple[float, float] = (0.5, 1)
+    keys: Tuple[int] = (4, 7)
+    sr_bounds: Tuple[float, float] = (2.5, 10.0)
 
     metric: str = 'accuracy'
 
     limit_scores_read: int = None
 
-    uid_le: LabelEncoder = field(default=LabelEncoder(), init=False)
-    mid_le: LabelEncoder = field(default=LabelEncoder(), init=False)
+    uid_le: LabelEncoder = field(default_factory=LabelEncoder, init=False)
+    mid_le: LabelEncoder = field(default_factory=LabelEncoder, init=False)
 
     def __post_init__(self):
         super().__init__()
@@ -47,26 +50,37 @@ class ScoreDataModule(pl.LightningDataModule):
         csv_score = csv_dir / "osu_scores_mania_high.csv"
         csv_map = csv_dir / "osu_beatmaps.csv"
 
-        logging.info("Preparing Score & Accuracy DF")
+        logging.info("Preparing Metric DF")
         df_metric = pd.read_csv(csv_score, nrows=self.limit_scores_read)
-        df_metric = self.prep_metric(df_metric)
+        df_metric = self.prep_metric(df_metric, self.score_bounds, self.accuracy_bounds)
 
         logging.info("Preparing Map DF")
         df_map = pd.read_csv(csv_map)
-        df_map = self.prep_map(df_map)
+        df_map = self.prep_map(df_map, self.keys, self.sr_bounds)
 
         logging.info("Merging")
         df = pd.merge(df_map, df_metric, how='inner', on='beatmap_id')
 
-        logging.info("Creating IDs & Cleaning DF")
-        df = df.pipe(self.get_ids).pipe(self.prep_df).pipe(self.scale_metric).pipe(self.encode_ids)
+        logging.info("Creating IDs")
+        df = self.get_ids(df)
+        logging.info("Preparing merged DF")
+        df = self.drop_infrequent_ids(df, self.m_min_support, self.u_min_support)
+        logging.info("Scaling Metrics")
+        df = self.scale_metric(
+            df, self.scaler_accuracy if self.metric == 'accuracy' else self.scaler_score,
+            self.metric
+        )
+        logging.info("Encoding Ids")
+        df = self.encode_ids(df)
         self.df = df
 
+        logging.info("Creating Tensors")
         x_uid = torch.Tensor(df[['uid_le']].values).to(torch.int)
         x_mid = torch.Tensor(df[['mid_le']].values).to(torch.int)
         y = torch.Tensor(df[[self.metric]].values)
         ds = TensorDataset(x_uid, x_mid, y)
 
+        logging.info("Splitting to Train Test Validation")
         n_train = int(len(df) * self.train_test_val[0])
         n_test = int(len(df) * self.train_test_val[1])
         n_val = len(df) - (n_train + n_test)
@@ -75,8 +89,8 @@ class ScoreDataModule(pl.LightningDataModule):
 
     @staticmethod
     def prep_metric(df: pd.DataFrame,
-                    score_bounds: Tuple[int, int] = (5e5, 1e6),
-                    accuracy_bounds: Tuple[int, int] = (0.5, 1)):
+                    score_bounds: Tuple[float, float] = (5e5, 1e6),
+                    accuracy_bounds: Tuple[float, float] = (0.5, 1)):
         """ Prepares the Score (Metric) DF
 
         Notes:
@@ -135,7 +149,7 @@ class ScoreDataModule(pl.LightningDataModule):
     @staticmethod
     def prep_map(df: pd.DataFrame,
                  diff_sizes: Tuple[int] = (4, 7),
-                 sr_bounds: Tuple[float] = (2.5, 10.0)):
+                 sr_bounds: Tuple[float, float] = (2.5, 10.0)):
         """ Prepares the Map DF
 
         Notes:
@@ -166,9 +180,10 @@ class ScoreDataModule(pl.LightningDataModule):
         return df
 
     @staticmethod
-    def prep_df(df: pd.DataFrame,
-                m_min_support: int,
-                u_min_support: int):
+    def drop_infrequent_ids(df: pd.DataFrame,
+                            m_min_support: int,
+                            u_min_support: int):
+        """ Drops infrequent ids for maps and users. """
         m_freq = df['mid'].value_counts()
         u_freq = df['uid'].value_counts()
         return df.mask(
