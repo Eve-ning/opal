@@ -2,12 +2,10 @@ import numpy as np
 import pytorch_lightning as pl
 import torch
 from sklearn.base import TransformerMixin
-from sklearn.preprocessing import MinMaxScaler
 from torch.nn import MSELoss
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from opal.score.collaborative_filtering.neu_mf_net import NeuMFNet
-from opal.score.collaborative_filtering.utils import adj_inv_sigmoid, adj_sigmoid
 
 
 class LitNet(pl.LightningModule):
