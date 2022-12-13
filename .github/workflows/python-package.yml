@@ -18,9 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Add data_ppy_sh_to_csv submodule
+      - name: Add data_ppy_sh_to_csv init
         run: |
-          git submodule add https://github.com/Eve-ning/data_ppy_sh_to_csv.git
+          touch data_ppy_sh_to_csv/__init__.py
+        
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
