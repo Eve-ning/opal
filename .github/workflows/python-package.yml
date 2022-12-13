@@ -29,7 +29,7 @@ jobs:
           ls
       - name: Check dirs
         run: |
-          ls data_ppy_sh_to_csv
+          ls opal/data_ppy_sh_to_csv
         
 
       - name: Set up Python ${{ matrix.python-version }}
