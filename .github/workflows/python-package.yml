@@ -3,7 +3,7 @@
 
 name: Test Neu MF Model
 
-on: [ pull_request ]
+on: [ workflow_dispatch ]
 
 
 jobs:
@@ -30,7 +30,8 @@ jobs:
       - name: Check dirs
         run: |
           ls opal/data_ppy_sh_to_csv
-        
+
+#        To insert a step to download csvs instead of using data_ppy_sh_to_csv.
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
