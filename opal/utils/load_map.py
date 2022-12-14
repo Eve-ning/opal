@@ -16,22 +16,23 @@ from reamber.osu.OsuHit import OsuHit
 from reamber.osu.OsuHold import OsuHold
 from reamber.osu.OsuMap import OsuMap
 
-from opal.conf import DATA_DIR
+from opal.conf import REPLAYS_DIR
 
 
-def load_maps(cache_reset=False) -> Generator[
+def load_replays(cache_reset=False) -> Generator[
     Tuple[pd.DataFrame, OsuMap], None, None]:
-    for d in filter(lambda d_: d_.is_dir(), DATA_DIR.iterdir()):
-        yield load_map(d, cache_reset)
+    for d in filter(lambda d_: d_.is_dir(), REPLAYS_DIR.iterdir()):
+        yield load_replay(d, cache_reset)
 
 
-def load_map(map_dir: Path, cache_reset=False) -> Tuple[pd.DataFrame, OsuMap]:
-    return MapLoader(map_dir).load(cache_reset)
+def load_replay(map_dir: Path, cache_reset=False) -> Tuple[pd.DataFrame, OsuMap]:
+    return ReplayLoader(map_dir).load(cache_reset)
 
 
 @dataclass
-class MapLoader:
+class ReplayLoader:
     map_dir: Path
+    cache_name: str = "cache.pkl"
 
     @staticmethod
     def get_errors(osu: OsuMap, rep_paths: List[Path]) -> pd.DataFrame:

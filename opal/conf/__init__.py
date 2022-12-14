@@ -1,3 +1,3 @@
-from opal.conf.conf import DATA_DIR
+from opal.conf.conf import REPLAYS_DIR
 
-__all__ = ['DATA_DIR']
+__all__ = ['REPLAYS_DIR']
