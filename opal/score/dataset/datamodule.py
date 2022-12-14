@@ -192,7 +192,7 @@ class ScoreDataModule(pl.LightningDataModule):
         df = df.assign(
             uid=lambda x: x.user_id.astype(str) + "/" + x.year,
             mid=lambda x: x.beatmap_id.astype(str) + "/" + x.speed.astype(str)
-        )[['uid', 'mid', 'score', 'accuracy']]
+        )#[['uid', 'mid', 'score', 'accuracy']]
         return df
 
     @staticmethod
