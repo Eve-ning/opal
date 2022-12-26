@@ -13,15 +13,15 @@ Medium is not uploaded due to its size.
 To load these models, make sure that the emb dims are right
 
 ```python
-from opal.score.collaborative_filtering.neu_mf import NeuMFNet
-from opal.score.dataset.datamodule import ScoreDataModule
+from opal.score.collaborative_filtering import NeuMF
+from opal.score.datamodule import ScoreDataModule
 
 dm = ScoreDataModule(
     ds_yyyy_mm="2022_12", batch_size=256,
     m_min_support=50, u_min_support=50,
     score_bounds=(7.5e5, 1e6)
 )
-net = NeuMFNet.load_from_checkpoint(
+net = NeuMF.load_from_checkpoint(
     "path/to/tiny/model.ckpt",
     uid_no=4007,
     mid_no=6189,

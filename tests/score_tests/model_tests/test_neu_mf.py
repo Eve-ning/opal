@@ -6,8 +6,8 @@ import pytorch_lightning as pl
 
 def test_neu_mf_net():
     from opal.conf.conf import MODEL_DIR
-    from opal.score.collaborative_filtering.neu_mf import NeuMFNet
-    from opal.score.dataset.datamodule import ScoreDataModule
+    from opal.score.collaborative_filtering import NeuMF
+    from opal.score.datamodule import ScoreDataModule
 
     dm = ScoreDataModule(
         ds_yyyy_mm="2022_11", batch_size=256, m_min_support=50, u_min_support=50,
@@ -16,7 +16,7 @@ def test_neu_mf_net():
 
     dm.setup()
 
-    net = NeuMFNet.load_from_checkpoint(
+    net = NeuMF.load_from_checkpoint(
         (MODEL_DIR / "tiny/checkpoints/epoch=2-step=6144.ckpt").as_posix(),
         uid_no=4007,
         mid_no=6189,

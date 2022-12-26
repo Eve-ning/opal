@@ -8,7 +8,7 @@ from torch.optim.lr_scheduler import StepLR
 from opal.score.collaborative_filtering.neu_mf_module import NeuMFModule
 
 
-class NeuMFNet(pl.LightningModule):
+class NeuMF(pl.LightningModule):
     def __init__(self, uid_no, mid_no, mf_emb_dim, mlp_emb_dim, mlp_chn_out, scaler: QuantileTransformer,
                  lr: float = 0.005):
         super().__init__()
