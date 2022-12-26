@@ -44,7 +44,7 @@ class NeuMF(pl.LightningModule):
         #     self.logger.experiment.add_histogram("true", y_true)
 
         self.log("Train Loss", loss)
-        self.log("Train MAE (%)", np.abs(y_pred_real - y_true_real).mean(), prog_bar=True)
+        self.log("Train MAE", np.abs(y_pred_real - y_true_real).mean(), prog_bar=True)
 
         return loss
 
@@ -53,7 +53,7 @@ class NeuMF(pl.LightningModule):
         loss = self.loss(y_pred, y_true)
 
         self.log("Val Loss", loss)
-        self.log("Val MAE (%)", np.abs(y_pred_real - y_true_real).mean(), prog_bar=True)
+        self.log("Val MAE", np.abs(y_pred_real - y_true_real).mean(), prog_bar=True)
 
     def predict_step(self, batch, batch_idx, **kwargs):
         x_uid, x_mid, *_, y_pred_real, y_true_real = self.step(batch)
