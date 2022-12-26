@@ -36,19 +36,23 @@ class NeuMF(pl.LightningModule):
         return self.dm.mid_le.inverse_transform(val.detach().numpy())
 
     def training_step(self, batch, batch_idx):
-        x_uid, x_mid, y_pred, y_true, y_pred_real, y_true_real = self.step(batch)
+        *_, y_pred, y_true, y_pred_real, y_true_real = self.step(batch)
+        loss = self.loss(y_pred, y_true)
 
         # if batch_idx % 32 == 0:
         #     self.logger.experiment.add_histogram("pred", y_pred)
         #     self.logger.experiment.add_histogram("true", y_true)
 
-        loss = self.loss(y_pred, y_true)
+        self.log("Train Loss", loss)
         self.log("Train MAE (%)", np.abs(y_pred_real - y_true_real).mean(), prog_bar=True)
 
         return loss
 
     def validation_step(self, batch, batch_idx):
-        *_, y_pred_real, y_true_real = self.step(batch)
+        *_, y_pred, y_true, y_pred_real, y_true_real = self.step(batch)
+        loss = self.loss(y_pred, y_true)
+
+        self.log("Val Loss", loss)
         self.log("Val MAE (%)", np.abs(y_pred_real - y_true_real).mean(), prog_bar=True)
 
     def predict_step(self, batch, batch_idx, **kwargs):
