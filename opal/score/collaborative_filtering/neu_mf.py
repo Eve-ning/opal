@@ -2,7 +2,7 @@ import numpy as np
 import pytorch_lightning as pl
 import torch
 from torch.nn import MSELoss
-from torch.optim.lr_scheduler import StepLR
+from torch.optim.lr_scheduler import OneCycleLR
 
 from opal.score.collaborative_filtering.neu_mf_module import NeuMFModule
 from opal.score.datamodule import ScoreDataModule
@@ -73,12 +73,21 @@ class NeuMF(pl.LightningModule):
 
     def configure_optimizers(self):
         optim = torch.optim.Adam(self.parameters(), lr=self.lr, weight_decay=0.001)
-
-        return {
-            "optimizer": optim,
-            "lr_scheduler": {
-                "scheduler": StepLR(optim, step_size=1, gamma=0.2),
-                # "scheduler": ReduceLROnPlateau(optim, mode='min', factor=0.2, patience=10, verbose=True),
-                # "monitor": "train_mae",
+        trainer = self.trainer
+        steps_per_epoch = (
+            trainer.limit_train_batches
+            if trainer.limit_train_batches
+            else len(self.dm.train_dataloader())
+        )
+        return [optim], [
+            {
+                "scheduler": OneCycleLR(
+                    optim, self.lr,
+                    steps_per_epoch=steps_per_epoch,
+                    epochs=trainer.max_epochs,
+                    verbose=True
+                ),
+                "interval": "step",
+                "frequency": 1
             },
-        }
+        ]
