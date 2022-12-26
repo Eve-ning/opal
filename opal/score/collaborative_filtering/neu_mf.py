@@ -85,7 +85,6 @@ class NeuMF(pl.LightningModule):
                     optim, self.lr,
                     steps_per_epoch=steps_per_epoch,
                     epochs=trainer.max_epochs,
-                    verbose=True
                 ),
                 "interval": "step",
                 "frequency": 1
