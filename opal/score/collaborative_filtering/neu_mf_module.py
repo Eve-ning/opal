@@ -16,17 +16,17 @@ class NeuMFBlock(nn.Module):
 
 
 class NeuMFModule(nn.Module):
-    def __init__(self, uid_no, mid_no, mf_emb_dim, mlp_emb_dim, mlp_chn_out):
+    def __init__(self, n_uid, n_mid, mf_emb_dim, mlp_emb_dim, mlp_chn_out):
         super(NeuMFModule, self).__init__()
 
-        self.u_mf_emb = nn.Embedding(uid_no, mf_emb_dim)
-        self.m_mf_emb = nn.Embedding(mid_no, mf_emb_dim)
+        self.u_mf_emb = nn.Embedding(n_uid, mf_emb_dim)
+        self.m_mf_emb = nn.Embedding(n_mid, mf_emb_dim)
         self.mf_net = nn.Sequential(
             NeuMFBlock(mlp_emb_dim, mlp_emb_dim),
             NeuMFBlock(mlp_emb_dim, mlp_emb_dim),
         )
-        self.u_mlp_emb = nn.Embedding(uid_no, mlp_emb_dim)
-        self.m_mlp_emb = nn.Embedding(mid_no, mlp_emb_dim)
+        self.u_mlp_emb = nn.Embedding(n_uid, mlp_emb_dim)
+        self.m_mlp_emb = nn.Embedding(n_mid, mlp_emb_dim)
         self.mlp_net = nn.Sequential(
             NeuMFBlock(mlp_emb_dim * 2, 512),
             NeuMFBlock(512, 256),
