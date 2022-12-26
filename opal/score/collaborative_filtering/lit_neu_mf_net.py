@@ -1,7 +1,6 @@
 import numpy as np
 import pytorch_lightning as pl
 import torch
-from sklearn.base import TransformerMixin
 from sklearn.preprocessing import QuantileTransformer
 from torch.nn import MSELoss
 from torch.optim.lr_scheduler import StepLR
@@ -26,31 +25,27 @@ class LitNeuMFNet(pl.LightningModule):
         return self.scaler.inverse_transform(val.detach().numpy())
 
     def training_step(self, batch, batch_idx):
-        x_uid, x_mid, y = batch
-        y_hat = self(x_uid, x_mid)
+        x_uid, x_mid, y_true = batch
+        y_pred = self(x_uid, x_mid)
 
-        if batch_idx % 32 == 0:
-            self.logger.experiment.add_histogram("pred", y_hat)
-            self.logger.experiment.add_histogram("true", y)
+        # if batch_idx % 32 == 0:
+        #     self.logger.experiment.add_histogram("pred", y_pred)
+        #     self.logger.experiment.add_histogram("true", y_true)
 
-        loss = self.loss(y_hat, y)
+        loss = self.loss(y_pred, y_true)
         self.log(
             "train_mae",
-            np.abs(
-                self.scaler_inverse(y_hat) - self.scaler_inverse(y)
-            ).mean()
+            np.abs(self.scaler_inverse(y_pred) - self.scaler_inverse(y_true)).mean()
         )
 
         return loss
 
     def validation_step(self, batch, batch_idx):
-        x_uid, x_mid, y = batch
-        y_hat = self(x_uid, x_mid)
+        x_uid, x_mid, y_true = batch
+        y_pred = self(x_uid, x_mid)
         self.log(
             "val_mae",
-            np.abs(
-                self.scaler_inverse(y_hat) - self.scaler_inverse(y)
-            ).mean()
+            np.abs(self.scaler_inverse(y_pred) - self.scaler_inverse(y_true)).mean()
         )
 
     def predict_step(self, batch, batch_idx, **kwargs):
