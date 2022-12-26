@@ -1,22 +1,27 @@
 import numpy as np
 import pytorch_lightning as pl
 import torch
-from sklearn.preprocessing import QuantileTransformer
 from torch.nn import MSELoss
 from torch.optim.lr_scheduler import StepLR
 
 from opal.score.collaborative_filtering.neu_mf_module import NeuMFModule
+from opal.score.datamodule import ScoreDataModule
 
 
 class NeuMF(pl.LightningModule):
-    def __init__(self, uid_no, mid_no, mf_emb_dim, mlp_emb_dim, mlp_chn_out, scaler: QuantileTransformer,
-                 lr: float = 0.005):
+    def __init__(
+            self,
+            dm: ScoreDataModule,
+            mf_emb_dim, mlp_emb_dim, mlp_chn_out,
+            lr: float = 0.005
+    ):
         super().__init__()
-        self.model = NeuMFModule(uid_no, mid_no, mf_emb_dim, mlp_emb_dim, mlp_chn_out)
+        self.model = NeuMFModule(dm.n_uid, dm.n_mid, mf_emb_dim, mlp_emb_dim, mlp_chn_out)
         self.loss = MSELoss()
-        self.scaler = scaler
         self.lr = lr
-        self.save_hyperparameters(ignore=['scaler'])
+
+        self.dm = dm
+        self.save_hyperparameters(ignore=['dm'])
 
     def forward(self, uid, mid):
         return self.model(uid, mid)
