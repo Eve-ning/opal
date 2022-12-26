@@ -23,8 +23,8 @@ class ScoreDataModule(pl.LightningDataModule):
 
     train_test_val: Sequence[float] = field(default_factory=lambda: (0.8, 0.1, 0.1))
 
-    scaler_score: TransformerMixin = QuantileTransformer(output_distribution="normal")
-    scaler_accuracy: TransformerMixin = QuantileTransformer(output_distribution="normal")
+    scaler_score: QuantileTransformer = QuantileTransformer(output_distribution="normal")
+    scaler_accuracy: QuantileTransformer = QuantileTransformer(output_distribution="normal")
 
     batch_size: int = 32
     m_min_support: int = 50
