@@ -15,9 +15,9 @@ class NeuMFBlock(nn.Module):
         return self.net(x)
 
 
-class NeuMFNet(nn.Module):
+class NeuMFModule(nn.Module):
     def __init__(self, uid_no, mid_no, mf_emb_dim, mlp_emb_dim, mlp_chn_out):
-        super(NeuMFNet, self).__init__()
+        super(NeuMFModule, self).__init__()
 
         self.u_mf_emb = nn.Embedding(uid_no, mf_emb_dim)
         self.m_mf_emb = nn.Embedding(mid_no, mf_emb_dim)
