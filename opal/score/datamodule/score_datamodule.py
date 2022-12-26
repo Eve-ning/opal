@@ -45,6 +45,9 @@ class ScoreDataModule(pl.LightningDataModule):
         super().__init__()
         assert sum(self.train_test_val) == 1, "Train Test Validation must sum to 1."
 
+        self.prepare_data()
+        self.setup()
+
     def prepare_data(self) -> None:
         """ Downloads data via data_ppy_sh_to_csv submodule """
         get_dataset(
