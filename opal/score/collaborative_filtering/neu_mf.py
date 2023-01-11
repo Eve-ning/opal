@@ -78,14 +78,14 @@ class NeuMF(pl.LightningModule):
         trainer = self.trainer
         steps_per_epoch = (
             trainer.limit_train_batches
-            if trainer.limit_train_batches
+            if trainer.limit_train_batches > 2
             else len(self.dm.train_dataloader())
         )
         return [optim], [
             {
                 "scheduler": OneCycleLR(
                     optim, self.lr,
-                    steps_per_epoch=steps_per_epoch,
+                    steps_per_epoch=int(steps_per_epoch),
                     epochs=trainer.max_epochs,
                     **self.one_cycle_lr_params
                 ),
