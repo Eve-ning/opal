@@ -60,16 +60,16 @@ class NeuMF(pl.LightningModule):
     def predict_step(self, batch, batch_idx, **kwargs):
         x_uid, x_mid, *_, y_pred_real, y_true_real = self.step(batch)
 
-        x_uid_real = self.uid_inverse(x_uid)
-        x_mid_real = self.mid_inverse(x_mid)
+        x_uid_real = self.uid_inverse_transform(x_uid)
+        x_mid_real = self.mid_inverse_transform(x_mid)
 
         return x_uid_real, x_mid_real, y_pred_real, y_true_real
 
     def step(self, batch):
         x_uid, x_mid, y_true = batch
         y_pred = self(x_uid, x_mid)
-        y_pred_real = self.scaler_inverse(y_pred)
-        y_true_real = self.scaler_inverse(y_true)
+        y_pred_real = self.scaler_inverse_transform(y_pred)
+        y_true_real = self.scaler_inverse_transform(y_true)
 
         return x_uid, x_mid, y_pred, y_true, y_pred_real, y_true_real
 
