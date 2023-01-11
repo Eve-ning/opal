@@ -13,7 +13,8 @@ class NeuMF(pl.LightningModule):
             self,
             dm: ScoreDataModule,
             mf_emb_dim, mlp_emb_dim, mlp_chn_out,
-            lr: float = 0.005
+            lr: float = 0.005,
+            one_cycle_lr_params: dict = {}
     ):
         super().__init__()
         self.model = NeuMFModule(dm.n_uid, dm.n_mid, mf_emb_dim, mlp_emb_dim, mlp_chn_out)
@@ -21,6 +22,7 @@ class NeuMF(pl.LightningModule):
         self.lr = lr
 
         self.dm = dm
+        self.one_cycle_lr_params = one_cycle_lr_params
         self.save_hyperparameters(ignore=['dm'])
 
     def forward(self, uid, mid):
@@ -85,6 +87,7 @@ class NeuMF(pl.LightningModule):
                     optim, self.lr,
                     steps_per_epoch=steps_per_epoch,
                     epochs=trainer.max_epochs,
+                    **self.one_cycle_lr_params
                 ),
                 "interval": "step",
                 "frequency": 1
