@@ -26,14 +26,14 @@ class NeuMF(pl.LightningModule):
     def forward(self, uid, mid):
         return self.model(uid, mid)
 
-    def scaler_inverse(self, val: torch.Tensor):
-        return self.dm.scaler_accuracy.inverse_transform(val.detach().numpy())
+    def scaler_inverse_transform(self, val: torch.Tensor):
+        return self.dm.scaler_accuracy.inverse_transform(val.detach().cpu().numpy())
 
-    def uid_inverse(self, val: torch.Tensor):
-        return self.dm.uid_le.inverse_transform(val.detach().numpy())
+    def uid_inverse_transform(self, val: torch.Tensor):
+        return self.dm.uid_le.inverse_transform(val.detach().cpu().numpy())
 
-    def mid_inverse(self, val: torch.Tensor):
-        return self.dm.mid_le.inverse_transform(val.detach().numpy())
+    def mid_inverse_transform(self, val: torch.Tensor):
+        return self.dm.mid_le.inverse_transform(val.detach().cpu().numpy())
 
     def training_step(self, batch, batch_idx):
         *_, y_pred, y_true, y_pred_real, y_true_real = self.step(batch)
