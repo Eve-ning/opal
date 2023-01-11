@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import List
+
 import numpy as np
 import pytorch_lightning as pl
 import torch
@@ -64,6 +68,24 @@ class NeuMF(pl.LightningModule):
         x_mid_real = self.mid_inverse_transform(x_mid)
 
         return x_uid_real, x_mid_real, y_pred_real, y_true_real
+
+    def predict(self, x_uid_real: str | List[str], x_mid_real: str | List[str]) -> np.ndarray:
+        """ Predicts a uid and mid
+
+        Args:
+            x_uid_real:
+            x_mid_real:
+
+        Returns:
+
+        """
+        x_uid_real = [x_uid_real] if isinstance(x_uid_real, str) else x_uid_real
+        x_mid_real = [x_mid_real] if isinstance(x_mid_real, str) else x_mid_real
+
+        x_uid = torch.Tensor(self.dm.uid_le.transform(x_uid_real)[np.newaxis, :]).to(int).T
+        x_mid = torch.Tensor(self.dm.mid_le.transform(x_mid_real)[np.newaxis, :]).to(int).T
+
+        return self.scaler_inverse_transform(self(x_uid, x_mid)).squeeze()
 
     def step(self, batch):
         x_uid, x_mid, y_true = batch
