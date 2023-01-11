@@ -1,0 +1,8 @@
+lr: 0.005
+mf_emb_dim: 16
+mlp_chn_out: 8
+mlp_emb_dim: 16
+one_cycle_lr_params:
+  final_div_factor: 100000.0
+  pct_start: 0.1
+  three_phase: true
