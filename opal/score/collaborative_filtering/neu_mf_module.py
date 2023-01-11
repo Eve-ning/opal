@@ -49,6 +49,6 @@ class NeuMFModule(nn.Module):
         m_mlp_emb = self.m_mlp_emb(mid)
         mlp_out = self.mlp_net(torch.concat([u_mlp_emb, m_mlp_emb], dim=-1))
 
-        pred = self.neu_mf_net(torch.concat([mf_out, mlp_out], dim=-1))
+        pred = self.neu_mf_net(torch.concat([mf_out, mlp_out], dim=-1)) * 2
 
-        return torch.tanh(pred)[:, :, 0]
+        return torch.tanh(pred)[:, :, 0] * 5
