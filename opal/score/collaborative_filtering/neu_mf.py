@@ -24,7 +24,10 @@ class NeuMF(pl.LightningModule):
             lr: float = 0.005,
             one_cycle_lr_params: dict = {},
     ):
-        """
+        """ Initializes the model for training
+
+        Notes:
+            If you want to load the model, use `NeuMF.load_from_checkpoint("path/to/model.ckpt")`
 
         Args:
             uid_le: UID LabelEncoder from the DM
@@ -100,14 +103,19 @@ class NeuMF(pl.LightningModule):
         return x_uid_real, x_mid_real, y_pred_real, y_true_real
 
     def predict(self, x_uid_real: str | List[str], x_mid_real: str | List[str]) -> np.ndarray:
-        """ Predicts a uid and mid
+        """ Predicts the accuracy for a uid and mid
 
         Args:
-            x_uid_real:
-            x_mid_real:
+            x_uid_real: The UID of the player in the format {PLAYER_ID}/{YEAR}
+            x_mid_real: The MID of the player in the format {MAP_ID}/{SPEED}. SPEED can be -1, 0 or 1.
+                -1 half-time, 0 normal time, 1 double time.
 
-        Returns:
+        Examples:
+            Given that we want to predict user 12345, for year 2020, on the map 54321, with double time.
+            >>> model.predict("12345/2020", "54321/2")
 
+        Raises:
+            ValueError if the model cannot predict the score.
         """
         x_uid_real = [x_uid_real] if isinstance(x_uid_real, str) else x_uid_real
         x_mid_real = [x_mid_real] if isinstance(x_mid_real, str) else x_mid_real
