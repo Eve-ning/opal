@@ -10,9 +10,9 @@ from sklearn.base import TransformerMixin
 from sklearn.preprocessing import LabelEncoder, QuantileTransformer
 from torch.utils.data import DataLoader, TensorDataset, random_split
 
-from opal.data_ppy_sh_to_csv.main import get_dataset, default_sql_names
 from opal.conf.conf import DATA_DIR
 from opal.conf.mods import OsuMod
+from opal.data_ppy_sh_to_csv.main import get_dataset, default_sql_names
 
 
 @dataclass
@@ -23,7 +23,6 @@ class ScoreDataModule(pl.LightningDataModule):
 
     train_test_val: Sequence[float] = field(default_factory=lambda: (0.8, 0.1, 0.1))
 
-    scaler_score: QuantileTransformer = QuantileTransformer(output_distribution="normal")
     scaler_accuracy: QuantileTransformer = QuantileTransformer(output_distribution="normal")
 
     batch_size: int = 32
@@ -85,10 +84,7 @@ class ScoreDataModule(pl.LightningDataModule):
         logging.info("Preparing merged DF")
         df = self.drop_infrequent_ids(df, self.m_min_support, self.u_min_support)
         logging.info("Scaling Metrics")
-        df = self.scale_metric(
-            df, self.scaler_accuracy if self.metric == 'accuracy' else self.scaler_score,
-            self.metric
-        )
+        df = self.scale_metric(df, self.scaler_accuracy, self.metric)
         logging.info("Encoding Ids")
         df = self.encode_ids(df)
         self.df = df
@@ -195,7 +191,7 @@ class ScoreDataModule(pl.LightningDataModule):
         df = df.assign(
             uid=lambda x: x.user_id.astype(str) + "/" + x.year,
             mid=lambda x: x.beatmap_id.astype(str) + "/" + x.speed.astype(str)
-        )#[['uid', 'mid', 'score', 'accuracy']]
+        )  # [['uid', 'mid', 'score', 'accuracy']]
         return df
 
     @staticmethod
