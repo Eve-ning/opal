@@ -23,7 +23,7 @@ def test_neu_mf_net():
         mf_emb_dim=64,
         mlp_emb_dim=64,
         mlp_chn_out=8,
-        scaler=dm.scaler_accuracy,
+        scaler=dm.qt_accuracy,
         lr=0.005
     )
 
