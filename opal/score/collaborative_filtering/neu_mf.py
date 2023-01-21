@@ -16,10 +16,22 @@ class NeuMF(pl.LightningModule):
     def __init__(
             self,
             dm: ScoreDataModule,
-            mf_emb_dim, mlp_emb_dim, mlp_chn_out,
+            mf_emb_dim: int,
+            mlp_emb_dim: int,
+            mlp_chn_out: int,
             lr: float = 0.005,
             one_cycle_lr_params: dict = {}
     ):
+        """
+
+        Args:
+            dm: DataModule to train with
+            mf_emb_dim: Matrix Factorization Branch Embedding Dimensions
+            mlp_emb_dim: MLP Branch Embedding Dimensions
+            mlp_chn_out: MLP Branch Channel Output Dimensions
+            lr: Learning Rate
+            one_cycle_lr_params: Extra arguments passed into OneCycleLR
+        """
         super().__init__()
         self.model = NeuMFModule(dm.n_uid, dm.n_mid, mf_emb_dim, mlp_emb_dim, mlp_chn_out)
         self.loss = MSELoss()
