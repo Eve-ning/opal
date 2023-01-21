@@ -1,34 +1,36 @@
 # Models
 
-There are 2 types of models I've done. 
+*Note: We provided V1_2022_11_NoQT additionally to compare the effects between `QuantileTransform` and `StandardScaler`.
+We found no significant differences.*
 
-Medium is not uploaded due to its size.
+**See below on how to load the model.**
 
-**Tiny**: `LitNeuMFNet(dm.n_uid, dm.n_mid, 64, 64, 8, dm.scaler_accuracy, lr=0.005)`.
+| Model      | MAE   | RMSE  | Error Distribution             |
+|------------|-------|-------|--------------------------------|
+| V1_2022_11 | 0.99% | 1.62% | ![Error](V1_2022_11/error.png) |
 
-**Medium**: `LitNeuMFNet(dm.n_uid, dm.n_mid, 256, 256, 32, dm.scaler_accuracy, lr=0.005)`.
+## Dependencies
+
+Each model is strongly coupled with the `DataModule` trained on it.
+To load the checkpoint, the correct `DataModule` must be provided, else will not function properly.
+
+| Model      | Dataset | Score Filter         |
+|------------|---------|----------------------|
+| V1_2022_11 | 2022_11 | (500,000, 1,000,000) |
 
 ## Loading
 
-To load these models, make sure that the emb dims are right
-
 ```python
-from opal.score.collaborative_filtering.lit_neu_mf_net import LitNeuMFNet
-from opal.score.dataset.datamodule import ScoreDataModule
+from opal.score.collaborative_filtering import NeuMF
+from opal.score.datamodule import ScoreDataModule
+import pytorch_lightning as pl
 
 dm = ScoreDataModule(
-    ds_yyyy_mm="2022_12", batch_size=256,
-    m_min_support=50, u_min_support=50,
-    score_bounds=(7.5e5, 1e6)
+    ds_yyyy_mm="2022_11",  # Must match checkpoint meta 
+    score_bounds=(5e5, 1e6),  # Must match checkpoint meta
 )
-net = LitNeuMFNet.load_from_checkpoint(
-    "path/to/tiny/model.ckpt",
-    uid_no=4007,
-    mid_no=6189,
-    mf_emb_dim=64,  # 256 for Medium
-    mlp_emb_dim=64,  # 256 for Medium
-    mlp_chn_out=8,  # 32 for Medium
-    scaler=dm.scaler_accuracy,
-    lr=0.005
-)
+net = NeuMF.load_from_checkpoint("path/to/model/checkpoint.ckpt", dm=dm)
+net.eval()  # Prevent gradient updates.
+trainer = pl.Trainer()
 ```
+
