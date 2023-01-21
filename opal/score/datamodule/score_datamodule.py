@@ -23,7 +23,7 @@ class ScoreDataModule(pl.LightningDataModule):
 
     train_test_val: Sequence[float] = field(default_factory=lambda: (0.8, 0.1, 0.1))
 
-    scaler_accuracy: QuantileTransformer = QuantileTransformer(output_distribution="normal")
+    qt_accuracy: QuantileTransformer = QuantileTransformer(output_distribution="normal")
 
     batch_size: int = 32
     m_min_support: int = 50
@@ -84,7 +84,7 @@ class ScoreDataModule(pl.LightningDataModule):
         logging.info("Preparing merged DF")
         df = self.drop_infrequent_ids(df, self.m_min_support, self.u_min_support)
         logging.info("Scaling Metrics")
-        df = self.scale_metric(df, self.scaler_accuracy, self.metric)
+        df = self.scale_metric(df, self.qt_accuracy, self.metric)
         logging.info("Encoding Ids")
         df = self.encode_ids(df)
         self.df = df
