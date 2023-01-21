@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Dict
+from typing import List
 
 import numpy as np
 import pytorch_lightning as pl
@@ -15,24 +15,21 @@ from opal.score.collaborative_filtering.neu_mf_module import NeuMFModule
 class NeuMF(pl.LightningModule):
     def __init__(
             self,
-            uid_le_mapping: Dict[str, int],
-            mid_le_mapping: Dict[str, int],
-            qt_quantiles: np.ndarray,
-            qt_references: np.ndarray,
+            uid_le: LabelEncoder,
+            mid_le: LabelEncoder,
+            qt: QuantileTransformer,
             mf_emb_dim: int,
             mlp_emb_dim: int,
             mlp_chn_out: int,
             lr: float = 0.005,
-            one_cycle_lr_params: dict = {}
+            one_cycle_lr_params: dict = {},
     ):
         """
 
         Args:
-            uid_le_mapping: Dictionary mapping for uid (str) to the integer label
-            mid_le_mapping: Dictionary mapping for mid (str) to the integer label
-            qt_quantiles: Quantile Transformer quantiles
-            qt_references: Quantile Transformer references
-
+            uid_le: UID LabelEncoder from the DM
+            mid_le: MID LabelEncoder from the DM
+            qt: QuantileTransformer from the DM
             mf_emb_dim: Matrix Factorization Branch Embedding Dimensions
             mlp_emb_dim: MLP Branch Embedding Dimensions
             mlp_chn_out: MLP Branch Channel Output Dimensions
@@ -42,8 +39,8 @@ class NeuMF(pl.LightningModule):
         """
         super().__init__()
         self.model = NeuMFModule(
-            n_uid=len(uid_le_mapping),
-            n_mid=len(mid_le_mapping),
+            n_uid=len(uid_le.classes_),
+            n_mid=len(mid_le.classes_),
             mf_emb_dim=mf_emb_dim,
             mlp_emb_dim=mlp_emb_dim,
             mlp_chn_out=mlp_chn_out
@@ -53,15 +50,9 @@ class NeuMF(pl.LightningModule):
 
         self.one_cycle_lr_params = one_cycle_lr_params
 
-        # Initialize the Label Encoders & Quantile Transformers
-        self.uid_le = LabelEncoder()
-        self.mid_le = LabelEncoder()
-        self.qt = QuantileTransformer()
-
-        self.uid_le.classes_ = uid_le_mapping
-        self.mid_le.classes_ = mid_le_mapping
-        self.qt.quantiles_ = qt_quantiles
-        self.qt.references_ = qt_references
+        self.uid_le = uid_le
+        self.mid_le = mid_le
+        self.qt = qt
 
         # Save the params in the hparams.yaml
         self.save_hyperparameters()
@@ -85,6 +76,8 @@ class NeuMF(pl.LightningModule):
         # if batch_idx % 32 == 0:
         #     self.logger.experiment.add_histogram("pred", y_pred)
         #     self.logger.experiment.add_histogram("true", y_true)
+        #     self.logger.experiment.add_histogram("pred_real", y_pred_real)
+        #     self.logger.experiment.add_histogram("true_real", y_true_real)
 
         self.log("train_loss", loss)
         self.log("train_mae", np.abs(y_pred_real - y_true_real).mean(), prog_bar=True)
