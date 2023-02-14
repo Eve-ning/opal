@@ -1,18 +1,18 @@
 import logging
-from dataclasses import dataclass, field
-from typing import Sequence, Tuple
-
 import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
 import torch
+from dataclasses import dataclass, field
+from pathlib import Path
 from sklearn.base import TransformerMixin
 from sklearn.preprocessing import LabelEncoder, QuantileTransformer
 from torch.utils.data import DataLoader, TensorDataset, random_split
+from typing import Sequence, Tuple
 
 from opal.conf.conf import DATA_DIR
 from opal.conf.mods import OsuMod
-from opal.data_ppy_sh_to_csv.main import get_dataset, default_sql_names
+from osu_data_csv.main import get_dataset
 
 
 @dataclass
@@ -50,18 +50,16 @@ class ScoreDataModule(pl.LightningDataModule):
     def prepare_data(self) -> None:
         """ Downloads data via data_ppy_sh_to_csv submodule """
         get_dataset(
-            self.ds_yyyy_mm,  # year_month=
-            self.ds_mode,  # mode=
-            self.ds_set,  # set=
-            DATA_DIR,  # dl_dir=
-            'Y',  # bypass_confirm=
-            ",".join(default_sql_names[:4]),  # sql_names=
-            'N',  # cleanup=
-            'N'  # zip_csv_files=
+            year_month=self.ds_yyyy_mm,
+            mode=self.ds_mode,
+            set=self.ds_set,
+            dl_dir=DATA_DIR,
+            bypass_confirm='Y',
+            cleanup='N',
+            ignore_path=(Path(__file__).parent / "ignore_mapping.yaml").as_posix()
         )
 
     def setup(self, stage: str = "") -> None:
-        self.prepare_data()
         ds_str = f"{self.ds_yyyy_mm}_01_performance_{self.ds_mode}_top_{self.ds_set}"
 
         csv_dir = DATA_DIR / ds_str / "csv"
@@ -175,7 +173,7 @@ class ScoreDataModule(pl.LightningDataModule):
             (df['playmode'] == 3) &
             (df['diff_size'].isin(diff_sizes)) &
             (df['difficultyrating'].between(*sr_bounds)),
-            ['difficultyrating', 'diff_overall', 'diff_size', 'version', 'beatmap_id', 'filename']
+            ['difficultyrating', 'diff_overall', 'diff_size', 'beatmap_id', 'filename']
         ]
         return df
 
