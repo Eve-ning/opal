@@ -11,6 +11,7 @@ python = "^3.9"
 scikit-learn = "^1.2.1"
 pandas = "^1.5.3"
 pytorch-lightning = "^1.9.1"
+osu-data-csv = "^0.1.6"
 
 
 [build-system]
