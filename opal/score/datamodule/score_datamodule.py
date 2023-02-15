@@ -1,14 +1,15 @@
 import logging
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Sequence, Tuple
+
 import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
 import torch
-from dataclasses import dataclass, field
-from pathlib import Path
 from sklearn.base import TransformerMixin
 from sklearn.preprocessing import LabelEncoder, QuantileTransformer
 from torch.utils.data import DataLoader, TensorDataset, random_split
-from typing import Sequence, Tuple
 
 from opal.conf.conf import DATA_DIR
 from opal.conf.mods import OsuMod
@@ -43,9 +44,6 @@ class ScoreDataModule(pl.LightningDataModule):
     def __post_init__(self):
         super().__init__()
         assert sum(self.train_test_val) == 1, "Train Test Validation must sum to 1."
-
-        self.prepare_data()
-        self.setup()
 
     def prepare_data(self) -> None:
         """ Downloads data via data_ppy_sh_to_csv submodule """
