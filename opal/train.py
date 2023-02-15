@@ -1,5 +1,7 @@
 import pytorch_lightning as pl
+import torch
 from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping
+from pytorch_lightning.strategies import DDPStrategy
 
 from opal.score.collaborative_filtering import NeuMF
 from opal.score.datamodule import ScoreDataModule
@@ -41,10 +43,14 @@ def train(yyyy_mm: str):
             ),
             LearningRateMonitor()
         ],
+        strategy=DDPStrategy(find_unused_parameters=False),
+        # devices=[3, ],
+        fast_dev_run=True,
     )
 
     trainer.fit(net, datamodule=dm)
 
 
 if __name__ == '__main__':
+    torch.set_float32_matmul_precision('high')
     train("2023_01")
