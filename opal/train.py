@@ -19,9 +19,8 @@ def train(yyyy_mm: str):
         uid_le=dm.uid_le,
         mid_le=dm.mid_le,
         qt=dm.qt_accuracy,
-        mf_emb_dim=8,
-        mlp_emb_dim=8,
-        mlp_chn_out=8,
+        emb_dim=128,
+        mlp_range=[512, 256, 128, 64, 32, 32],
         lr=1e-3,
         # one_cycle_lr_params={
         #     "pct_start": 0.025,
