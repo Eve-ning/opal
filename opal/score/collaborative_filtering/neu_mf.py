@@ -18,7 +18,8 @@ class NeuMF(pl.LightningModule):
             uid_le: LabelEncoder,
             mid_le: LabelEncoder,
             qt: QuantileTransformer,
-             emb_dim: int,
+            emb_dim: int,
+            mf_repeats: int,
             mlp_chn_out: int,
             lr: float = 0.005,
             lr_gamma: float = 0.25
@@ -41,6 +42,7 @@ class NeuMF(pl.LightningModule):
         self.model = NeuMFModule(
             n_uid=len(uid_le.classes_),
             n_mid=len(mid_le.classes_),
+            mf_repeats=mf_repeats,
             emb_dim=emb_dim,
             mlp_chn_out=mlp_chn_out
         )
