@@ -1,6 +1,6 @@
 import pytorch_lightning as pl
 import torch
-from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping, ModelCheckpoint
+from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping, ModelCheckpoint, ModelPruning, QuantizationAwareTraining
 
 from opal.score.collaborative_filtering import NeuMF
 from opal.score.datamodule import ScoreDataModule
@@ -11,7 +11,7 @@ def train(yyyy_mm: str):
         ds_yyyy_mm=yyyy_mm,
         batch_size=2 ** 10,
         score_bounds=(5e5, 1e6),
-        ds_set="1000"
+        ds_set="10000"
     )
 
     epochs = 50
@@ -19,15 +19,10 @@ def train(yyyy_mm: str):
         uid_le=dm.uid_le,
         mid_le=dm.mid_le,
         qt=dm.qt_accuracy,
-        emb_dim=128,
+        emb_dim=8,
         mf_repeats=2,
-        mlp_range=[512, 256, 128, 64, 32, 32],
+        mlp_range=[128, 64, 32, 8],
         lr=1e-3,
-        # one_cycle_lr_params={
-        #     "pct_start": 0.025,
-        #     "three_phase": True,
-        #     "final_div_factor": 1e7
-        # }
     )
 
     trainer = pl.Trainer(
@@ -38,7 +33,7 @@ def train(yyyy_mm: str):
         callbacks=[
             EarlyStopping(
                 monitor="val_loss",
-                patience=20,
+                patience=3,
                 verbose=True,
                 mode='min',
                 divergence_threshold=1
@@ -47,7 +42,6 @@ def train(yyyy_mm: str):
             ModelCheckpoint(monitor='val_loss', save_top_k=1, mode='min')
         ],
         devices=[3, ],
-        # fast_dev_run=True,
     )
 
     trainer.fit(net, datamodule=dm)
