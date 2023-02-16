@@ -11,10 +11,10 @@ def train(yyyy_mm: str):
         ds_yyyy_mm=yyyy_mm,
         batch_size=2 ** 10,
         score_bounds=(5e5, 1e6),
-        ds_set="10000"
+        ds_set="1000"
     )
 
-    epochs = 25
+    epochs = 50
     net = NeuMF(
         uid_le=dm.uid_le,
         mid_le=dm.mid_le,
@@ -31,6 +31,7 @@ def train(yyyy_mm: str):
     )
 
     trainer = pl.Trainer(
+        deterministic=True,
         max_epochs=epochs,
         accelerator='gpu',
         default_root_dir="V1_2022_11",
@@ -42,11 +43,9 @@ def train(yyyy_mm: str):
                 mode='min',
                 divergence_threshold=1
             ),
-            # StochasticWeightAveraging(0.0005),
             LearningRateMonitor(),
             ModelCheckpoint(monitor='val_loss', save_top_k=1, mode='min')
         ],
-        # strategy=DDPStrategy(find_unused_parameters=False),
         devices=[3, ],
         # fast_dev_run=True,
     )
