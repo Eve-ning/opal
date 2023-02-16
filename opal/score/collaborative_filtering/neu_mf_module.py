@@ -18,9 +18,10 @@ class NeuMFBlock(nn.Module):
 
 
 class NeuMFModule(nn.Module):
-    def __init__(self, n_uid, n_mid, emb_dim, mlp_chn_out,
+    def __init__(self, n_uid, n_mid,
+                 emb_dim: int,
                  mf_repeats: int = 2,
-                 mlp_range: List[int] = [512, 256, 128, 64, 32]):
+                 mlp_range: List[int] = [512, 256, 128, 64, 32, 16]):
         super(NeuMFModule, self).__init__()
 
         self.u_mf_emb = nn.Embedding(n_uid, emb_dim)
@@ -30,11 +31,10 @@ class NeuMFModule(nn.Module):
         self.m_mlp_emb = nn.Embedding(n_mid, emb_dim)
         self.mlp_net = nn.Sequential(
             NeuMFBlock(emb_dim * 2, mlp_range[0]),
-            *[NeuMFBlock(i, j) for i, j in zip(mlp_range[:-1], mlp_range[1:])],
-            NeuMFBlock(mlp_range[-1], mlp_chn_out),
+            *[NeuMFBlock(i, j) for i, j in zip(mlp_range[:-1], mlp_range[1:])]
         )
         self.neu_mf_net = nn.Sequential(
-            nn.Linear(mlp_chn_out + emb_dim, 1),
+            nn.Linear(mlp_range[0] + emb_dim, 1),
             nn.Tanh(),
         )
 

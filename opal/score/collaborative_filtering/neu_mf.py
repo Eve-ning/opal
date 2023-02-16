@@ -20,7 +20,7 @@ class NeuMF(pl.LightningModule):
             qt: QuantileTransformer,
             emb_dim: int,
             mf_repeats: int,
-            mlp_chn_out: int,
+            mlp_range: List[int],
             lr: float = 0.005,
             lr_gamma: float = 0.25
     ):
@@ -34,7 +34,6 @@ class NeuMF(pl.LightningModule):
             mid_le: MID LabelEncoder from the DM
             qt: QuantileTransformer from the DM
             emb_dim: Embedding Dimensions
-            mlp_chn_out: MLP Branch Channel Output Dimensions
             lr: Learning Rate
 
         """
@@ -44,7 +43,7 @@ class NeuMF(pl.LightningModule):
             n_mid=len(mid_le.classes_),
             mf_repeats=mf_repeats,
             emb_dim=emb_dim,
-            mlp_chn_out=mlp_chn_out
+            mlp_range=mlp_range
         )
         self.loss = MSELoss()
         self.lr = lr
