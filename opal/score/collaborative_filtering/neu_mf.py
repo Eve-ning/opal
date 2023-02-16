@@ -7,7 +7,7 @@ import pytorch_lightning as pl
 import torch
 from sklearn.preprocessing import LabelEncoder, QuantileTransformer
 from torch.nn import MSELoss
-from torch.optim.lr_scheduler import OneCycleLR
+from torch.optim.lr_scheduler import ExponentialLR
 
 from opal.score.collaborative_filtering.neu_mf_module import NeuMFModule
 
@@ -135,19 +135,19 @@ class NeuMF(pl.LightningModule):
 
     def configure_optimizers(self):
         optim = torch.optim.Adam(self.parameters(), lr=self.lr, weight_decay=0.001)
-        trainer = self.trainer
-        steps_per_epoch = (
-            trainer.limit_train_batches
-            if trainer.limit_train_batches > 2
-            else len(self.trainer.datamodule.train_dataloader())
-        )
+        # trainer = self.trainer
+        # steps_per_epoch = (
+        #     trainer.limit_train_batches
+        #     if trainer.limit_train_batches > 2
+        #     else len(self.trainer.datamodule.train_dataloader())
+        # )
         return [optim], [
             {
-                "scheduler": OneCycleLR(
-                    optim, self.lr,
-                    steps_per_epoch=int(steps_per_epoch),
-                    epochs=trainer.max_epochs,
-                    **self.one_cycle_lr_params
+                "scheduler": ExponentialLR(
+                    optim, 0.1,
+                    # steps_per_epoch=int(steps_per_epoch),
+                    # epochs=trainer.max_epochs,
+                    # **self.one_cycle_lr_params
                 ),
                 "interval": "step",
                 "frequency": 1
