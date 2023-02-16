@@ -144,7 +144,7 @@ class NeuMF(pl.LightningModule):
         return [optim], [
             {
                 "scheduler": ExponentialLR(
-                    optim, 0.1,
+                    optim, 0.25,
                     # steps_per_epoch=int(steps_per_epoch),
                     # epochs=trainer.max_epochs,
                     # **self.one_cycle_lr_params
