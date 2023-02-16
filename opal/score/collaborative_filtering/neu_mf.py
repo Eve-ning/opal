@@ -22,7 +22,7 @@ class NeuMF(pl.LightningModule):
             mlp_emb_dim: int,
             mlp_chn_out: int,
             lr: float = 0.005,
-            one_cycle_lr_params: dict = {},
+            lr_gamma: float = 0.25
     ):
         """ Initializes the model for training
 
@@ -38,7 +38,6 @@ class NeuMF(pl.LightningModule):
             mlp_chn_out: MLP Branch Channel Output Dimensions
             lr: Learning Rate
 
-            one_cycle_lr_params: Extra arguments passed into OneCycleLR
         """
         super().__init__()
         self.model = NeuMFModule(
@@ -50,9 +49,7 @@ class NeuMF(pl.LightningModule):
         )
         self.loss = MSELoss()
         self.lr = lr
-
-        self.one_cycle_lr_params = one_cycle_lr_params
-
+        self.lr_gamma = lr_gamma
         self.uid_le = uid_le
         self.mid_le = mid_le
         self.qt = qt
@@ -135,20 +132,10 @@ class NeuMF(pl.LightningModule):
 
     def configure_optimizers(self):
         optim = torch.optim.Adam(self.parameters(), lr=self.lr, weight_decay=0.001)
-        # trainer = self.trainer
-        # steps_per_epoch = (
-        #     trainer.limit_train_batches
-        #     if trainer.limit_train_batches > 2
-        #     else len(self.trainer.datamodule.train_dataloader())
-        # )
+
         return [optim], [
             {
-                "scheduler": ExponentialLR(
-                    optim, 0.25,
-                    # steps_per_epoch=int(steps_per_epoch),
-                    # epochs=trainer.max_epochs,
-                    # **self.one_cycle_lr_params
-                ),
+                "scheduler": ExponentialLR(optim, self.lr_gamma),
                 "interval": "epoch",
                 "frequency": 1
             },
