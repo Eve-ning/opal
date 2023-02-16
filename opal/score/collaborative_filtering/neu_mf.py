@@ -149,7 +149,7 @@ class NeuMF(pl.LightningModule):
                     # epochs=trainer.max_epochs,
                     # **self.one_cycle_lr_params
                 ),
-                "interval": "step",
+                "interval": "epoch",
                 "frequency": 1
             },
         ]
