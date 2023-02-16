@@ -20,6 +20,7 @@ def train(yyyy_mm: str):
         mid_le=dm.mid_le,
         qt=dm.qt_accuracy,
         emb_dim=128,
+        mf_repeats=2,
         mlp_range=[512, 256, 128, 64, 32, 32],
         lr=1e-3,
         # one_cycle_lr_params={
