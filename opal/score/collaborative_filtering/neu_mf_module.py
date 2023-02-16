@@ -34,7 +34,7 @@ class NeuMFModule(nn.Module):
             *[NeuMFBlock(i, j) for i, j in zip(mlp_range[:-1], mlp_range[1:])]
         )
         self.neu_mf_net = nn.Sequential(
-            nn.Linear(mlp_range[0] + emb_dim, 1),
+            nn.Linear(mlp_range[-1] + emb_dim, 1),
             nn.Tanh(),
         )
 
