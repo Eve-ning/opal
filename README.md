@@ -15,15 +15,19 @@ Currently, it's in its early access, that means, it'll have many problems!
 
 However, we're working on it to minimize these issues o wo)b
 
-
 ## Dataset Used
 
 I used the top 10K mania users data from https://data.ppy.sh.
 After preprocessing, we use
-- 1m scores for training
-- 120k scores for validation and testing each
+- ~10m scores for training
+- ~1m scores for validation and testing each
 
-This models can thus help predict 26.5m unplayed scores!
+After preprocessing, we found 29006 valid users, 12397 valid maps
+This models can thus help predict >300m unplayed scores!
+
+### Users
+We deem a player on separate years as a different user. This is to reflect
+the improvement of the player after time.
 
 ## Usage
 
