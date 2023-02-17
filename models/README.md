@@ -2,15 +2,16 @@
 
 **See below on how to load the model.**
 
-| Model      | MAE   | RMSE  | Error Distribution             |
-|------------|-------|-------|--------------------------------|
-| V1_2022_11 | 0.96% | 1.59% | ![Error](V1_2022_11/error.png) |
+| Model      | R2     | MAE   | RMSE  | Error Distribution             |
+|------------|--------|-------|-------|--------------------------------|
+| V2_2023_01 | 77.77% | 1.23% | 1.90% | ![Error](V2_2023_01/error.png) |
 
+**Note: V1 is deprecated due to incompatibility with new model signature.**
 ## Limitations
 
 The model cannot ...
-- predict maps not played by at least 50 players within the top 1k
-- predict players not in the top 1k
+- predict maps not played by at least 50 players within the top 10k
+- predict players not in the top 10k
 - predict players who have not played at least 50 unique ranked maps in that year.
 
 The predictive power (i.e. accuracy) is dependent on the number of players associated with each map.

@@ -7,7 +7,7 @@ import pytorch_lightning as pl
 import torch
 from sklearn.preprocessing import LabelEncoder, QuantileTransformer
 from torch.nn import MSELoss
-from torch.optim.lr_scheduler import OneCycleLR
+from torch.optim.lr_scheduler import ExponentialLR
 
 from opal.score.collaborative_filtering.neu_mf_module import NeuMFModule
 
@@ -18,11 +18,11 @@ class NeuMF(pl.LightningModule):
             uid_le: LabelEncoder,
             mid_le: LabelEncoder,
             qt: QuantileTransformer,
-            mf_emb_dim: int,
-            mlp_emb_dim: int,
-            mlp_chn_out: int,
+            emb_dim: int,
+            mf_repeats: int,
+            mlp_range: List[int],
             lr: float = 0.005,
-            one_cycle_lr_params: dict = {},
+            lr_gamma: float = 0.25
     ):
         """ Initializes the model for training
 
@@ -33,26 +33,21 @@ class NeuMF(pl.LightningModule):
             uid_le: UID LabelEncoder from the DM
             mid_le: MID LabelEncoder from the DM
             qt: QuantileTransformer from the DM
-            mf_emb_dim: Matrix Factorization Branch Embedding Dimensions
-            mlp_emb_dim: MLP Branch Embedding Dimensions
-            mlp_chn_out: MLP Branch Channel Output Dimensions
+            emb_dim: Embedding Dimensions
             lr: Learning Rate
 
-            one_cycle_lr_params: Extra arguments passed into OneCycleLR
         """
         super().__init__()
         self.model = NeuMFModule(
             n_uid=len(uid_le.classes_),
             n_mid=len(mid_le.classes_),
-            mf_emb_dim=mf_emb_dim,
-            mlp_emb_dim=mlp_emb_dim,
-            mlp_chn_out=mlp_chn_out
+            mf_repeats=mf_repeats,
+            emb_dim=emb_dim,
+            mlp_range=mlp_range
         )
         self.loss = MSELoss()
         self.lr = lr
-
-        self.one_cycle_lr_params = one_cycle_lr_params
-
+        self.lr_gamma = lr_gamma
         self.uid_le = uid_le
         self.mid_le = mid_le
         self.qt = qt
@@ -135,21 +130,11 @@ class NeuMF(pl.LightningModule):
 
     def configure_optimizers(self):
         optim = torch.optim.Adam(self.parameters(), lr=self.lr, weight_decay=0.001)
-        trainer = self.trainer
-        steps_per_epoch = (
-            trainer.limit_train_batches
-            if trainer.limit_train_batches > 2
-            else len(self.trainer.datamodule.train_dataloader())
-        )
+
         return [optim], [
             {
-                "scheduler": OneCycleLR(
-                    optim, self.lr,
-                    steps_per_epoch=int(steps_per_epoch),
-                    epochs=trainer.max_epochs,
-                    **self.one_cycle_lr_params
-                ),
-                "interval": "step",
+                "scheduler": ExponentialLR(optim, self.lr_gamma),
+                "interval": "epoch",
                 "frequency": 1
             },
         ]
