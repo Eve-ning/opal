@@ -6,15 +6,19 @@ opal is an accuracy-prediction model.
 It uses Neural Collaborative Filtering to learn associations between user and maps, then using those associations to
 predict new scores never before seen.
 
+**Performance Error Graph**
+![Performance Graph](models/V2_2023_01/error.png)
+
 ## Project Status
 
 Currently, it's in its early access, that means, it'll have many problems!
 
 However, we're working on it to minimize these issues o wo)b
 
+
 ## Dataset Used
 
-I used the top 1K mania users data from https://data.ppy.sh.
+I used the top 10K mania users data from https://data.ppy.sh.
 After preprocessing, we use
 - 1m scores for training
 - 120k scores for validation and testing each
