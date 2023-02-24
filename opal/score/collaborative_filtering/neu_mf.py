@@ -129,14 +129,11 @@ class NeuMF(pl.LightningModule):
         return x_uid, x_mid, y_pred, y_true, y_pred_real, y_true_real
 
     def configure_optimizers(self):
-        optims = [
-            torch.optim.RMSprop(self.model.u_mlp_emb.parameters(), lr=self.lr,),
-            torch.optim.RMSprop(self.parameters(), lr=self.lr, weight_decay=0.001)
-        ]
+        optim = torch.optim.Adam(self.parameters(), lr=self.lr)
 
-        return optims, [
+        return [optim], [
             {
-                "scheduler": ExponentialLR(optims[1], self.lr_gamma),
+                "scheduler": ExponentialLR(optim, self.lr_gamma),
                 "interval": "epoch",
                 "frequency": 1
             },
