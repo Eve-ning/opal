@@ -10,8 +10,8 @@ def train(yyyy_mm: str):
     dm = ScoreDataModule(
         ds_yyyy_mm=yyyy_mm,
         batch_size=2 ** 10,
-        score_bounds=(5e5, 1e6),
-        ds_set="10000"
+        ds_set="10000",
+        accuracy_bounds=(0.85, 1.0)
     )
 
     epochs = 50
