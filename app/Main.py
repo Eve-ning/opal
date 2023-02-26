@@ -74,37 +74,34 @@ uid = DEFAULT_USER_ID
 mid = DEFAULT_MAP_ID
 api_key = os.environ['OSU_API']
 
-if ("uid" not in st.session_state.keys()) or ("mid" not in st.session_state.keys()):
-    st.session_state['uid'] = DEFAULT_USER_ID
-    st.session_state['mid'] = DEFAULT_MAP_ID
-
 st.markdown("""
-
 <h1 style='text-align: center;'>
 <span style='filter: drop-shadow(0 0.2mm 1mm rgba(142, 190, 255, 0.9));'>Opal</span>
 
 <p style='color:grey'>AI Score Predictor by 
 <a href='https://github.com/Eve-ning/' style='text-decoration:none'>Evening</a>
 
-<a href='https://github.com/Eve-ning/opal' style='text-decoration:none'>![Repo](https://img.shields.io/badge/-opal-success?logo=github)</a>
+<a href='https://github.com/Eve-ning/opal' style='text-decoration:none'>![Repo](https://img.shields.io/badge/GitHub-opal-success?logo=github)</a>
 <a href='https://twitter.com/dev_evening' style='text-decoration:none'>![Twitter](https://img.shields.io/badge/-dev__evening-blue?logo=twitter)</a>
 <a href='https://github.com/Eve-ning/opal/blob/master/models/' style='text-decoration:none'>
 ![Model Size](https://img.shields.io/github/size/Eve-ning/opal/models/V2_2023_01/checkpoints/epoch%253D5-step%253D43584.ckpt?color=purple&label=Model%20Size&logo=pytorch-lightning)
 </a>
 </p>
-
-
 </h1>
 """, unsafe_allow_html=True)
-
 left, right = st.columns(2)
 with left:
     st.button("Get Random Player", on_click=random_uid)
-    uid = int(st.text_input("User ID", value=uid, key='uid'))
+    uid = st.text_input("User ID", key='uid', placeholder="2193881")
 with right:
     st.button("Get Random Map", on_click=random_mid)
-    mid = int(st.text_input("Map ID", value=mid, key='mid'))
+    mid = st.text_input("Map ID", key='mid', placeholder="767046")
 
+try:
+    uid = int(uid)
+    mid = int(mid)
+except:
+    st.stop()
 username = get_username(uid)
 map_metadata = get_beatmap_metadata(mid)
 
@@ -173,7 +170,7 @@ chart = (
     .mark_line(point=True, size=1)
     .encode(
         alt.X('year:Q',
-              scale=alt.Scale(domain=(years[0], years[-1] + 1)),
+              scale=alt.Scale(padding=1),
               axis=alt.Axis(tickMinStep=1)),
         alt.Y('pred:Q',
               scale=alt.Scale(zero=False, padding=20, domainMax=1),
