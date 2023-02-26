@@ -1,7 +1,9 @@
-import os
 from pathlib import Path
 
 import sys
+
+sys.path.append(Path(__file__).parents[1].as_posix())
+import os
 
 import altair as alt
 import numpy as np
@@ -14,7 +16,6 @@ from opal.score.collaborative_filtering import NeuMF
 
 st.set_page_config(page_title="Opal | o!m AI Score Predictor", page_icon=":comet:")
 
-sys.path.append(Path(__file__).parents[1].as_posix())
 
 @st.cache_resource
 def get_model(model_path=MODEL_DIR / "V2_2023_01/checkpoints/epoch=5-step=43584.ckpt"):
