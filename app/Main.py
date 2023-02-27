@@ -79,6 +79,33 @@ uid = DEFAULT_USER_ID
 mid = DEFAULT_MAP_ID
 api_key = os.environ['OSU_API']
 
+with st.sidebar:
+    st.header(":game_die: Metrics")
+    st.markdown("""
+    ![R2](https://img.shields.io/badge/R%20Squared-81.48%25-blueviolet)
+    ![MAE](https://img.shields.io/badge/MAE-1.18%25-blue)
+    ![RMSE](https://img.shields.io/badge/RMSE-1.71%25-blue)
+    """)
+    st.header(":bookmark: Requirements")
+    st.markdown("""
+    1) Only osu!mania.
+
+    The user must be:
+    1) ranked <10K in 1st Jan 2023
+    2) active in that predicted year
+
+    The map must be:
+    1) ranked or loved
+    2) played often enough 
+    """)
+    st.warning(":warning: Players and Maps that **barely** meet these may have incorrect predictions")
+    st.write("---")
+    st.header(":wave: Hey! [Try AlphaOsu!](alphaosu.keytoix.vip/)")
+    st.caption("AlphaOsu is a pp recommender system with a website UI. ")
+    st.caption("Opal doesn't require monetary support, but they do. "
+               "If you do enjoy using their services, "
+               "you can [support them](https://alphaosu.keytoix.vip/support)")
+
 st.markdown("""
 <h1 style='text-align: center;'>
 <span style='filter: drop-shadow(0 0.2mm 1mm rgba(142, 190, 255, 0.9));'>Opal</span>
@@ -94,6 +121,9 @@ st.markdown("""
 </p>
 </h1>
 """, unsafe_allow_html=True)
+st.info("""
+:grey_exclamation: **We weigh judgments out of 320, thus we usually underestimate.** See FAQ (2) for more info 
+""")
 left, right = st.columns(2)
 with left:
     st.button("Get Random Player", on_click=random_uid)
@@ -186,26 +216,7 @@ chart = (
 
 st.altair_chart(chart, use_container_width=True)
 
-st.caption(f"You can support me by adding a :star2: on the GitHub Page. It'll boost my analytics \:D")
+st.caption(f"You can support me by adding a :star2: on the "
+           f"<a href='https://github.com/Eve-ning/opal' style='text-decoration:none'>GitHub Page</a>. It'll boost my analytics \:D",
+           unsafe_allow_html=True)
 # st.info(f"Performed {len(df_pred)} predictions")
-
-with st.sidebar:
-    st.markdown("""
-    ![R2](https://img.shields.io/badge/R%20Squared-81.48%25-blueviolet)
-    ![MAE](https://img.shields.io/badge/MAE-1.18%25-blue)
-    ![RMSE](https://img.shields.io/badge/RMSE-1.71%25-blue)
-    """)
-    st.header("Requirements")
-    st.markdown("""
-    1) Only osu!mania.
-    
-    The user must be:
-    1) ranked <10K in 1st Jan 2023
-    2) active in that predicted year
-    
-    The map must be:
-    1) ranked or loved
-    2) played often enough 
-    
-    """)
-    st.warning(":warning: Players and Maps that **barely** meet these may have incorrect predictions")
