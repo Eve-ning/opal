@@ -1,3 +1,4 @@
+import pandas as pd
 import streamlit as st
 
 st.set_page_config("FAQ", page_icon=":question:")
@@ -17,6 +18,25 @@ st.markdown("---")
 c1, c2 = st.columns([2, 3])
 
 with c1:
+    st.write(":question: Why does the algorithm underestimate my performance?")
+with c2:
+    st.write(":information_source: "
+             "One of the main reasons is because we weigh judgements differently. "
+             "In osu!mania, 300s and MAX/300G both weigh 1.0. "
+             "In opal, we weigh MAX as 320/320, 300s as 300/320, 200s as 200/320, and so on.")
+    st.table(
+        pd.DataFrame(
+            {
+                'osu!mania': map(lambda x: f"{x:.0%}", [1.0, 1.0, 2 / 3, 1 / 3, 1 / 6, 0]),
+                'opal': map(lambda x: f"{x:.0%}", [1.0, 300 / 320, 200 / 320, 100 / 320, 50 / 320, 0]),
+            }, index=['300G/MAX', '300', '200', '100', '50', '0']
+        )
+    )
+
+st.markdown("---")
+c1, c2 = st.columns([2, 3])
+
+with c1:
     st.markdown(":question: Why did the prediction fail?")
 with c2:
     st.markdown("""
@@ -25,6 +45,7 @@ with c2:
     2) The map you predicted wasn't played enough
     3) You didn't play enough for that year 
     """)
+
 st.markdown("---")
 c1, c2 = st.columns([2, 3])
 
@@ -41,6 +62,7 @@ with c2:
     In this case, we're not recommending items, instead, finding similar players to you, then aggregating their scores
     to find a suitable estimate to your performance!  
     """)
+
 st.markdown("---")
 c1, c2 = st.columns([2, 3])
 
@@ -60,3 +82,17 @@ with c2:
     If you do use it in a paper, in your own game, or anything similar like a school project, please credit me > w<)b.
     """)
 
+st.markdown("---")
+c1, c2 = st.columns([2, 3])
+
+with c1:
+    st.markdown(":question: Where can I feedback?")
+with c2:
+    st.markdown("""
+    :information_source:
+    You can feedback to me on the [Opal GitHub Repo](https://github.com/Eve-ning/opal). Open an issue and write away!
+    
+    It doesn't have to be professionally written! Just keep your issue short and to the point o wo)b
+    
+    If you're unsure, feel free to ping me on [Twitter](https://twitter.com/dev_evening).
+    """)
