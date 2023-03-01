@@ -1,9 +1,11 @@
+import base64
+import json
 from pathlib import Path
 
 import sys
+from google.cloud import firestore
 
 sys.path.append(Path(__file__).parents[1].as_posix())
-import os
 
 import altair as alt
 import numpy as np
@@ -15,6 +17,30 @@ from opal.conf.conf import MODEL_DIR
 from opal.score.collaborative_filtering import NeuMF
 
 st.set_page_config(page_title="Opal | o!m AI Score Predictor", page_icon=":comet:")
+if 'predictions' not in st.session_state:
+    st.session_state['predictions'] = 0
+
+osu_api_key = st.secrets['OSU_API']
+fb_api_key = st.secrets['FB_KEY']
+
+
+@st.cache_resource
+def get_db_pred_ref():
+    print("Initializing Firebase Reference")
+    key_b64_decoded = base64.b64decode(fb_api_key)
+    db = firestore.Client.from_service_account_info(json.loads(key_b64_decoded))
+
+    return db.collection("predictions").document("predict")
+
+
+db_pred = get_db_pred_ref()
+
+
+def add_analytics_count(add: int):
+    """ Adds `add` amount of 'predictions' into the firebase count """
+    count = db_pred.get().to_dict()['count']
+    db_pred.update({'count': count + add})
+    st.session_state['predictions'] += add
 
 
 @st.cache_resource
@@ -34,14 +60,15 @@ def random_mid():
 
 def predict(uid, mid):
     try:
-        return float(net.predict(uid, mid))
+        preds = float(net.predict(uid, mid))
+        return preds
     except ValueError:
         return None
 
 
 @st.cache_data
 def get_username(user_id: int):
-    url = f'https://osu.ppy.sh/api/get_user?k={api_key}&u={user_id}'
+    url = f'https://osu.ppy.sh/api/get_user?k={osu_api_key}&u={user_id}'
 
     response = requests.get(url)
 
@@ -55,7 +82,7 @@ def get_username(user_id: int):
 
 @st.cache_data
 def get_beatmap_metadata(beatmap_id: int):
-    url = f'https://osu.ppy.sh/api/get_beatmaps?k={api_key}&b={beatmap_id}'
+    url = f'https://osu.ppy.sh/api/get_beatmaps?k={osu_api_key}&b={beatmap_id}'
 
     response = requests.get(url)
 
@@ -75,9 +102,6 @@ YEARS_SEARCH = 10
 DEFAULT_USER_ID = "2193881"
 DEFAULT_MAP_ID = "767046"
 net = get_model()
-uid = DEFAULT_USER_ID
-mid = DEFAULT_MAP_ID
-api_key = os.environ['OSU_API']
 
 with st.sidebar:
     st.header(":game_die: Metrics")
@@ -85,6 +109,7 @@ with st.sidebar:
     ![R2](https://img.shields.io/badge/R%20Squared-81.48%25-blueviolet)
     ![MAE](https://img.shields.io/badge/MAE-1.18%25-blue)
     ![RMSE](https://img.shields.io/badge/RMSE-1.71%25-blue)
+    ![Model Size](https://img.shields.io/github/size/Eve-ning/opal/models/V2_2023_01/checkpoints/epoch%253D5-step%253D43584.ckpt?color=purple&label=Model%20Size&logo=pytorch-lightning)
     """)
     st.header(":bookmark: Requirements")
     st.markdown("""
@@ -106,24 +131,25 @@ with st.sidebar:
                "If you do enjoy using their services, "
                "you can [support them](https://alphaosu.keytoix.vip/support)")
 
-st.markdown("""
+st.markdown(f"""
 <h1 style='text-align: center;'>
 <span style='filter: drop-shadow(0 0.2mm 1mm rgba(142, 190, 255, 0.9));'>Opal</span>
 
 <p style='color:grey'>AI Score Predictor by 
 <a href='https://github.com/Eve-ning/' style='text-decoration:none'>Evening</a>
 
-<a href='https://github.com/Eve-ning/opal' style='text-decoration:none'>![Repo](https://img.shields.io/badge/GitHub-opal-success?logo=github)</a>
 <a href='https://twitter.com/dev_evening' style='text-decoration:none'>![Twitter](https://img.shields.io/badge/-dev__evening-blue?logo=twitter)</a>
-<a href='https://github.com/Eve-ning/opal/blob/master/models/' style='text-decoration:none'>
-![Model Size](https://img.shields.io/github/size/Eve-ning/opal/models/V2_2023_01/checkpoints/epoch%253D5-step%253D43584.ckpt?color=purple&label=Model%20Size&logo=pytorch-lightning)
-</a>
+
+<a href='https://github.com/Eve-ning/opal' style='text-decoration:none'>![Repo](https://img.shields.io/badge/GitHub-opal-success?logo=github)</a>
+![Predictions](https://img.shields.io/badge/Predictions-{db_pred.get().to_dict()['count']:,}-yellow?logo=firebase)
 </p>
 </h1>
 """, unsafe_allow_html=True)
+
 st.info("""
 :grey_exclamation: **We weigh judgments out of 320, thus we usually underestimate.** See FAQ (2) for more info 
 """)
+
 left, right = st.columns(2)
 with left:
     st.button("Get Random Player", on_click=random_uid)
@@ -159,6 +185,7 @@ if not df_pred_last.empty:
     year_last = list(df_pred_last['year'])[0]
 else:
     year_last = "??"
+
 st.markdown(f"""
 <h5 style='text-align: center;'>
 If <a href='https://osu.ppy.sh/users/{uid}' style='text-decoration:none'>{username}</a> 
@@ -199,6 +226,8 @@ if pred_dt:
 else:
     c3.warning(":warning: No Prediction")
 
+add_analytics_count(len(df_pred))
+
 chart = (
     alt
     .Chart(df_pred)
@@ -215,8 +244,14 @@ chart = (
 )
 
 st.altair_chart(chart, use_container_width=True)
+st.markdown('---')
 
 st.caption(f"You can support me by adding a :star2: on the "
-           f"<a href='https://github.com/Eve-ning/opal' style='text-decoration:none'>GitHub Page</a>. It'll boost my analytics \:D",
+           f"<a href='https://github.com/Eve-ning/opal' style='text-decoration:none'>GitHub Page</a>. "
+           f"It'll boost my analytics > w<)9!",
            unsafe_allow_html=True)
-# st.info(f"Performed {len(df_pred)} predictions")
+
+if st.session_state['predictions']:
+    st.caption(f"You've contributed **{st.session_state['predictions']}** predictions to my analytics, thanks!")
+
+st.caption(":grey_exclamation: *We do not track the history of your predictions, only the count*")
