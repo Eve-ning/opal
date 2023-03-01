@@ -16,7 +16,9 @@ data/**/*.pkl
 *.synctex.gz
 *.osr
 lightning_logs/
-
+models/
+.streamlit/
+poetry.lock
 .data/
 
 .run/
