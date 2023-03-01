@@ -125,7 +125,7 @@ with st.sidebar:
     """)
     st.warning(":warning: Players and Maps that **barely** meet these may have incorrect predictions")
     st.write("---")
-    st.header(":wave: Hey! [Try AlphaOsu!](alphaosu.keytoix.vip/)")
+    st.header(":wave: Hey! [Try AlphaOsu!](https://alphaosu.keytoix.vip/)")
     st.caption("AlphaOsu is a pp recommender system with a website UI. ")
     st.caption("Opal doesn't require monetary support, but they do. "
                "If you do enjoy using their services, "
