@@ -115,6 +115,8 @@ class ScoreDataModule(pl.LightningDataModule):
             Adds Year column
         """
 
+        df = df.dropna()
+        df['enabled_mods'] = df['enabled_mods'].astype(int)
         half_score = (
                 ((df['enabled_mods'] & OsuMod.EASY) > 0) |
                 ((df['enabled_mods'] & OsuMod.NO_FAIL) > 0) |
