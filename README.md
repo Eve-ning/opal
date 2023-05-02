@@ -7,7 +7,7 @@ It uses Neural Collaborative Filtering to learn associations between user and ma
 predict new scores never before seen.
 
 **Performance Error Graph**
-![Performance Graph](models/V2_2023_01/error.png)
+![Performance Graph](models/V2_2023_04/error.png)
 
 ## :hourglass_flowing_sand: Project Status
 
