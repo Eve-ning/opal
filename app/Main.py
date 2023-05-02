@@ -107,9 +107,9 @@ net = get_model()
 with st.sidebar:
     st.header(":game_die: Metrics")
     st.markdown("""
-    ![R2](https://img.shields.io/badge/R%20Squared-81.48%25-blueviolet)
-    ![MAE](https://img.shields.io/badge/MAE-1.18%25-blue)
-    ![RMSE](https://img.shields.io/badge/RMSE-1.71%25-blue)
+    ![R2](https://img.shields.io/badge/R%20Squared-71.88%25-blueviolet)
+    ![MAE](https://img.shields.io/badge/MAE-1.14%25-blue)
+    ![RMSE](https://img.shields.io/badge/RMSE-1.68%25-blue)
     ![Model Size](https://img.shields.io/github/size/Eve-ning/opal/models/V2_2023_01/checkpoints/epoch%253D5-step%253D43584.ckpt?color=purple&label=Model%20Size&logo=pytorch-lightning)
     """)
     st.header(":bookmark: Requirements")
