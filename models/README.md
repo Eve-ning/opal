@@ -2,9 +2,10 @@
 
 **See below on how to load the model.**
 
-| Model      | R2     | MAE    | RMSE  | Error Distribution             |
-|------------|--------|--------|-------|--------------------------------|
+| Model      | R2     | MAE   | RMSE  | Error Distribution             |
+|------------|--------|-------|-------|--------------------------------|
 | V2_2023_01 | 81.48% | 1.18% | 1.71% | ![Error](V2_2023_01/error.png) |
+| V2_2023_04 | 71.88% | 1.14% | 1.68% | ![Error](V2_2023_04/error.png) |
 
 **Note: V1 is deprecated due to incompatibility with new model signature.**
 ## Limitations
