@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 import sys
+import torch
 from google.cloud import firestore
 
 sys.path.append(Path(__file__).parents[1].as_posix())
@@ -45,7 +46,7 @@ def add_analytics_count(add: int):
 
 
 @st.cache_resource
-def get_model(model_path=MODEL_DIR / "V2_2023_01/checkpoints/epoch=5-step=43584.ckpt"):
+def get_model(model_path=MODEL_DIR / "V2_2023_04/checkpoints/epoch=8-step=55773.ckpt"):
     net = NeuMF.load_from_checkpoint(model_path.as_posix(), map_location=torch.device('cpu'))
     net.eval()
     return net
@@ -107,9 +108,9 @@ net = get_model()
 with st.sidebar:
     st.header(":game_die: Metrics")
     st.markdown("""
-    ![R2](https://img.shields.io/badge/R%20Squared-81.48%25-blueviolet)
-    ![MAE](https://img.shields.io/badge/MAE-1.18%25-blue)
-    ![RMSE](https://img.shields.io/badge/RMSE-1.71%25-blue)
+    ![R2](https://img.shields.io/badge/R%20Squared-71.88%25-blueviolet)
+    ![MAE](https://img.shields.io/badge/MAE-1.14%25-blue)
+    ![RMSE](https://img.shields.io/badge/RMSE-1.68%25-blue)
     ![Model Size](https://img.shields.io/github/size/Eve-ning/opal/models/V2_2023_01/checkpoints/epoch%253D5-step%253D43584.ckpt?color=purple&label=Model%20Size&logo=pytorch-lightning)
     """)
     st.header(":bookmark: Requirements")
@@ -117,7 +118,7 @@ with st.sidebar:
     1) Only osu!mania.
 
     The user must be:
-    1) ranked <10K in 1st Jan 2023
+    1) ranked <10K in 1st Apr 2023
     2) active in that predicted year
 
     The map must be:
@@ -199,9 +200,9 @@ pred_ht = df_pred_last.loc[(df_pred_last['speed'] == 'HT'), 'pred']
 pred_nt = df_pred_last.loc[(df_pred_last['speed'] == 'NT'), 'pred']
 pred_dt = df_pred_last.loc[(df_pred_last['speed'] == 'DT'), 'pred']
 
-pred_ht = float(pred_ht) if pred_ht.any() else None
-pred_nt = float(pred_nt) if pred_nt.any() else None
-pred_dt = float(pred_dt) if pred_dt.any() else None
+pred_ht = float(pred_ht.iloc[0]) if pred_ht.any() else None
+pred_nt = float(pred_nt.iloc[0]) if pred_nt.any() else None
+pred_dt = float(pred_dt.iloc[0]) if pred_dt.any() else None
 
 c1, c2, c3 = st.columns(3)
 
