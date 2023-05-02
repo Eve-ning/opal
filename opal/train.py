@@ -1,6 +1,6 @@
 import pytorch_lightning as pl
 import torch
-from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping, ModelCheckpoint, ModelPruning, QuantizationAwareTraining
+from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping, ModelCheckpoint
 
 from opal.score.collaborative_filtering import NeuMF
 from opal.score.datamodule import ScoreDataModule
@@ -41,7 +41,6 @@ def train(yyyy_mm: str):
             LearningRateMonitor(),
             ModelCheckpoint(monitor='val_loss', save_top_k=1, mode='min')
         ],
-        devices=[3, ],
     )
 
     trainer.fit(net, datamodule=dm)
@@ -49,4 +48,4 @@ def train(yyyy_mm: str):
 
 if __name__ == '__main__':
     torch.set_float32_matmul_precision('high')
-    train("2023_01")
+    train("2023_04")
