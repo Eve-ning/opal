@@ -169,7 +169,7 @@ username = get_username(uid)
 map_metadata = get_beatmap_metadata(mid)
 
 preds = []
-years = range(MODEL_YEAR - YEARS_SEARCH, MODEL_YEAR)
+years = range(MODEL_YEAR - YEARS_SEARCH, MODEL_YEAR + 1)
 speeds = {-1: 'HT', 0: 'NT', 1: 'DT'}
 for speed, speed_txt in speeds.items():
     for year in years:
