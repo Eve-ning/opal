@@ -45,7 +45,7 @@ def add_analytics_count(add: int):
 
 
 @st.cache_resource
-def get_model(model_path=MODEL_DIR / "V2_2023_01/checkpoints/epoch=5-step=43584.ckpt"):
+def get_model(model_path=MODEL_DIR / "V2_2023_04/checkpoints/epoch=8-step=55773.ckpt"):
     net = NeuMF.load_from_checkpoint(model_path.as_posix(), map_location=torch.device('cpu'))
     net.eval()
     return net
