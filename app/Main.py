@@ -200,9 +200,9 @@ pred_ht = df_pred_last.loc[(df_pred_last['speed'] == 'HT'), 'pred']
 pred_nt = df_pred_last.loc[(df_pred_last['speed'] == 'NT'), 'pred']
 pred_dt = df_pred_last.loc[(df_pred_last['speed'] == 'DT'), 'pred']
 
-pred_ht = float(pred_ht) if pred_ht.any() else None
-pred_nt = float(pred_nt) if pred_nt.any() else None
-pred_dt = float(pred_dt) if pred_dt.any() else None
+pred_ht = float(pred_ht.iloc[0]) if pred_ht.any() else None
+pred_nt = float(pred_nt.iloc[0]) if pred_nt.any() else None
+pred_dt = float(pred_dt.iloc[0]) if pred_dt.any() else None
 
 c1, c2, c3 = st.columns(3)
 
