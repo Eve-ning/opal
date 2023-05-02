@@ -35,7 +35,7 @@ If you want to use this locally, you need Python and the packages listed in [req
 
 Below is a recipe on how to use it.
 ```py
-path_to_model = MODEL_DIR / "V2_2023_01/checkpoints/epoch=5-step=43584.ckpt"
+path_to_model = "oath/to/model.ckpt"
 net = NeuMF.load_from_checkpoint(path_to_model.as_posix())
 
 # THIS MUST BE RAN TO AVOID TRAINING THE MODEL
