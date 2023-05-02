@@ -115,8 +115,10 @@ class NeuMF(pl.LightningModule):
         x_uid_real = [x_uid_real] if isinstance(x_uid_real, str) else x_uid_real
         x_mid_real = [x_mid_real] if isinstance(x_mid_real, str) else x_mid_real
 
-        x_uid = torch.Tensor(self.uid_le.transform(x_uid_real)[np.newaxis, :]).to(int).T
-        x_mid = torch.Tensor(self.mid_le.transform(x_mid_real)[np.newaxis, :]).to(int).T
+        x_uid = torch.Tensor(self.uid_le.transform(x_uid_real)[np.newaxis, :]).to(int).T.to(
+            'cuda' if torch.cuda.is_available() else 'cpu')
+        x_mid = torch.Tensor(self.mid_le.transform(x_mid_real)[np.newaxis, :]).to(int).T.to(
+            'cuda' if torch.cuda.is_available() else 'cpu')
 
         return self.scaler_inverse_transform(self(x_uid, x_mid)).squeeze()
 
