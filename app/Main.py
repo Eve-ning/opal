@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 import sys
+import torch
 from google.cloud import firestore
 
 sys.path.append(Path(__file__).parents[1].as_posix())
@@ -117,7 +118,7 @@ with st.sidebar:
     1) Only osu!mania.
 
     The user must be:
-    1) ranked <10K in 1st Jan 2023
+    1) ranked <10K in 1st Apr 2023
     2) active in that predicted year
 
     The map must be:
