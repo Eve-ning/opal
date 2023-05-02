@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 import requests
 import streamlit as st
+import torch
 
 from opal.conf.conf import MODEL_DIR
 from opal.score.collaborative_filtering import NeuMF
@@ -45,7 +46,7 @@ def add_analytics_count(add: int):
 
 @st.cache_resource
 def get_model(model_path=MODEL_DIR / "V2_2023_01/checkpoints/epoch=5-step=43584.ckpt"):
-    net = NeuMF.load_from_checkpoint(model_path.as_posix())
+    net = NeuMF.load_from_checkpoint(model_path.as_posix(), map_location=torch.device('cpu'))
     net.eval()
     return net
 
