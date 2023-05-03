@@ -8,6 +8,9 @@
 | V2_2023_04 | 71.88% | 1.14% | 1.68% | ![Error](V2_2023_04/error.png) |
 
 **Note: V1 is deprecated due to incompatibility with new model signature.**
+
+**Old notebooks may not be runnable**
+
 ## Limitations
 
 The model cannot ...
