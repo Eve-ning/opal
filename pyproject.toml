@@ -5,6 +5,11 @@ description = "AI osu!mania score prediction"
 authors = ["Evening"]
 license = "MIT"
 readme = "README.md"
+exclude = [
+    "opal/models/V2_2023_01", # Old Model
+    "**/*.ipynb",
+    "**/*.png"
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
