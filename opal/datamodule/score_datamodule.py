@@ -148,8 +148,8 @@ class ScoreDataModule(pl.LightningDataModule):
             speed=lambda x: np.where(half_speed, -1, x.speed)
         ).assign(
             speed=lambda x: np.where(double_speed, 1, x.speed)
-        )[['user_id', 'beatmap_id', 'year', 'module', 'accuracy', 'speed']]
-        return df[df['module'].between(*score_bounds) & df['accuracy'].between(*accuracy_bounds)]
+        )[['user_id', 'beatmap_id', 'year', 'score', 'accuracy', 'speed']]
+        return df[df['score'].between(*score_bounds) & df['accuracy'].between(*accuracy_bounds)]
 
     @staticmethod
     def scale_metric(df: pd.DataFrame,
@@ -190,7 +190,7 @@ class ScoreDataModule(pl.LightningDataModule):
         df = df.assign(
             uid=lambda x: x.user_id.astype(str) + "/" + x.year,
             mid=lambda x: x.beatmap_id.astype(str) + "/" + x.speed.astype(str)
-        )  # [['uid', 'mid', 'module', 'accuracy']]
+        )  # [['uid', 'mid', 'score', 'accuracy']]
         return df
 
     @staticmethod

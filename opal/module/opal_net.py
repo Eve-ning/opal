@@ -131,7 +131,7 @@ class OpalNet(pl.LightningModule):
             >>> model.predict("12345/2020", "54321/2")
 
         Raises:
-            ValueError if the model cannot predict the module.
+            ValueError if the model cannot predict the score.
         """
         x_uid_real = [x_uid_real] if isinstance(x_uid_real, str) else x_uid_real
         x_mid_real = [x_mid_real] if isinstance(x_mid_real, str) else x_mid_real
