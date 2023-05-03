@@ -8,6 +8,9 @@
 | V2_2023_04 | 71.88% | 1.14% | 1.68% | ![Error](V2_2023_04/error.png) |
 
 **Note: V1 is deprecated due to incompatibility with new model signature.**
+
+**Old notebooks may not be runnable**
+
 ## Limitations
 
 The model cannot ...
@@ -25,7 +28,7 @@ Thus, these will be less accurate
 ## Loading
 
 ```python
-from opal.score.collaborative_filtering import NeuMF
+from opal.module.collaborative_filtering import NeuMF
 import pytorch_lightning as pl
 
 net = NeuMF.load_from_checkpoint("path/to/model/checkpoint.ckpt")

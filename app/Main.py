@@ -3,7 +3,6 @@ import json
 from pathlib import Path
 
 import sys
-import torch
 from google.cloud import firestore
 
 sys.path.append(Path(__file__).parents[1].as_posix())
@@ -13,10 +12,8 @@ import numpy as np
 import pandas as pd
 import requests
 import streamlit as st
-import torch
 
-from opal.conf.conf import MODEL_DIR
-from opal.score.collaborative_filtering import NeuMF
+from opal import OpalNet
 
 st.set_page_config(page_title="Opal | o!m AI Score Predictor", page_icon=":comet:")
 if 'predictions' not in st.session_state:
@@ -46,10 +43,8 @@ def add_analytics_count(add: int):
 
 
 @st.cache_resource
-def get_model(model_path=MODEL_DIR / "V2_2023_04/checkpoints/epoch=8-step=55773.ckpt"):
-    net = NeuMF.load_from_checkpoint(model_path.as_posix(), map_location=torch.device('cpu'))
-    net.eval()
-    return net
+def get_model():
+    return OpalNet.load()
 
 
 def random_uid():

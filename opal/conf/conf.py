@@ -1,7 +1,9 @@
 from pathlib import Path
 
-ROOT_DIR = Path(__file__).parents[2]
+PKG_DIR = Path(__file__).parents[1]
+ROOT_DIR = PKG_DIR.parent
+
 DATA_DIR = ROOT_DIR / "data/"
-OSU_DIR = DATA_DIR / "osu/"
-MODEL_DIR = ROOT_DIR / "models/"
-SCORES_DIR = OSU_DIR / "scores"
+MODEL_DIR = PKG_DIR / "models/"
+
+MODEL_CKPT = MODEL_DIR / "V2_2023_04/model.ckpt"

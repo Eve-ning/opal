@@ -1,25 +1,9 @@
 .idea/*
-*.osu
-*.zip
-*.csv
-*.db
-*.pkl
-*.npz
-*.rar
-data/**/*.pkl
-*.pygtex
-*.pygstyle
-*.bbl
-*.bcf
-*.blg
-*.aux
-*.synctex.gz
-*.osr
-lightning_logs/
 .streamlit/
 poetry.lock
 .data/
+data/
 
 .run/
 __pycache__/
-*.bz2
+dist/
