@@ -20,6 +20,10 @@ jobs:
 #        with:
 #          submodules: 'true'
 
+      - name: Remove current project source
+        run: |
+          rm -rf opal/
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
         with:
