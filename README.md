@@ -29,10 +29,13 @@ the improvement of the player after time.
 
 ## :high_brightness: Usage
 
-If you want to use this locally, you need Python and the packages listed in [requirements.txt](requirements.txt)
+To use this, install `opal-net`
 
-Below is a recipe on how to use it.
+```bash
+pip install opal-net
+```
 
+Then in a python script
 ```py
 from opal import OpalNet
 
