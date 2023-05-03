@@ -1,11 +1,11 @@
 import pytest
 
-from opal.module import NeuMF
+from opal import OpalNet
 
 
 @pytest.fixture(scope="session")
 def net():
-    return NeuMF.load(is_eval=True)
+    return OpalNet.load(is_eval=True)
 
 
 def test_inference_single(net):

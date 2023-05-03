@@ -1,4 +1,4 @@
-from opal.module.neu_mf import NeuMF
-from opal.module.neu_mf_module import NeuMFModule
+from opal.module.opal_net import OpalNet
+from opal.module.opal_net_module import OpalNetModule
 
-__all__ = ['NeuMF', 'NeuMFModule']
+__all__ = ['OpalNet', 'OpalNetModule']

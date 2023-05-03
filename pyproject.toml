@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "opal-ai"
+name = "opal-net"
 version = "0.1.0"
 description = "osu!mania score prediction through AI collaborative filtering"
 authors = ["Evening"]

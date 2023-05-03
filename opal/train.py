@@ -2,7 +2,7 @@ import pytorch_lightning as pl
 import torch
 from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping, ModelCheckpoint
 
-from opal.module import NeuMF
+from opal.module import OpalNet
 from opal.datamodule import ScoreDataModule
 
 
@@ -15,7 +15,7 @@ def train(yyyy_mm: str):
     )
 
     epochs = 50
-    net = NeuMF(
+    net = OpalNet(
         uid_le=dm.uid_le,
         mid_le=dm.mid_le,
         qt=dm.qt_accuracy,

@@ -12,12 +12,12 @@ from torch.optim.lr_scheduler import ExponentialLR
 from opal.conf import MODEL_CKPT
 
 
-class NeuMF(pl.LightningModule):
+class OpalNet(pl.LightningModule):
 
     @staticmethod
     def load(map_location='cuda' if torch.cuda.is_available() else 'cpu',
-             is_eval: bool = True) -> NeuMF:
-        """ Loads the OpalAI Model, which is built upon Neural Collaborative Filtering.
+             is_eval: bool = True) -> OpalNet:
+        """ Loads the OpalNet Model, which is built upon Neural Collaborative Filtering.
 
         Notes:
             See PyTorchLightning's load_from_checkpoint for more details on map_location
@@ -29,7 +29,7 @@ class NeuMF(pl.LightningModule):
         Returns:
             The loaded model
         """
-        net = NeuMF.load_from_checkpoint(MODEL_CKPT, map_location=map_location)
+        net = OpalNet.load_from_checkpoint(MODEL_CKPT, map_location=map_location)
         if is_eval:
             net.eval()
         return net
@@ -57,9 +57,9 @@ class NeuMF(pl.LightningModule):
             emb_dim: Embedding Dimensions
             lr: Learning Rate
         """
-        from opal.module import NeuMFModule
+        from opal.module import OpalNetModule
         super().__init__()
-        self.model = NeuMFModule(
+        self.model = OpalNetModule(
             n_uid=len(uid_le.classes_),
             n_mid=len(mid_le.classes_),
             mf_repeats=mf_repeats,
