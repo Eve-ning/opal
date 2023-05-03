@@ -9,10 +9,31 @@ from sklearn.preprocessing import LabelEncoder, QuantileTransformer
 from torch.nn import MSELoss
 from torch.optim.lr_scheduler import ExponentialLR
 
-from opal.module import NeuMFModule
+from opal.conf import MODEL_CKPT
 
 
 class NeuMF(pl.LightningModule):
+
+    @staticmethod
+    def load(map_location='cuda' if torch.cuda.is_available() else 'cpu',
+             is_eval: bool = True) -> NeuMF:
+        """ Loads the OpalAI Model, which is built upon Neural Collaborative Filtering.
+
+        Notes:
+            See PyTorchLightning's load_from_checkpoint for more details on map_location
+
+        Args:
+            map_location: Device to send this model to. By default, will use 'cuda' if available, else 'cpu'
+            is_eval: Whether to load this model for evaluation. Will call net.eval() if True.
+
+        Returns:
+            The loaded model
+        """
+        net = NeuMF.load_from_checkpoint(MODEL_CKPT, map_location=map_location)
+        if is_eval:
+            net.eval()
+        return net
+
     def __init__(
             self,
             uid_le: LabelEncoder,
@@ -27,7 +48,7 @@ class NeuMF(pl.LightningModule):
         """ Initializes the model for training
 
         Notes:
-            If you want to load the model, use `NeuMF.load_from_checkpoint("path/to/model.ckpt")`
+            If you want to load the latest model, use `NeuMF.load(...)`
 
         Args:
             uid_le: UID LabelEncoder from the DM
@@ -35,8 +56,8 @@ class NeuMF(pl.LightningModule):
             qt: QuantileTransformer from the DM
             emb_dim: Embedding Dimensions
             lr: Learning Rate
-
         """
+        from opal.module import NeuMFModule
         super().__init__()
         self.model = NeuMFModule(
             n_uid=len(uid_le.classes_),
