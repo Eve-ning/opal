@@ -7,7 +7,7 @@ from opal.score.collaborative_filtering import NeuMF
 
 @pytest.fixture(scope="session")
 def net():
-    return NeuMF.load_from_checkpoint(MODEL_DIR / "V2_2023_04/checkpoints/model.ckpt",
+    return NeuMF.load_from_checkpoint(MODEL_DIR / "V2_2023_04/model.ckpt",
                                       map_location=torch.device('cpu'))
 
 
