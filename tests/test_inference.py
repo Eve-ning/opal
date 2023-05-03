@@ -1,14 +1,11 @@
 import pytest
-import torch
 
-from opal.conf import MODEL_DIR
-from opal.score.collaborative_filtering import NeuMF
+from opal.module import NeuMF
 
 
 @pytest.fixture(scope="session")
 def net():
-    return NeuMF.load_from_checkpoint(MODEL_DIR / "V2_2023_04/model.ckpt",
-                                      map_location=torch.device('cpu'))
+    return NeuMF.load(is_eval=True)
 
 
 def test_inference_single(net):
