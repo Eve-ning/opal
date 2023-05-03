@@ -42,7 +42,7 @@ osu_scores{mode}_high.sql:
 #  - score_id
 #  - beatmap_id
 #  - user_id
-#  - score
+#  - module
   - maxcombo
   - rank
 #  - count50

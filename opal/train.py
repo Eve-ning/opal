@@ -2,8 +2,8 @@ import pytorch_lightning as pl
 import torch
 from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping, ModelCheckpoint
 
-from opal.score.collaborative_filtering import NeuMF
-from opal.score.datamodule import ScoreDataModule
+from opal.module import NeuMF
+from opal.datamodule import ScoreDataModule
 
 
 def train(yyyy_mm: str):

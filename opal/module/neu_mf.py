@@ -9,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder, QuantileTransformer
 from torch.nn import MSELoss
 from torch.optim.lr_scheduler import ExponentialLR
 
-from opal.score.collaborative_filtering.neu_mf_module import NeuMFModule
+from opal.module import NeuMFModule
 
 
 class NeuMF(pl.LightningModule):
@@ -110,7 +110,7 @@ class NeuMF(pl.LightningModule):
             >>> model.predict("12345/2020", "54321/2")
 
         Raises:
-            ValueError if the model cannot predict the score.
+            ValueError if the model cannot predict the module.
         """
         x_uid_real = [x_uid_real] if isinstance(x_uid_real, str) else x_uid_real
         x_mid_real = [x_mid_real] if isinstance(x_mid_real, str) else x_mid_real

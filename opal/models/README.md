@@ -25,7 +25,7 @@ Thus, these will be less accurate
 ## Loading
 
 ```python
-from opal.score.collaborative_filtering import NeuMF
+from opal.module.collaborative_filtering import NeuMF
 import pytorch_lightning as pl
 
 net = NeuMF.load_from_checkpoint("path/to/model/checkpoint.ckpt")
