@@ -2,6 +2,7 @@ import os
 
 import pandas as pd
 from sqlalchemy import create_engine, text
+from tqdm import tqdm
 
 mysql_pw = os.environ['mysql_pw']
 
@@ -33,12 +34,14 @@ class DB:
             - speed: Speed of map {-1, 0, 1} to indicate {HT, NT, DT}
             - accuracy: Accuracy of play
         """
-        connection = self.mysql_engine.connect()
-        connection.execute(
+        pbar = tqdm(total=6, desc="Querying from database...", unit="Step")
+        con = self.mysql_engine.connect()
+        con.execute(
             text("DROP TEMPORARY TABLE IF EXISTS beatmaps, beatmap_scores, scores, active_uid, active_mid")
         )
 
-        connection.execute(text(f"""
+        pbar.update()
+        con.execute(text(f"""
             CREATE TEMPORARY TABLE
                 beatmaps (SELECT beatmap_id mid
                           FROM osu_beatmaps b
@@ -46,7 +49,8 @@ class DB:
                             AND (b.diff_size IN {keys}));
         """))
 
-        connection.execute(text(f"""
+        pbar.update()
+        con.execute(text(f"""
             CREATE TEMPORARY TABLE
                 scores (SELECT s.score_id     sid,
                                s.beatmap_id   mid,
@@ -58,7 +62,8 @@ class DB:
                         WHERE (s.accuracy_320 BETWEEN {accuracy_bounds[0]} AND {accuracy_bounds[1]}));
         """))
 
-        connection.execute(text("""
+        pbar.update()
+        con.execute(text("""
             CREATE TEMPORARY TABLE beatmap_scores (
                 sid INT NOT NULL,
                 mid INT NOT NULL,
@@ -78,7 +83,8 @@ class DB:
               FROM beatmaps b JOIN scores s USING (mid);
         """))
 
-        connection.execute(text(f"""
+        pbar.update()
+        con.execute(text(f"""
             CREATE TEMPORARY TABLE active_mid (
                 mid INT,
                 speed INT,
@@ -89,7 +95,8 @@ class DB:
               HAVING COUNT(0) > {min_active_map};
         """))
 
-        connection.execute(text(f"""
+        pbar.update()
+        con.execute(text(f"""
             CREATE TEMPORARY TABLE active_uid (
                 uid INT,
                 year INT,
@@ -100,13 +107,14 @@ class DB:
               HAVING COUNT(0) > {min_active_user};
         """))
 
+        pbar.update()
         df = pd.read_sql(
             "SELECT * FROM beatmap_scores NATURAL JOIN active_mid NATURAL JOIN active_uid;",
-            con=connection
+            con=con
         ).set_index('sid')
 
         # Clean up temp tables
-        connection.execute(
+        con.execute(
             text("DROP TEMPORARY TABLE IF EXISTS beatmaps, beatmap_scores, scores, active_uid, active_mid")
         )
         return df
