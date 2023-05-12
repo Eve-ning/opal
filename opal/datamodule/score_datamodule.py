@@ -16,7 +16,7 @@ from opal.datamodule.db_io import DB
 class ScoreDataModule(pl.LightningDataModule):
     train_test_val: Sequence[float] = field(default_factory=lambda: (0.8, 0.1, 0.1))
 
-    qt_accuracy: QuantileTransformer = PowerTransformer()
+    transformer: QuantileTransformer = QuantileTransformer(output_distribution='normal')
 
     batch_size: int = 32
 
@@ -24,6 +24,7 @@ class ScoreDataModule(pl.LightningDataModule):
     u_min_support: int = 50
     accuracy_bounds: Tuple[float, float] = (0.85, 1)
     keys: Tuple[int] = (4, 7)
+    visual_complexity_limit: float = 0.05
 
     metric: str = 'accuracy'
 
@@ -35,24 +36,25 @@ class ScoreDataModule(pl.LightningDataModule):
     def __post_init__(self):
         super().__init__()
         assert sum(self.train_test_val) == 1, "Train Test Validation must sum to 1."
+        self.prepare_data()
+        self.setup()
 
     def prepare_data(self) -> None:
-        self.db = DB()
+        self.db = DB(min_active_map=self.m_min_support,
+                     min_active_user=self.u_min_support,
+                     accuracy_bounds=self.accuracy_bounds,
+                     visual_complexity_limit=self.visual_complexity_limit,
+                     keys=self.keys)
 
     def setup(self, stage: str = "") -> None:
         logging.info("Querying from DB")
-        df = self.db.get_df_score(
-            min_active_map=self.m_min_support,
-            min_active_user=self.u_min_support,
-            accuracy_bounds=self.accuracy_bounds,
-            keys=self.keys
-        )
+        df = self.db.get_df_score().drop('visual_complexity', axis=1, errors='ignore')
 
         logging.info("Creating IDs")
         df = self.get_ids(df)
 
         logging.info("Scaling Metrics")
-        df = self.scale_metric(df, self.qt_accuracy, self.metric)
+        df = self.scale_metric(df, self.transformer, self.metric)
 
         logging.info("Encoding Ids")
         df = self.encode_ids(df)
@@ -73,11 +75,11 @@ class ScoreDataModule(pl.LightningDataModule):
 
     @staticmethod
     def scale_metric(df: pd.DataFrame,
-                     scaler: TransformerMixin,
+                     transformer: TransformerMixin,
                      metric: str):
         """ Uses the scalers provided to scale the metric """
         return df.assign(
-            **{metric: lambda x: scaler.fit_transform(x[[metric]].values)}
+            **{metric: lambda x: transformer.fit_transform(x[[metric]].values)}
         )
 
     @staticmethod
