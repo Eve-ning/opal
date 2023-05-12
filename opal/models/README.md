@@ -1,3 +1,4 @@
+
 # Models
 
 **See below on how to load the model.**
@@ -26,10 +27,9 @@ Thus, these will be less accurate
 ## Loading
 
 ```python
-from opal.module.collaborative_filtering import NeuMF
-import pytorch_lightning as pl
+from opal import OpalNet
 
-net = NeuMF.load_from_checkpoint("path/to/model/checkpoint.ckpt")
+net = OpalNet.load_from_checkpoint("path/to/model/checkpoint.ckpt")
 net.eval()  # Prevent gradient updates.
 USER_ID = 12345
 YEAR = 2020
