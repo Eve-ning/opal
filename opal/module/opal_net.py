@@ -147,7 +147,7 @@ class OpalNet(pl.LightningModule):
         return x_uid, x_mid, y_pred, y_true, y_pred_real, y_true_real
 
     def configure_optimizers(self):
-        optim = torch.optim.Adam(self.parameters(), lr=self.lr, weight_decay=0.001)
+        optim = torch.optim.NAdam(self.parameters(), lr=self.lr, weight_decay=0.001)
 
         return [optim], [
             {
