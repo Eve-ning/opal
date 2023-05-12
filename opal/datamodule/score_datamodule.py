@@ -1,12 +1,13 @@
 import logging
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Sequence, Tuple
 
 import pandas as pd
 import pytorch_lightning as pl
 import torch
 from sklearn.base import TransformerMixin
-from sklearn.preprocessing import LabelEncoder, QuantileTransformer, PowerTransformer
+from sklearn.preprocessing import LabelEncoder, QuantileTransformer
 from torch.utils.data import DataLoader, TensorDataset, random_split
 
 from opal.datamodule.db_io import DB
@@ -40,11 +41,14 @@ class ScoreDataModule(pl.LightningDataModule):
         self.setup()
 
     def prepare_data(self) -> None:
-        self.db = DB(min_active_map=self.m_min_support,
-                     min_active_user=self.u_min_support,
-                     accuracy_bounds=self.accuracy_bounds,
-                     visual_complexity_limit=self.visual_complexity_limit,
-                     keys=self.keys)
+        self.db = DB(
+            osu_files_path=Path(),
+            min_active_map=self.m_min_support,
+            min_active_user=self.u_min_support,
+            accuracy_bounds=self.accuracy_bounds,
+            visual_complexity_limit=self.visual_complexity_limit,
+            keys=self.keys
+        )
 
     def setup(self, stage: str = "") -> None:
         logging.info("Querying from DB")
