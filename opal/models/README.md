@@ -6,10 +6,7 @@
 |------------|--------|-------|-------|--------------------------------|
 | V2_2023_01 | 81.48% | 1.18% | 1.71% | ![Error](V2_2023_01/error.png) |
 | V2_2023_04 | 71.88% | 1.14% | 1.68% | ![Error](V2_2023_04/error.png) |
-
-**Note: V1 is deprecated due to incompatibility with new model signature.**
-
-**Old notebooks may not be runnable**
+| V3_2023_04 | 92.09% | 0.72% | 1.23% | ![Error](V3_2023_04/error.png) |
 
 ## Limitations
 
@@ -17,6 +14,7 @@ The model cannot ...
 - predict maps not played by at least 50 players within the top 10k
 - predict players not in the top 10k
 - predict players who have not played at least 50 unique ranked maps in that year.
+- predict maps with too many SVs
 
 The predictive power (i.e. accuracy) is dependent on the number of players associated with each map.
 Thus, these will be less accurate
@@ -40,3 +38,20 @@ SPEED = 0  # 0: Normal Time, -1: Half Time, 1: Double Time
 pred_acc = net.predict(f"{USER_ID}/{YEAR}", f"{MAP_ID}/{SPEED}")
 ```
 
+## History
+
+V1 & V2 are deprecated due to model signature updates.
+
+### V1
+V1 is the very first model deployed.
+
+### V2
+
+- Reduces model size such that it fits in a GitHub blob
+- Decouples model from datamodule such that it's loadable separately
+
+### V3
+
+- Remove maps with high presence of SVs.
+- Migrate datamodule to use MySQL database instead of csv.
+- Change Adam to use NAdam for more consistent convergence
