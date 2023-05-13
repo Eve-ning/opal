@@ -44,7 +44,7 @@ def add_analytics_count(add: int):
 
 @st.cache_resource
 def get_model():
-    return OpalNet.load()
+    return OpalNet.load(map_location='cpu')
 
 
 def random_uid():
