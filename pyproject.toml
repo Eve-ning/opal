@@ -27,7 +27,6 @@ google-cloud-firestore = "^2.11.1"
 streamlit = "^1.22.0"
 
 [build-system]
-requires = ['setuptools']
-build-backend = 'setuptools.build_meta'
-
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
