@@ -7,7 +7,7 @@
 |------------|--------|-------|-------|--------------------------------|
 | V2_2023_01 | 81.48% | 1.18% | 1.71% | ![Error](V2_2023_01/error.png) |
 | V2_2023_04 | 71.88% | 1.14% | 1.68% | ![Error](V2_2023_04/error.png) |
-| V3_2023_04 | 92.09% | 0.72% | 1.23% | ![Error](V3_2023_04/error.png) |
+| V3_2023_05 | 73.76% | 1.09% | 1.62% | ![Error](V3_2023_05/error.png) |
 
 ## Limitations
 
@@ -54,4 +54,3 @@ V1 is the very first model deployed.
 
 - Remove maps with high presence of SVs.
 - Migrate datamodule to use MySQL database instead of csv.
-- Change Adam to use NAdam for more consistent convergence
