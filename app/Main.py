@@ -69,12 +69,12 @@ def get_username(user_id: int):
 
     response = requests.get(url)
 
-    if response.status_code == 200:
+    try:
         user_data = response.json()[0]
         username = user_data['username']
         return username
-    else:
-        return None
+    except:
+        return
 
 
 @st.cache_data
@@ -83,14 +83,14 @@ def get_beatmap_metadata(beatmap_id: int):
 
     response = requests.get(url)
 
-    if response.status_code == 200:
-        user_data = response.json()[0]
-        map_metadata = f"{user_data['artist']} - " \
-                       f"{user_data['title']} (" \
-                       f"{user_data['creator']}) [" \
-                       f"{user_data['version']}]"
+    try:
+        map_data = response.json()[0]
+        map_metadata = f"{map_data['artist']} - " \
+                       f"{map_data['title']} (" \
+                       f"{map_data['creator']}) [" \
+                       f"{map_data['version']}]"
         return map_metadata
-    else:
+    except:
         return None
 
 
@@ -101,27 +101,9 @@ DEFAULT_MAP_ID = "767046"
 net = get_model()
 
 with st.sidebar:
-    st.header(":game_die: Metrics")
-    st.markdown("""
-    ![R2](https://img.shields.io/badge/R%20Squared-71.88%25-blueviolet)
-    ![MAE](https://img.shields.io/badge/MAE-1.14%25-blue)
-    ![RMSE](https://img.shields.io/badge/RMSE-1.68%25-blue)
-    ![Model Size](https://img.shields.io/github/size/Eve-ning/opal/opal/models/V2_2023_04/model.ckpt)
+    st.info("""
+    **Judgements are out of 320, thus we underestimate.**\n\nSee FAQ (2) for more info 
     """)
-    st.header(":bookmark: Requirements")
-    st.markdown("""
-    1) Only osu!mania.
-
-    The user must be:
-    1) ranked <10K in 1st Apr 2023
-    2) active in that predicted year
-
-    The map must be:
-    1) ranked or loved
-    2) played often enough 
-    """)
-    st.warning(":warning: Players and Maps that **barely** meet these may have incorrect predictions")
-    st.write("---")
     st.header(":wave: Hey! [Try AlphaOsu!](https://alphaosu.keytoix.vip/)")
     st.caption("AlphaOsu is a pp recommender system with a website UI. ")
     st.caption("Opal doesn't require monetary support, but they do. "
@@ -130,118 +112,112 @@ with st.sidebar:
 
 st.markdown(f"""
 <h1 style='text-align: center;'>
-<span style='filter: drop-shadow(0 0.2mm 1mm rgba(142, 190, 255, 0.9));'>Opal</span>
+<span style='filter: drop-shadow(0 0.2mm 1mm rgba(142, 190, 255, 0.9));'>Opal</span>\n
 
 <p style='color:grey'>AI Score Predictor by 
-<a href='https://github.com/Eve-ning/' style='text-decoration:none'>Evening</a>
-
+    <a href='https://github.com/Eve-ning/' style='text-decoration:none'>Evening</a>
+    
 <a href='https://twitter.com/dev_evening' style='text-decoration:none'>![Twitter](https://img.shields.io/badge/-dev__evening-blue?logo=twitter)</a>
-
-<a href='https://github.com/Eve-ning/opal' style='text-decoration:none'>![Repo](https://img.shields.io/badge/GitHub-opal-success?logo=github)</a>
+<a href='https://github.com/Eve-ning/opal' style='text-decoration:none'>![Repo](https://img.shields.io/badge/Repository-purple?logo=github)</a>
 ![Predictions](https://img.shields.io/badge/Predictions-{db_pred.get().to_dict()['count']:,}-yellow?logo=firebase)
 </p>
 </h1>
 """, unsafe_allow_html=True)
 
-st.info("""
-:grey_exclamation: **We weigh judgments out of 320, thus we usually underestimate.** See FAQ (2) for more info 
-""")
+with st.container():
+    left, right = st.columns(2)
+    with left:
+        st.button("Get Random Player", on_click=random_uid)
+        uid = st.text_input("User ID", key='uid', placeholder="2193881")
+    with right:
+        st.button("Get Random Map", on_click=random_mid)
+        mid = st.text_input("Map ID", key='mid', placeholder="767046")
 
-left, right = st.columns(2)
-with left:
-    st.button("Get Random Player", on_click=random_uid)
-    uid = st.text_input("User ID", key='uid', placeholder="2193881")
-with right:
-    st.button("Get Random Map", on_click=random_mid)
-    mid = st.text_input("Map ID", key='mid', placeholder="767046")
+    try:
+        uid = int(uid)
+        username = get_username(uid)
 
-try:
-    uid = int(uid)
-    mid = int(mid)
-except:
-    st.stop()
-username = get_username(uid)
-map_metadata = get_beatmap_metadata(mid)
+        mid = int(mid)
+        map_metadata = get_beatmap_metadata(mid)
+        left.markdown(f"<a href='https://osu.ppy.sh/users/{uid}' style='text-decoration:none'>{username}</a>",
+                      unsafe_allow_html=True)
+        right.markdown(f"<a href='https://osu.ppy.sh/b/{mid}' style='text-decoration:none'>{map_metadata}</a>",
+                       unsafe_allow_html=True)
+    except:
+        st.stop()
 
-preds = []
-years = range(MODEL_YEAR - YEARS_SEARCH, MODEL_YEAR + 1)
-speeds = {-1: 'HT', 0: 'NT', 1: 'DT'}
-for speed, speed_txt in speeds.items():
-    for year in years:
-        uid_ = f"{uid}/{year}"
-        mid_ = f"{mid}/{speed}"
-        if uid_ in net.uid_le.classes_:
-            pred = predict(uid_, mid_)
-            if pred:
-                preds.append([year, speed_txt, pred])
+# Prediction Logic
+with st.container():
+    years = range(MODEL_YEAR - YEARS_SEARCH, MODEL_YEAR + 1)
+    speeds = {-1: 'HT', 0: 'NT', 1: 'DT'}
 
-df_pred = pd.DataFrame(preds, columns=['year', 'speed', 'pred'])
+    preds = []
 
-df_pred_last = df_pred[df_pred['year'] == df_pred['year'].max()]
-if not df_pred_last.empty:
-    year_last = list(df_pred_last['year'])[0]
-else:
-    year_last = "??"
+    for speed, speed_txt in speeds.items():
+        for year in years:
+            uid_ = f"{uid}/{year}"
+            mid_ = f"{mid}/{speed}"
+            if uid_ in net.uid_le.classes_ and mid_ in net.mid_le.classes_:
+                pred = predict(uid_, mid_)
+                if pred:
+                    preds.append([year, speed_txt, pred])
 
-st.markdown(f"""
-<h5 style='text-align: center;'>
-If <a href='https://osu.ppy.sh/users/{uid}' style='text-decoration:none'>{username}</a> 
-played 
-<a href='https://osu.ppy.sh/b/{mid}' style='text-decoration:none'>{map_metadata}</a> in {year_last}
-</h5>
-""", unsafe_allow_html=True)
+    df_pred = pd.DataFrame(preds, columns=['year', 'speed', 'pred'])
+    df_pred_last = df_pred[df_pred['year'] == df_pred['year'].max()]
 
-pred_ht = df_pred_last.loc[(df_pred_last['speed'] == 'HT'), 'pred']
-pred_nt = df_pred_last.loc[(df_pred_last['speed'] == 'NT'), 'pred']
-pred_dt = df_pred_last.loc[(df_pred_last['speed'] == 'DT'), 'pred']
+    pred_ht = df_pred_last.loc[(df_pred_last['speed'] == 'HT'), 'pred']
+    pred_nt = df_pred_last.loc[(df_pred_last['speed'] == 'NT'), 'pred']
+    pred_dt = df_pred_last.loc[(df_pred_last['speed'] == 'DT'), 'pred']
 
-pred_ht = float(pred_ht.iloc[0]) if pred_ht.any() else None
-pred_nt = float(pred_nt.iloc[0]) if pred_nt.any() else None
-pred_dt = float(pred_dt.iloc[0]) if pred_dt.any() else None
+    pred_ht = float(pred_ht.iloc[0]) if pred_ht.any() else None
+    pred_nt = float(pred_nt.iloc[0]) if pred_nt.any() else None
+    pred_dt = float(pred_dt.iloc[0]) if pred_dt.any() else None
 
-c1, c2, c3 = st.columns(3)
+    c1, c2, c3 = st.columns(3)
 
-st.markdown("---")
+    if pred_ht:
+        delta_ht = pred_ht - pred_nt
+        c1.metric(f"{':warning:' if delta_ht < 0 else ''} "
+                  f"HT", f"{pred_ht:.2%}",
+                  delta=f"{delta_ht:.2%}")
+    else:
+        c1.warning(":warning: No Prediction")
 
-if pred_ht:
-    delta_ht = pred_ht - pred_nt
-    c1.metric(f"{':warning:' if delta_ht < 0 else ''} "
-              f"HT", f"{pred_ht:.2%}",
-              delta=f"{delta_ht:.2%}")
-else:
-    c1.warning(":warning: No Prediction")
+    if pred_nt:
+        c2.metric(f"NT", f"{pred_nt:.2%}")
+    else:
+        c2.warning(":warning: No Prediction")
 
-if pred_nt:
-    c2.metric(f"NT", f"{pred_nt:.2%}")
-else:
-    c2.warning(":warning: No Prediction")
+    if pred_dt:
+        delta_dt = pred_dt - pred_nt
+        c3.metric(f"{':warning:' if delta_dt > 0 else ''} "
+                  f"DT", f"{pred_dt:.2%}", delta=f"{delta_dt:.2%}")
+    else:
+        c3.warning(":warning: No Prediction")
 
-if pred_dt:
-    delta_dt = pred_dt - pred_nt
-    c3.metric(f"{':warning:' if delta_dt > 0 else ''} "
-              f"DT", f"{pred_dt:.2%}", delta=f"{delta_dt:.2%}")
-else:
-    c3.warning(":warning: No Prediction")
+    add_analytics_count(len(df_pred))
 
-add_analytics_count(len(df_pred))
-
-chart = (
-    alt
-    .Chart(df_pred)
-    .mark_line(point=True, size=1)
-    .encode(
-        alt.X('year:Q',
-              scale=alt.Scale(padding=1),
-              axis=alt.Axis(tickMinStep=1)),
-        alt.Y('pred:Q',
-              scale=alt.Scale(zero=False, padding=20, domainMax=1),
-              axis=alt.Axis(format='%')),
-        color='speed:O',
+# Chart Logic
+with st.container():
+    chart = (
+        alt
+        .Chart(df_pred)
+        .mark_line(point=True, size=1)
+        .encode(
+            alt.X('year:Q',
+                  scale=alt.Scale(padding=1),
+                  axis=alt.Axis(tickMinStep=1),
+                  title="Year"),
+            alt.Y('pred:Q',
+                  scale=alt.Scale(zero=False, padding=20, domainMax=1),
+                  axis=alt.Axis(format='%'),
+                  title="Predicted Accuracy"),
+            color='speed:O'
+        )
     )
-)
 
-st.altair_chart(chart, use_container_width=True)
-st.markdown('---')
+    st.altair_chart(chart, use_container_width=True)
+
 
 st.caption(f"You can support me by adding a :star2: on the "
            f"<a href='https://github.com/Eve-ning/opal' style='text-decoration:none'>GitHub Page</a>. "

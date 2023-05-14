@@ -1,9 +1,42 @@
 import pandas as pd
 import streamlit as st
 
-st.set_page_config("FAQ", page_icon=":question:")
+st.set_page_config("Info", page_icon=":question:")
 
-st.title("FAQ")
+st.title("Info")
+
+r2 = 0.7376
+mae = 0.0109
+rmse = 0.0162
+version = "May%202023"
+st.header(":game_die: Metrics")
+st.markdown(f"""
+![R2](https://img.shields.io/badge/R2-{r2:.2%}-blueviolet)
+![MAE](https://img.shields.io/badge/MAE-{mae:.2%}-blue)
+![RMSE](https://img.shields.io/badge/RMSE-{rmse:.2%}-blue)
+![Version](https://img.shields.io/badge/V3-{version}-purple)
+![Model Size](https://img.shields.io/github/size/Eve-ning/opal/opal/models/V3_2023_05/model.ckpt)
+""")
+
+st.header(":bookmark: Requirements")
+
+
+st.markdown("""
+- Only osu!mania.
+
+The user must be:
+- ranked <10K in 1st Apr 2023
+- active in that predicted year
+
+The map must be:
+- ranked or loved
+- played often enough 
+- little in SVs
+- \>2.0 SR
+""")
+
+st.warning(":warning: Players and Maps that **barely** meet these may have incorrect predictions")
+st.header(":question: FAQ")
 c1, c2 = st.columns([2, 3])
 
 with c1:
