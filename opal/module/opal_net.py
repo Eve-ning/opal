@@ -93,7 +93,7 @@ class OpalNet(pl.LightningModule):
         *_, y_pred, y_true, y_pred_real, y_true_real = self.step(batch)
         loss = self.loss(y_pred, y_true)
 
-        self.log("train_loss", loss)
+        self.log("train_loss", loss, prog_bar=True)
         self.log("train_mae", mean_absolute_error(y_pred_real, y_true_real), prog_bar=True)
 
         return loss
