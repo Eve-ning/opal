@@ -7,6 +7,7 @@ license = "MIT"
 readme = "README.md"
 exclude = [
     "opal/models/V2_2023_01", # Old Model
+    "opal/models/V2_2023_04", # Old Model
     "**/*.ipynb",
     "**/*.png"
 ]

@@ -5,6 +5,7 @@ from typing import List
 import numpy as np
 import pytorch_lightning as pl
 import torch
+from sklearn.metrics import mean_absolute_error
 from sklearn.preprocessing import LabelEncoder, QuantileTransformer
 from torch.nn import MSELoss
 from torch.optim.lr_scheduler import ExponentialLR
@@ -38,7 +39,7 @@ class OpalNet(pl.LightningModule):
             self,
             uid_le: LabelEncoder,
             mid_le: LabelEncoder,
-            qt: QuantileTransformer,
+            transformer: QuantileTransformer,
             emb_dim: int,
             mf_repeats: int,
             mlp_range: List[int],
@@ -53,7 +54,7 @@ class OpalNet(pl.LightningModule):
         Args:
             uid_le: UID LabelEncoder from the DM
             mid_le: MID LabelEncoder from the DM
-            qt: QuantileTransformer from the DM
+            transformer: QuantileTransformer from the DM
             emb_dim: Embedding Dimensions
             lr: Learning Rate
         """
@@ -71,7 +72,7 @@ class OpalNet(pl.LightningModule):
         self.lr_gamma = lr_gamma
         self.uid_le = uid_le
         self.mid_le = mid_le
-        self.qt = qt
+        self.transformer = transformer
 
         # Save the params in the hparams.yaml
         self.save_hyperparameters()
@@ -80,7 +81,7 @@ class OpalNet(pl.LightningModule):
         return self.model(uid, mid)
 
     def scaler_inverse_transform(self, val: torch.Tensor):
-        return self.qt.inverse_transform(val.detach().cpu().numpy())
+        return self.transformer.inverse_transform(val.detach().cpu().numpy())
 
     def uid_inverse_transform(self, val: torch.Tensor):
         return self.uid_le.inverse_transform(val.detach().cpu().numpy())
@@ -92,14 +93,8 @@ class OpalNet(pl.LightningModule):
         *_, y_pred, y_true, y_pred_real, y_true_real = self.step(batch)
         loss = self.loss(y_pred, y_true)
 
-        # if batch_idx % 32 == 0:
-        #     self.logger.experiment.add_histogram("pred", y_pred)
-        #     self.logger.experiment.add_histogram("true", y_true)
-        #     self.logger.experiment.add_histogram("pred_real", y_pred_real)
-        #     self.logger.experiment.add_histogram("true_real", y_true_real)
-
-        self.log("train_loss", loss)
-        self.log("train_mae", np.abs(y_pred_real - y_true_real).mean(), prog_bar=True)
+        self.log("train_loss", loss, prog_bar=True)
+        self.log("train_mae", mean_absolute_error(y_pred_real, y_true_real), prog_bar=True)
 
         return loss
 
@@ -108,7 +103,7 @@ class OpalNet(pl.LightningModule):
         loss = self.loss(y_pred, y_true)
 
         self.log("val_loss", loss)
-        self.log("val_mae", np.abs(y_pred_real - y_true_real).mean(), prog_bar=True)
+        self.log("val_mae", mean_absolute_error(y_pred_real, y_true_real), prog_bar=True)
 
     def predict_step(self, batch, batch_idx, **kwargs):
         x_uid, x_mid, *_, y_pred_real, y_true_real = self.step(batch)
