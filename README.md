@@ -1,5 +1,8 @@
 # :arrow_forward: [**Try Out Opal on Streamlit**](https://opal-ai.streamlit.app/)
-
+![modelsize](https://img.shields.io/github/size/Eve-ning/opal/opal/models/V3_2023_05/model.ckpt)
+![version](https://img.shields.io/pypi/v/opal-net)
+![pyversions](https://img.shields.io/pypi/pyversions/opal-net)
+[![https://img.shields.io/pypi/dm/opal-net](https://img.shields.io/pypi/dm/opal-net)](https://pypi.org/project/opal-net/)
 # :comet: opal-net
 opal is an accuracy-prediction model.
 
