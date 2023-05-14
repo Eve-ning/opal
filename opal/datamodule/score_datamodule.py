@@ -15,6 +15,7 @@ from opal.datamodule.db_io import DB
 
 @dataclass
 class ScoreDataModule(pl.LightningDataModule):
+    osu_files_path: Path
     train_test_val: Sequence[float] = field(default_factory=lambda: (0.8, 0.1, 0.1))
 
     transformer: QuantileTransformer = QuantileTransformer(output_distribution='normal')
@@ -24,11 +25,13 @@ class ScoreDataModule(pl.LightningDataModule):
     m_min_support: int = 50
     u_min_support: int = 50
     accuracy_bounds: Tuple[float, float] = (0.85, 1)
+    sr_bounds: Tuple[float, float] = (2.0, 15.0)
     keys: Tuple[int] = (4, 7)
     visual_complexity_limit: float = 0.05
 
     metric: str = 'accuracy'
 
+    regen_tables: bool = False
     limit_scores_read: int = None
 
     uid_le: LabelEncoder = field(default_factory=LabelEncoder, init=False)
@@ -42,12 +45,13 @@ class ScoreDataModule(pl.LightningDataModule):
 
     def prepare_data(self) -> None:
         self.db = DB(
-            osu_files_path=Path(),
+            osu_files_path=self.osu_files_path,
             min_active_map=self.m_min_support,
             min_active_user=self.u_min_support,
             accuracy_bounds=self.accuracy_bounds,
             visual_complexity_limit=self.visual_complexity_limit,
-            keys=self.keys
+            keys=self.keys,
+            regen_tables=self.regen_tables
         )
 
     def setup(self, stage: str = "") -> None:
