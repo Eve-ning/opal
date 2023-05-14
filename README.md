@@ -7,7 +7,7 @@ It uses **Neural Collaborative Filtering** to learn associations between user an
 predict new scores never before seen.
 
 **Performance Error Graph**
-![Performance Graph](opal/models/V2_2023_04/error.png)
+![Performance Graph](opal/models/V3_2023_05/error.png)
 
 ## :hourglass_flowing_sand: Project Status
 Currently, it's in its early access, that means, it'll have many problems!
