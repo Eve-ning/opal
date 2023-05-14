@@ -20,6 +20,7 @@ class DB:
             min_active_map: int = 50,
             min_active_user: int = 50,
             accuracy_bounds: tuple[float, float] = (0.85, 1.0),
+            sr_bounds: tuple[float, float] = (2.5, 15),
             keys: tuple[int] = (4, 7),
             visual_complexity_limit: float = 0.05,
             regen_tables: bool = False,
@@ -31,6 +32,7 @@ class DB:
             min_active_user: Minimum number of scores for a user to be included
             keys: Tuple of keys to include
             accuracy_bounds: The lower and upper bound of accuracies to include
+            sr_bounds: The lower and upper bound of star ratings to include
             visual_complexity_limit: The upper limit of visual complexity. Ranges [0, 1)
             regen_tables: Whether to regenerate the auxiliary opal MySQL tables.
                 Will automatically be set to true if they don't exist.
@@ -50,10 +52,13 @@ class DB:
             con.execute(text("DROP TABLE IF EXISTS opal_beatmaps"))
             con.execute(text(f"""
                 CREATE TABLE
-                    opal_beatmaps (SELECT beatmap_id mid
-                                   FROM osu_beatmaps b
-                                   WHERE (b.playmode = 3)
-                                     AND (b.diff_size IN {keys}));
+                    opal_beatmaps (
+                    SELECT beatmap_id mid
+                    FROM osu_beatmaps b
+                    WHERE (b.playmode = 3)
+                    AND (b.diff_size IN {keys})
+                    AND (b.difficultyrating BETWEEN {sr_bounds[0]} AND {sr_bounds[1]})
+                    );
             """))
 
             pbar.update()
