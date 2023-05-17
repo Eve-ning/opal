@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 from pathlib import Path
 
@@ -23,7 +25,6 @@ class DB:
             sr_bounds: tuple[float, float] = (2.5, 15),
             keys: tuple[int] = (4, 7),
             visual_complexity_limit: float = 0.05,
-            regen_tables: bool = False,
     ):
         """ Initializes a database instance to interact with MySQL
 
@@ -34,21 +35,15 @@ class DB:
             accuracy_bounds: The lower and upper bound of accuracies to include
             sr_bounds: The lower and upper bound of star ratings to include
             visual_complexity_limit: The upper limit of visual complexity. Ranges [0, 1)
-            regen_tables: Whether to regenerate the auxiliary opal MySQL tables.
-                Will automatically be set to true if they don't exist.
         """
 
         self.visual_complexity_limit = visual_complexity_limit
 
-        # Check if last table is generated
-        if self.get_table("opal_beatmaps_visual_complexity") is None:
-            regen_tables = True
+        con = self.mysql_engine.connect()
+        pbar = tqdm(total=0, desc="Initializating Temporary Tables...")
 
-        if regen_tables:
-            con = self.mysql_engine.connect()
-            pbar = tqdm(total=6, desc="Initializating Temporary Tables...")
-
-            pbar.update()
+        pbar.set_description("Checking opal_beatmaps")
+        if self.get_table("opal_beatmaps", 1) is None:
             con.execute(text("DROP TABLE IF EXISTS opal_beatmaps"))
             con.execute(text(f"""
                 CREATE TABLE
@@ -61,7 +56,8 @@ class DB:
                     );
             """))
 
-            pbar.update()
+        pbar.set_description("Checking opal_scores")
+        if self.get_table("opal_scores", 1) is None:
             con.execute(text("DROP TABLE IF EXISTS opal_scores"))
             con.execute(text(f"""
                 CREATE TABLE
@@ -75,7 +71,8 @@ class DB:
                             WHERE (s.accuracy_320 BETWEEN {accuracy_bounds[0]} AND {accuracy_bounds[1]}));
             """))
 
-            pbar.update()
+        pbar.set_description("Checking opal_beatmap_scores")
+        if self.get_table("opal_beatmap_scores", 1) is None:
             con.execute(text("DROP TABLE IF EXISTS opal_beatmap_scores"))
             con.execute(text("""
                 CREATE TABLE opal_beatmap_scores (
@@ -97,7 +94,8 @@ class DB:
                   FROM opal_beatmaps b JOIN opal_scores s USING (mid);
             """))
 
-            pbar.update()
+        pbar.set_description("Checking opal_active_mid")
+        if self.get_table("opal_active_mid", 1) is None:
             con.execute(text("DROP TABLE IF EXISTS opal_active_mid"))
             con.execute(text(f"""
                 CREATE TABLE opal_active_mid (
@@ -110,7 +108,8 @@ class DB:
                   HAVING COUNT(0) > {min_active_map};
             """))
 
-            pbar.update()
+        pbar.set_description("Checking opal_active_uid")
+        if self.get_table("opal_active_uid", 1) is None:
             con.execute(text("DROP TABLE IF EXISTS opal_active_uid"))
             con.execute(text(f"""
                 CREATE TABLE opal_active_uid (
@@ -123,11 +122,13 @@ class DB:
                   HAVING COUNT(0) > {min_active_user};
             """))
 
-            pbar.update()
-            pbar.close()
+        pbar.set_description("Checking opal_beatmaps_visual_complexity")
+        if self.get_table("opal_beatmaps_visual_complexity", 1) is None:
             con.execute(text("DROP TABLE IF EXISTS opal_beatmaps_visual_complexity"))
             self.create_osu_beatmaps_visual_complexity(osu_files_path)
-            con.close()
+
+        con.close()
+
 
     def get_df_score(self) -> pd.DataFrame:
         """ Get Data Frame for Relevant Scores
@@ -227,13 +228,13 @@ class DB:
         con.close()
         return df
 
-    def get_table(self, table_name):
+    def get_table(self, table_name, limit: int | None = None):
         con = self.mysql_engine.connect()
         try:
-            sql_table = pd.read_sql_table(table_name, con=con)
-        except ValueError:
-            sql_table = None
-
-        con.close()
-
-        return sql_table
+            result = pd.read_sql_query(f"SELECT * FROM {table_name} {f'LIMIT {limit}' if limit else ''};",
+                                       con=con)
+            con.close()
+        except:
+            con.rollback()
+            result = None
+        return result
