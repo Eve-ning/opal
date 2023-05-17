@@ -31,7 +31,6 @@ class ScoreDataModule(pl.LightningDataModule):
 
     metric: str = 'accuracy'
 
-    regen_tables: bool = False
     limit_scores_read: int = None
 
     uid_le: LabelEncoder = field(default_factory=LabelEncoder, init=False)
@@ -51,7 +50,6 @@ class ScoreDataModule(pl.LightningDataModule):
             accuracy_bounds=self.accuracy_bounds,
             visual_complexity_limit=self.visual_complexity_limit,
             keys=self.keys,
-            regen_tables=self.regen_tables
         )
 
     def setup(self, stage: str = "") -> None:
