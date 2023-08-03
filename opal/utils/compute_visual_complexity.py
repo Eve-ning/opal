@@ -10,11 +10,9 @@ from reamber.osu import OsuMap
 from tqdm import tqdm
 
 client = docker.from_env()
-from sqlalchemy import create_engine
 
 
-
-def create_visual_complexity_table(osu_files_path: Path) -> pd.DataFrame:
+def compute_visual_complexity(osu_files_path: Path) -> pd.DataFrame:
     mids = pd.read_sql_table("opal_active_mid", con=con)['mid'].unique()
 
     # Create the DF we'll populate with vc_ix
