@@ -2,16 +2,14 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import docker
 import numpy as np
 import pandas as pd
 from reamber.algorithms.analysis import scroll_speed
 from reamber.osu import OsuMap
 from tqdm import tqdm
 
+from opal.conf.conf import get_current_files_dir
 from opal.utils.get_db_connection import get_db_connection
-
-client = docker.from_env()
 
 
 def osu_map_visual_complexity(m: OsuMap):
@@ -84,24 +82,11 @@ def compute_visual_complexity(mids: pd.Series, osu_files_path: Path) -> pd.DataF
         # Set the Visual Complexity to corresponding map
         df.loc[df['mid'] == mid, 'visual_complexity'] = vc
 
-    df = df.set_index('mid')
-
-    # # Send to sql
-    # df.to_sql(
-    #     name="opal_beatmaps_visual_complexity",
-    #     con=self.mysql_engine,
-    #     if_exists='replace',
-    # )
-    # con.close()
-    return df
+    return df.set_index('mid')
 
 
 if __name__ == '__main__':
-    con = get_db_connection()
-    mids = pd.read_sql_table("opal_active_mid", con=con)['mid'].unique()
-    # compute_visual_complexity(mids, osu_f)
-    # df.to_sql(
-    #     name="opal_beatmaps_visual_complexity",
-    #     con=self.mysql_engine,
-    #     if_exists='replace',
-    # )
+    con = get_db_connection("osu")
+    mids = pd.read_sql_table("opal_active_mid", con=con)['mid'][:10].unique()
+    df_vc = compute_visual_complexity(mids, get_current_files_dir())
+    df_vc.to_sql(name="opal_beatmaps_visual_complexity", con=con, if_exists='replace', )
