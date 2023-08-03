@@ -7,3 +7,4 @@ data/
 .run/
 __pycache__/
 dist/
+opal.files/*
