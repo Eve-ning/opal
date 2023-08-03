@@ -10,7 +10,7 @@ from sklearn.preprocessing import LabelEncoder, QuantileTransformer
 from torch.nn import MSELoss
 from torch.optim.lr_scheduler import ExponentialLR
 
-from opal.conf import MODEL_CKPT
+from opal.conf import LATEST_MODEL_CKPT
 
 
 class OpalNet(pl.LightningModule):
@@ -30,7 +30,7 @@ class OpalNet(pl.LightningModule):
         Returns:
             The loaded model
         """
-        net = OpalNet.load_from_checkpoint(MODEL_CKPT, map_location=map_location)
+        net = OpalNet.load_from_checkpoint(LATEST_MODEL_CKPT, map_location=map_location)
         if is_eval:
             net.eval()
         return net

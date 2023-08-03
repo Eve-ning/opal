@@ -1,3 +1,3 @@
-from opal.conf.conf import DATA_DIR, MODEL_CKPT
+from opal.conf.conf import LATEST_MODEL_CKPT
 
-__all__ = ['MODEL_CKPT', 'DATA_DIR']
+__all__ = ['LATEST_MODEL_CKPT']
