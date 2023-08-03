@@ -20,6 +20,16 @@ services:
     volumes:
       - ./opal.files:/osu.files
 
+  opal.compute_visual_complexity:
+    container_name: opal.compute_visual_complexity
+    image: opal.compute_visual_complexity
+    depends_on:
+      - osu.mysql
+    build:
+      context: .
+      dockerfile: ./compute_visual_complexity.Dockerfile
+    volumes:
+      - ./opal.files:/opal.files
 
 volumes:
   osu.mysql.vol:

@@ -5,8 +5,19 @@ PROJ_DIR="$(dirname "$(realpath "$0")")"
 cd "$PROJ_DIR" || exit 1
 
 docker compose \
-  --project-directory ../ \
+  --project-directory ./ \
   --profile files \
   -f ./docker-compose.yml \
   --env-file ./.env \
-  up
+  up --wait --build
+
+./create_opal_tables.sh
+
+read -rp "Press enter to stop containers"
+
+docker compose \
+  --project-directory ./ \
+  --profile files \
+  -f ./docker-compose.yml \
+  --env-file ./.env \
+  stop

@@ -1,15 +1,15 @@
 from __future__ import annotations
 
+from datetime import datetime
 from pathlib import Path
+from urllib.parse import quote_plus
 
 import numpy as np
 import pandas as pd
 from reamber.algorithms.analysis import scroll_speed
 from reamber.osu import OsuMap
+from sqlalchemy import create_engine
 from tqdm import tqdm
-
-from opal.conf.conf import get_current_files_dir
-from opal.utils.get_db_connection import get_db_connection
 
 
 def osu_map_visual_complexity(m: OsuMap):
@@ -65,7 +65,7 @@ def compute_visual_complexity(mids: pd.Series, osu_files_path: Path) -> pd.DataF
         osu_files_path: Path to the *.osu files.
 
     Returns:
-        A pd.DataFrame of
+        A pd.DataFrame of index 'mid' and column 'visual_complexity'.
     """
 
     # Create the DF we'll populate with vc_ix
@@ -86,7 +86,17 @@ def compute_visual_complexity(mids: pd.Series, osu_files_path: Path) -> pd.DataF
 
 
 if __name__ == '__main__':
-    con = get_db_connection("osu")
-    mids = pd.read_sql_table("opal_active_mid", con=con)['mid'][:10].unique()
-    df_vc = compute_visual_complexity(mids, get_current_files_dir())
+    db_name: str = "osu"
+    user_name: str = "root"
+    password: str = "p@ssw0rd1"
+    host: str = "opal.mysql"
+    port: int = 3307
+    quoted_password = quote_plus(password)
+    engine = create_engine(f'mysql+mysqlconnector://{user_name}:{quoted_password}@{host}:{port}/{db_name}')
+
+    con = engine.connect()
+    mids = pd.read_sql_table("opal_active_mid", con=con)['mid'].unique()
+    files_dir = Path("/opal.files") / f"{datetime.now().strftime('%Y_%m')}_01_osu_files/"
+
+    df_vc = compute_visual_complexity(mids, files_dir)
     df_vc.to_sql(name="opal_beatmaps_visual_complexity", con=con, if_exists='replace', )
