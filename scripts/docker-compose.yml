@@ -1,0 +1,27 @@
+version: "2.19.1"
+services:
+  osu.mysql.dl:
+    container_name: opal.mysql.dl
+    extends:
+      file: osu-data-docker/docker-compose.yml
+      service: osu.mysql.dl
+
+  osu.mysql:
+    container_name: opal.mysql
+    extends:
+      file: osu-data-docker/docker-compose.yml
+      service: osu.mysql
+
+  osu.files:
+    container_name: opal.files
+    extends:
+      file: osu-data-docker/docker-compose.yml
+      service: osu.files
+    volumes:
+      - ./opal.files:/osu.files
+
+
+volumes:
+  osu.mysql.vol:
+  osu.mysql.dl.vol:
+  osu.files.vol:
