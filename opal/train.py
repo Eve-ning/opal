@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytorch_lightning as pl
 import torch
-from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping, ModelCheckpoint, StochasticWeightAveraging
+from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping, ModelCheckpoint
 
 from opal.datamodule import ScoreDataModule
 from opal.module import OpalNet
@@ -33,7 +33,6 @@ def train(version: str):
         default_root_dir=version,
 
         callbacks=[
-            # StochasticWeightAveraging(swa_lrs=1e-2),
             EarlyStopping(
                 monitor="val_loss",
                 patience=3,
