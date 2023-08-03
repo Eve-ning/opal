@@ -3,10 +3,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
-from reamber.algorithms.analysis import scroll_speed
-from reamber.osu import OsuMap
 from sqlalchemy import create_engine, text
 from tqdm import tqdm
 
@@ -129,7 +126,6 @@ class DB:
 
         con.close()
 
-
     def get_df_score(self) -> pd.DataFrame:
         """ Get Data Frame for Relevant Scores
 
@@ -144,89 +140,11 @@ class DB:
             - vc_ix: Visual Complexity
         """
         con = self.mysql_engine.connect()
-        df_beatmap_scores = pd.read_sql_table("opal_beatmap_scores", con=con)
-        df_active_mid = pd.read_sql_table("opal_active_mid", con=con)
-        df_active_uid = pd.read_sql_table("opal_active_uid", con=con)
+        df = pd.read_sql_table("opal_active_scores", con=con)
         df_vc = pd.read_sql_table("opal_beatmaps_visual_complexity", con=con)
         df_vc = df_vc.loc[df_vc['visual_complexity'] < self.visual_complexity_limit]
 
-        return (
-            df_beatmap_scores
-            .merge(df_active_mid, on=['mid', 'speed'])
-            .merge(df_active_uid, on=['uid', 'year'])
-            .merge(df_vc, on=['mid'])
-        )
-
-    def create_osu_beatmaps_visual_complexity(
-            self,
-            osu_files_path: Path,
-    ) -> pd.DataFrame:
-        """ Creates the Visual Complexity SQL Table within MySQL
-
-        Args:
-            osu_files_path: Path to the osu files directory.
-
-        Returns:
-            The beatmap visual complexity table.
-        """
-
-        # Pull the beatmap ids we're interested in
-        con = self.mysql_engine.connect()
-        mids = pd.read_sql_table("opal_active_mid", con=con)['mid'].unique()
-
-        # Create the DF we'll populate with vc_ix
-        df = pd.DataFrame(dict(mid=mids))
-
-        def visual_complexity(x):
-            # Visual Complexity Equation
-            # Below 1.0, we use a simple x^2
-            # Above 1.0, we do a sigmoid easing from 1 to 3
-            # Otherwise, we set to 1.0
-            return np.piecewise(
-                x,
-                [
-                    (0 <= x) * (x < 1),
-                    (1 <= x) * (x < 3)
-                ],
-                [
-                    lambda x: (x - 1) ** 2,  # x^2 0 to 1
-                    lambda x: np.sin((x - 2) * np.pi * 0.5) / 2 + 0.5,  # Sigmoid Easing 1 to 3
-                    1  # Otherwise
-                ]
-            )
-
-        def osu_visual_complexity(osu):
-            speed = scroll_speed(osu)
-            offsets = speed.index
-
-            return np.sum(
-                # Evaluate the integral visual complexity w.r.t. time
-                (visual_complexity(speed.to_numpy()[:-1]) * np.diff(offsets)) /
-                # Take the proportional visual complexity
-                (offsets.max() - offsets.min())
-            )
-
-        for mid in tqdm(mids, desc="Evaluating Visual Complexity of Maps..."):
-            # Get our osu map
-            osu_path = osu_files_path / f"{mid}.osu"
-            osu = OsuMap.read_file(osu_path)
-
-            # Get visual_complexity
-            vc = osu_visual_complexity(osu)
-
-            # Set the Visual Complexity to corresponding map
-            df.loc[df['mid'] == mid, 'visual_complexity'] = vc
-
-        df = df.set_index('mid')
-
-        # Send to sql
-        df.to_sql(
-            name="opal_beatmaps_visual_complexity",
-            con=self.mysql_engine,
-            if_exists='replace',
-        )
-        con.close()
-        return df
+        return df.merge(df_vc, on=['mid'])
 
     def get_table(self, table_name, limit: int | None = None):
         con = self.mysql_engine.connect()
