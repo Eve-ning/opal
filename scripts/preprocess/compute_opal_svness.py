@@ -12,11 +12,11 @@ from sqlalchemy import create_engine
 from tqdm import tqdm
 
 
-def osu_map_visual_complexity(m: OsuMap):
-    """ Evaluate the visual complexity of a map via integral over the map's visual complexity """
+def compute_map_svness(m: OsuMap):
+    """ Evaluate the 'SV'-ness of a map via integral over the map's deviation from 1.0 """
 
-    def visual_complexity(speed: np.ndarray):
-        """ Evaluates the VC for the current speed.
+    def compute_speed_svness(speed: np.ndarray):
+        """ Evaluates the deviation for the current speed.
 
         Notes:
             The VC for   1 = 0
@@ -50,15 +50,15 @@ def osu_map_visual_complexity(m: OsuMap):
     offsets = speed.index
 
     return np.sum(
-        # Evaluate the integral visual complexity w.r.t. time
-        (visual_complexity(speed.to_numpy()[:-1]) * np.diff(offsets)) /
-        # Take the proportional visual complexity
+        # Evaluate the integral svness w.r.t. time
+        (compute_speed_svness(speed.to_numpy()[:-1]) * np.diff(offsets)) /
+        # Take the proportional svness
         (offsets.max() - offsets.min())
     )
 
 
-def compute_visual_complexity(mids: pd.Series, osu_files_path: Path) -> pd.DataFrame:
-    """ Given mids & path to the *.osu files, compute visual complexity of all maps and return as a DataFrame.
+def compute_maps_svness(mids: pd.Series, osu_files_path: Path) -> pd.DataFrame:
+    """ Given mids & path to the *.osu files, compute svness of all maps and return as a DataFrame.
 
     Args:
         mids: pd.Series of the beatmap_ids to compute.
@@ -71,15 +71,15 @@ def compute_visual_complexity(mids: pd.Series, osu_files_path: Path) -> pd.DataF
     # Create the DF we'll populate with vc_ix
     df = pd.DataFrame(dict(mid=mids))
 
-    for mid in tqdm(mids, desc="Evaluating Visual Complexity of Maps..."):
+    for mid in tqdm(mids, desc="Evaluating SV-ness of Maps..."):
         # Get our osu map
         osu_path = osu_files_path / f"{mid}.osu"
         osu = OsuMap.read_file(osu_path)
 
         # Get visual_complexity
-        vc = osu_map_visual_complexity(osu)
+        vc = compute_map_svness(osu)
 
-        # Set the Visual Complexity to corresponding map
+        # Set the svness to corresponding map
         df.loc[df['mid'] == mid, 'visual_complexity'] = vc
 
     return df.set_index('mid')
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     db_name: str = "osu"
     user_name: str = "root"
     password: str = "p@ssw0rd1"
-    host: str = "opal.mysql"
+    host: str = "osu.mysql"
     port: int = 3307
     quoted_password = quote_plus(password)
     engine = create_engine(f'mysql+mysqlconnector://{user_name}:{quoted_password}@{host}:{port}/{db_name}')
@@ -98,5 +98,5 @@ if __name__ == '__main__':
     mids = pd.read_sql_table("opal_active_mid", con=con)['mid'].unique()
     files_dir = Path("/var/lib/osu/osu.files") / f"{datetime.now().strftime('%Y_%m')}_01_osu_files/"
 
-    df_vc = compute_visual_complexity(mids, files_dir)
-    df_vc.to_sql(name="opal_beatmaps_visual_complexity", con=con, if_exists='replace', )
+    df_vc = compute_maps_svness(mids, files_dir)
+    df_vc.to_sql(name="opal_active_mid_svness", con=con, if_exists='replace', )
