@@ -96,7 +96,7 @@ if __name__ == '__main__':
 
     con = engine.connect()
     mids = pd.read_sql_table("opal_active_mid", con=con)['mid'].unique()
-    files_dir = Path("/opal.files") / f"{datetime.now().strftime('%Y_%m')}_01_osu_files/"
+    files_dir = Path("/tmp/osu.view") / f"{datetime.now().strftime('%Y_%m')}_01_osu_files/"
 
     df_vc = compute_visual_complexity(mids, files_dir)
     df_vc.to_sql(name="opal_beatmaps_visual_complexity", con=con, if_exists='replace', )
