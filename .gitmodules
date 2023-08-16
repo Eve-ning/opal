@@ -1,3 +1,3 @@
 [submodule "osu-data-docker"]
-	path = osu-data-docker
+	path = scripts/preprocess/osu-data-docker
 	url = https://github.com/Eve-ning/osu-data-docker
