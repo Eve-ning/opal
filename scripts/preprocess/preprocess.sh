@@ -27,5 +27,37 @@ compute_visual_complexity() {
   docker run --rm compute_visual_complexity
 }
 
+cd_to_script() {
+  # We allow this script to be run from any location, we just force it to cd here before executing the rest.
+  PROJ_DIR="$(dirname "$(realpath "$0")")"
+  cd "$PROJ_DIR" || exit 1
+}
+
+docker_compose_up() {
+  # We have to run compose WITHIN the submod, so it can detect dependent sh files.
+  cd osu-data-docker/ || exit 1
+  docker compose \
+    --profile files \
+    -f docker-compose.yml \
+    --env-file .env \
+    --env-file ../osu-data-docker.env \
+    up --wait --build
+  cd .. || exit 1
+}
+
+docker_compose_down() {
+  cd osu-data-docker/ || exit 1
+  docker compose \
+    --profile files \
+    -f docker-compose.yml \
+    --env-file .env \
+    --env-file ../osu-data-docker.env \
+    stop
+  cd .. || exit 1
+}
+
+cd_to_script
+docker_compose_up
 create_opal_tables
 compute_visual_complexity
+docker_compose_down
