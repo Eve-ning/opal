@@ -20,9 +20,26 @@ compute_opal_tables() {
   fi
 }
 
-compute_visual_complexity() {
-  docker build -t compute_visual_complexity -f ./compute_visual_complexity.Dockerfile .
-  docker run --rm compute_visual_complexity
+compute_opal_svness() {
+
+  # Check if svness is calculated already
+  docker exec osu.mysql mysql -u root -pp@ssw0rd1 -D osu -h localhost --port=3307 \
+    -e "SELECT * FROM opal_active_mid_svness LIMIT 3;" >>/dev/null 2>&1
+
+  # If not then we create it
+  if [ $? -eq 1 ]; then
+
+    # We define a network between the osu.mysql and our svness calc
+    if [ -z "$(docker network ls -f name=mysql-net -q)" ]; then
+      docker network create mysql-net
+      docker network connect mysql-net osu.mysql
+    fi
+    docker build -t compute_opal_svness -f ./compute_opal_svness.Dockerfile .
+    docker run --network mysql-net --mount type=bind,source="/var/lib/osu/",target="/var/lib/osu/" \
+      compute_opal_svness
+  else
+    echo -e "\e[33mopal_active_mid_svness is present, skip computing svness\e[0m"
+  fi
 }
 
 cd_to_script() {
