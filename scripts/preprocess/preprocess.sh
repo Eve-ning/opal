@@ -1,9 +1,8 @@
 #!/bin/bash
 
 create_opal_tables() {
-  # Check that opal.mysql is running
-  if ! docker ps | grep -q opal.mysql; then
-    echo -e "\e[31mopal.mysql is not running, please run it first\e[0m"
+  if ! docker ps | grep -q osu.mysql; then
+    echo -e "\e[osu.mysql is not running, please run it first\e[0m"
     exit 1
   fi
 
