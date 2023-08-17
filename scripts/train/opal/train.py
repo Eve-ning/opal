@@ -4,7 +4,7 @@ import pytorch_lightning as pl
 import torch
 from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping, ModelCheckpoint
 
-from opal.datamodule import ScoreDataModule
+from opal.score_datamodule import ScoreDataModule
 from opal.module import OpalNet
 
 
@@ -12,7 +12,6 @@ def train(version: str):
     dm = ScoreDataModule(
         osu_files_path=Path(r"D:\osu!db\2023_05_01_osu_files\2023_05_01_osu_files\\"),
         batch_size=2 ** 9,
-        accuracy_bounds=(0.85, 1.0),
     )
 
     epochs = 50

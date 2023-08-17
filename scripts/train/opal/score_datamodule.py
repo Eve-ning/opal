@@ -10,7 +10,7 @@ from sklearn.base import TransformerMixin
 from sklearn.preprocessing import LabelEncoder, QuantileTransformer
 from torch.utils.data import DataLoader, TensorDataset, random_split
 
-from opal.conf.conf import DATASET_DIR
+from opal.conf import DATASET_DIR
 
 
 @dataclass

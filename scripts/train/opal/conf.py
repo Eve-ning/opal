@@ -1,4 +1,3 @@
-from datetime import datetime
 from pathlib import Path
 
 # PROJ_DIR is opal/, PKG_DIR is opal/opal/
