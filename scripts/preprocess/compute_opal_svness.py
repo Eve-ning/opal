@@ -80,7 +80,7 @@ def compute_maps_svness(mids: pd.Series, osu_files_path: Path) -> pd.DataFrame:
         vc = compute_map_svness(osu)
 
         # Set the svness to corresponding map
-        df.loc[df['mid'] == mid, 'visual_complexity'] = vc
+        df.loc[df['mid'] == mid, 'svness'] = vc
 
     return df.set_index('mid')
 
