@@ -8,3 +8,5 @@ data/
 __pycache__/
 dist/
 opal.files/*
+
+lightning_logs
