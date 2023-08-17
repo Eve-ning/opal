@@ -24,6 +24,11 @@ class ScoreDataModule(pl.LightningDataModule):
     uid_le: LabelEncoder = field(default_factory=LabelEncoder, init=False)
     mid_le: LabelEncoder = field(default_factory=LabelEncoder, init=False)
 
+    df: pd.DataFrame = field(init=False)
+    train_ds: TensorDataset = field(init=False)
+    test_ds: TensorDataset = field(init=False)
+    val_ds: TensorDataset = field(init=False)
+
     def __post_init__(self):
         super().__init__()
         assert sum(self.train_test_val) == 1, "Train Test Validation must sum to 1."
