@@ -1,0 +1,14 @@
+version: "2.19.1"
+services:
+  pytorch.lightning:
+    image: pytorch.lightning
+    stdin_open: true
+    container_name: pytorch.lightning
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../datasets:/var/lib/opal/datasets
+
+volumes:
+  osu.mysql.init.vol:
