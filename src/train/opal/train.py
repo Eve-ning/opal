@@ -10,7 +10,6 @@ from opal.module import OpalNet
 
 def train(version: str):
     dm = ScoreDataModule(
-        osu_files_path=Path(r"D:\osu!db\2023_05_01_osu_files\2023_05_01_osu_files\\"),
         batch_size=2 ** 9,
     )
 

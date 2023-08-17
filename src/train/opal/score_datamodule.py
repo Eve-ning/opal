@@ -15,7 +15,6 @@ from opal.conf import DATASET_DIR
 
 @dataclass
 class ScoreDataModule(pl.LightningDataModule):
-    osu_files_path: Path
     train_test_val: Sequence[float] = field(default_factory=lambda: (0.8, 0.1, 0.1))
     transformer: QuantileTransformer = QuantileTransformer(output_distribution='normal')
     batch_size: int = 32
