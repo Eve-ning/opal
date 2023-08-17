@@ -87,5 +87,5 @@ export EXPORT_CSV
 cd_to_script
 docker_compose_up
 compute_opal_tables
-export_opal_active_scores EXPORT_CSV
+export_opal_active_scores "$EXPORT_CSV"
 docker_compose_down
