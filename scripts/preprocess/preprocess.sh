@@ -77,6 +77,10 @@ docker_compose_down() {
   echo "Moving to out of osu-data-docker"
 }
 
+export DB_URL=https://data.ppy.sh/2023_08_01_performance_mania_top_1000.tar.bz2
+export FILES_URL=https://data.ppy.sh/2023_08_01_osu_files.tar.bz2
+EXPORT_CSV=../../datasets/"$(basename "$DB_URL" .tar.bz2)".csv
+export EXPORT_CSV
 cd_to_script
 docker_compose_up
 compute_opal_tables
