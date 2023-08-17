@@ -79,6 +79,6 @@ docker_compose_down() {
 
 cd_to_script
 docker_compose_up
-create_opal_tables
+compute_opal_tables
 compute_opal_svness
 docker_compose_down
