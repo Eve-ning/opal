@@ -35,7 +35,7 @@ compute_opal_svness() {
       docker network connect mysql-net osu.mysql
     fi
     docker build -t compute_opal_svness -f ./compute_opal_svness.Dockerfile .
-    docker run --network mysql-net --mount type=bind,source="/var/lib/osu/",target="/var/lib/osu/" \
+    docker run --rm --network mysql-net --mount type=bind,source="/var/lib/osu/",target="/var/lib/osu/" \
       compute_opal_svness
   else
     echo -e "\e[33mopal_active_mid_svness is present, skip computing svness\e[0m"
