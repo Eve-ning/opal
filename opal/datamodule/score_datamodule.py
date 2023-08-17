@@ -82,21 +82,6 @@ class ScoreDataModule(pl.LightningDataModule):
             **{metric: lambda x: transformer.fit_transform(x[[metric]].values)}
         )
 
-    @staticmethod
-    def get_ids(df: pd.DataFrame):
-        """ Prepares the ids used in Collaborative Filtering Model
-
-        Notes:
-            Creates uid = {user_id}/{year}
-                    mid = {beatmap_id}/{speed}
-            Label Encodes uid & mid.
-        """
-        df = df.assign(
-            uid=lambda x: x.uid.astype(str) + "/" + x.year.astype(str),
-            mid=lambda x: x.mid.astype(str) + "/" + x.speed.astype(str)
-        ).drop(['year', 'speed'], axis=1)
-        return df
-
     def encode_ids(self, df: pd.DataFrame):
         """ Label Encode the ids """
         return df.assign(
