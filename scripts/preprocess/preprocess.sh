@@ -71,6 +71,14 @@ docker_compose_down() {
   echo "Moving to out of osu-data-docker"
 }
 
+# Exports the opal_active_scores table to a csv file.
+export_opal_active_scores() {
+  docker exec -i osu.mysql mysql -u root --password=p@ssw0rd1 -D osu \
+    <./export_opal_active_scores.sql |
+    sed 's/\t/,/g' \
+      >"$1"
+}
+
 export DB_URL=https://data.ppy.sh/2023_08_01_performance_mania_top_1000.tar.bz2
 export FILES_URL=https://data.ppy.sh/2023_08_01_osu_files.tar.bz2
 EXPORT_CSV=../../datasets/"$(basename "$DB_URL" .tar.bz2)".csv
@@ -79,4 +87,5 @@ cd_to_script
 docker_compose_up
 compute_opal_tables
 compute_opal_svness
+export_opal_active_scores EXPORT_CSV
 docker_compose_down
