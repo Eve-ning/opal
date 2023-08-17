@@ -1,19 +1,15 @@
-from pathlib import Path
-
 import pytorch_lightning as pl
 import torch
 from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping, ModelCheckpoint
 
-from opal.score_datamodule import ScoreDataModule
 from opal.module import OpalNet
+from opal.score_datamodule import ScoreDataModule
 
 
-def train(version: str):
-    dm = ScoreDataModule(
-        batch_size=2 ** 9,
-    )
+def train():
+    dm = ScoreDataModule(batch_size=2 ** 5)
 
-    epochs = 50
+    epochs = 1
     net = OpalNet(
         uid_le=dm.uid_le,
         mid_le=dm.mid_le,
@@ -28,7 +24,7 @@ def train(version: str):
         deterministic=True,
         max_epochs=epochs,
         accelerator='gpu',
-        default_root_dir=version,
+        # fast_dev_run=True,
 
         callbacks=[
             EarlyStopping(
@@ -49,4 +45,4 @@ def train(version: str):
 
 if __name__ == '__main__':
     torch.set_float32_matmul_precision('high')
-    train("V3_2023_05")
+    train()
