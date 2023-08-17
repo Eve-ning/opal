@@ -2,15 +2,15 @@ import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Sequence
-from urllib.parse import quote_plus
 
 import pandas as pd
 import pytorch_lightning as pl
 import torch
 from sklearn.base import TransformerMixin
 from sklearn.preprocessing import LabelEncoder, QuantileTransformer
-from sqlalchemy import create_engine
 from torch.utils.data import DataLoader, TensorDataset, random_split
+
+from opal.conf.conf import DATASET_DIR
 
 
 @dataclass
@@ -19,7 +19,6 @@ class ScoreDataModule(pl.LightningDataModule):
     train_test_val: Sequence[float] = field(default_factory=lambda: (0.8, 0.1, 0.1))
     transformer: QuantileTransformer = QuantileTransformer(output_distribution='normal')
     batch_size: int = 32
-    visual_complexity_limit: float = 0.05
     metric: str = 'accuracy'
 
     uid_le: LabelEncoder = field(default_factory=LabelEncoder, init=False)
@@ -33,25 +32,7 @@ class ScoreDataModule(pl.LightningDataModule):
 
     def setup(self, stage: str = "") -> None:
         logging.info("Querying from DB")
-
-        db_name: str = "osu"
-        user_name: str = "root"
-        password: str = "p@ssw0rd1"
-        host: str = "opal.mysql"
-        port: int = 3307
-        quoted_password = quote_plus(password)
-        engine = create_engine(f'mysql+mysqlconnector://{user_name}:{quoted_password}@{host}:{port}/{db_name}')
-
-        con = engine.connect()
-        df = pd.read_sql_table("opal_active_scores", con=con)
-        df_vc = pd.read_sql_table("opal_beatmaps_visual_complexity", con=con)
-        df_vc = df_vc.loc[df_vc['visual_complexity'] < self.visual_complexity_limit]
-
-        df = df.merge(df_vc, on=['mid'])
-        df = self.db.get_df_score().drop('visual_complexity', axis=1, errors='ignore')
-
-        logging.info("Creating IDs")
-        df = self.get_ids(df)
+        df = pd.read_csv(DATASET_DIR / "2023_08_01_performance_mania_top_1000.csv")
 
         logging.info("Scaling Metrics")
         df = self.scale_metric(df, self.transformer, self.metric)
