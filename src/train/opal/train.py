@@ -23,9 +23,9 @@ def train():
     trainer = pl.Trainer(
         deterministic=True,
         max_epochs=epochs,
-        accelerator='gpu',
-        # fast_dev_run=True,
-
+        accelerator='cpu',
+        default_root_dir=ROOT_DIR,
+        log_every_n_steps=50,
         callbacks=[
             EarlyStopping(
                 monitor="val_loss",
