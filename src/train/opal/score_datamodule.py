@@ -62,9 +62,7 @@ class ScoreDataModule(pl.LightningDataModule):
                      transformer: TransformerMixin,
                      metric: str):
         """ Uses the scalers provided to scale the metric """
-        return df.assign(
-            **{metric: lambda x: transformer.fit_transform(x[[metric]].values)}
-        )
+        return df.assign(accuracy=transformer.fit_transform(df[['accuracy']].values))
 
     def encode_ids(self, df: pd.DataFrame):
         """ Label Encode the ids """
