@@ -18,6 +18,7 @@ class ScoreDataModule(pl.LightningDataModule):
     transformer: QuantileTransformer = QuantileTransformer(output_distribution='normal')
     batch_size: int = 32
     metric: str = 'accuracy'
+    dataset: str = "2023_08_01_performance_mania_top_1000.csv"
 
     uid_le: LabelEncoder = field(default_factory=LabelEncoder, init=False)
     mid_le: LabelEncoder = field(default_factory=LabelEncoder, init=False)

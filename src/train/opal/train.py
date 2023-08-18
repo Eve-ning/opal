@@ -8,7 +8,10 @@ from opal.score_datamodule import ScoreDataModule
 
 
 def train():
-    dm = ScoreDataModule(batch_size=2 ** 5)
+    dm = ScoreDataModule(
+        dataset="2023_08_01_performance_mania_top_10000",
+        batch_size=2 ** 5
+    )
 
     epochs = 1
     net = OpalNet(
