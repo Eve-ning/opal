@@ -39,7 +39,7 @@ compute_opal_tables() {
     fi
 
     echo -e "\e[33m(3/3) Computing 2nd opal table set\e[0m"
-    docker exec -i osu.mysql mysql -u root --password=p@ssw0rd1 -D osu <./compute_opal_tables_1.sql
+    docker exec -i osu.mysql mysql -u root --password=p@ssw0rd1 -D osu <./compute_opal_tables_2.sql
 
     echo -e "\e[33mopal tables created\e[0m"
   fi
