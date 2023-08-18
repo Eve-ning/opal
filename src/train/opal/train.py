@@ -31,7 +31,7 @@ def train():
         callbacks=[
             EarlyStopping(
                 monitor="val_loss",
-                patience=3,
+                patience=1,
                 verbose=True,
                 mode='min',
                 min_delta=0.0001,
