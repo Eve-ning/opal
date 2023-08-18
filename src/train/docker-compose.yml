@@ -9,6 +9,4 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ../datasets:/var/lib/opal/datasets
-
-volumes:
-  osu.mysql.init.vol:
+      - ../lightning_logs/:/var/lib/opal/lightning_logs
