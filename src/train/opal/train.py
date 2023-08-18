@@ -2,6 +2,7 @@ import pytorch_lightning as pl
 import torch
 from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping, ModelCheckpoint
 
+from opal.conf import ROOT_DIR
 from opal.module import OpalNet
 from opal.score_datamodule import ScoreDataModule
 
