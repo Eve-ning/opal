@@ -16,18 +16,27 @@ compute_opal_tables() {
     echo -e "\e[33mopal_active_scores is absent, creating opal tables (~10mins)\e[0m"
 
     echo -e "\e[33m(1/3) Computing 1st opal table set\e[0m"
-    docker exec -i osu.mysql mysql -u root --password=p@ssw0rd1 -D osu <./compute_opal_tables_1.sql
+    if ! docker exec osu.mysql mysql \
+      -u root --password=p@ssw0rd1 -D osu \
+      -e 'SELECT * FROM opal_beatmap_scores LIMIT 1;' >>/dev/null 2>&1; then
+      docker exec -i osu.mysql mysql -u root --password=p@ssw0rd1 -D osu <./compute_opal_tables_1.sql
+    fi
 
     # We define a network between the osu.mysql and our svness calc
     if [ -z "$(docker network ls -f name=mysql-net -q)" ]; then
       echo -e "\e[33mmysql-net not found, creating mysql-net\e[0m"
       docker network create mysql-net
-      docker network connect mysql-net osu.mysql
     fi
+
+    docker network connect mysql-net osu.mysql >> /dev/null 2>&1
     echo -e "\e[33(2/3) Computing SV-ness\e[0m"
-    docker build -t compute_opal_svness -f ./compute_opal_svness.Dockerfile .
-    docker run --rm --network mysql-net --mount type=bind,source="/var/lib/osu/",target="/var/lib/osu/" \
-      compute_opal_svness
+    if ! docker exec osu.mysql mysql \
+      -u root --password=p@ssw0rd1 -D osu \
+      -e 'SELECT * FROM opal_active_mid_svness LIMIT 1;' >>/dev/null 2>&1; then
+      docker build -t compute_opal_svness -f ./compute_opal_svness.Dockerfile .
+      docker run --rm --network mysql-net --mount type=bind,source="/var/lib/osu/",target="/var/lib/osu/" \
+        compute_opal_svness
+    fi
 
     echo -e "\e[33m(3/3) Computing 2nd opal table set\e[0m"
     docker exec -i osu.mysql mysql -u root --password=p@ssw0rd1 -D osu <./compute_opal_tables_1.sql
