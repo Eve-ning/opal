@@ -41,8 +41,6 @@ class OpalNet(pl.LightningModule):
             mid_le: LabelEncoder,
             transformer: QuantileTransformer,
             emb_dim: int,
-            mf_repeats: int,
-            mlp_range: List[int],
             lr: float = 0.005,
             lr_gamma: float = 0.25
     ):
@@ -63,9 +61,7 @@ class OpalNet(pl.LightningModule):
         self.model = OpalNetModule(
             n_uid=len(uid_le.classes_),
             n_mid=len(mid_le.classes_),
-            mf_repeats=mf_repeats,
             emb_dim=emb_dim,
-            mlp_range=mlp_range
         )
         self.loss = MSELoss()
         self.lr = lr

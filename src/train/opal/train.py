@@ -15,9 +15,7 @@ def train():
         uid_le=dm.uid_le,
         mid_le=dm.mid_le,
         transformer=dm.transformer,
-        emb_dim=8,
-        mf_repeats=2,
-        mlp_range=[128, 64, 32, 8],
+        emb_dim=3,
         lr=1e-3,
     )
 
