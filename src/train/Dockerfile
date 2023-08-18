@@ -6,4 +6,4 @@ RUN pip3 install pytorch-lightning[extra] scikit-learn pandas
 COPY ./opal ./opal
 COPY ./entrypoint.sh /entrypoint.sh
 
-CMD ["python3", "-m", "opal.train"]
+CMD ["/bin/bash", "/entrypoint.sh"]
