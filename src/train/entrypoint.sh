@@ -4,4 +4,4 @@
 python3 -m opal.train
 
 # Run Tensorboard to view the results
-python3 -m tensorboard.main --logdir=./lightning_logs --bind_all
+tensorboard --logdir=/var/lib/opal/lightning_logs --bind_all
