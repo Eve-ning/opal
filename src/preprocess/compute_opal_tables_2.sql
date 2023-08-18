@@ -4,12 +4,11 @@ DROP TABLE IF EXISTS opal_active_mid_svness_low;
 CREATE TABLE opal_active_mid_svness_low
 (
     mid    INT,
-    svness FLOAT,
-    INDEX mid (mid)
+    speed  FLOAT,
+    INDEX mid (mid, speed)
 )
 SELECT oams.mid AS mid,
-       speed    AS speed,
-       svness   AS svness
+       speed    AS speed
 FROM opal_active_mid_svness oams
          JOIN osu.opal_active_mid oam ON oams.mid = oam.mid
 WHERE oams.svness < @max_svenss;
