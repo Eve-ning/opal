@@ -10,3 +10,5 @@ services:
     volumes:
       - ../datasets:/var/lib/opal/datasets
       - ../lightning_logs/:/var/lib/opal/lightning_logs
+    ports:
+      - 6006:6006 # Tensorboard Port
