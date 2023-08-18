@@ -21,5 +21,6 @@ CREATE TABLE opal_active_scores (SELECT DISTINCT s.sid,
                                                  s.accuracy,
                                                  s.year
                                  FROM opal_beatmap_scores s
-                                          JOIN opal_active_mid_svness_low oams ON s.mid = oams.mid
+                                          JOIN opal_active_mid_svness_low oams
+                                              ON s.mid = oams.mid AND s.speed = oams.speed
                                           JOIN opal_active_uid oau ON s.uid = oau.uid);
