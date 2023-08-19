@@ -4,10 +4,12 @@ services:
     image: pytorch.lightning
     stdin_open: true
     container_name: pytorch.lightning
+    working_dir: /app
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
+      - ../opal:/app/opal
       - ../datasets:/var/lib/opal/datasets
       - ../lightning_logs/:/var/lib/opal/lightning_logs
     ports:
