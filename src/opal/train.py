@@ -38,6 +38,7 @@ def train():
                 min_delta=0.0001,
                 divergence_threshold=1
             ),
+            StochasticWeightAveraging(1e-3),
             LearningRateMonitor(),
             ModelCheckpoint(monitor='val_loss', save_top_k=1, mode='min')
         ],
