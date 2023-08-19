@@ -73,16 +73,16 @@ class ScoreDataModule(pl.LightningDataModule):
         )
 
     def train_dataloader(self):
-        return DataLoader(self.train_ds, shuffle=True, batch_size=self.batch_size, num_workers=4)
+        return DataLoader(self.train_ds, shuffle=True, batch_size=self.batch_size)
 
     def test_dataloader(self):
-        return DataLoader(self.test_ds, shuffle=False, batch_size=self.batch_size, num_workers=4)
+        return DataLoader(self.test_ds, shuffle=False, batch_size=self.batch_size)
 
     def val_dataloader(self):
-        return DataLoader(self.val_ds, shuffle=False, batch_size=self.batch_size, num_workers=4)
+        return DataLoader(self.val_ds, shuffle=False, batch_size=self.batch_size)
 
     def predict_dataloader(self):
-        return DataLoader(self.val_ds, shuffle=False, batch_size=self.batch_size, num_workers=4)
+        return DataLoader(self.val_ds, shuffle=False, batch_size=self.batch_size)
 
     @property
     def n_uid(self):
