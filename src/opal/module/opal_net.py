@@ -41,6 +41,7 @@ class OpalNet(pl.LightningModule):
             mid_le: LabelEncoder,
             transformer: QuantileTransformer,
             emb_dim: int,
+            mlp_range: list[int],
             lr: float = 0.005,
             lr_gamma: float = 0.25
     ):
@@ -62,6 +63,7 @@ class OpalNet(pl.LightningModule):
             n_uid=len(uid_le.classes_),
             n_mid=len(mid_le.classes_),
             emb_dim=emb_dim,
+            mlp_range=mlp_range
         )
         self.loss = MSELoss()
         self.lr = lr
@@ -80,10 +82,10 @@ class OpalNet(pl.LightningModule):
         return self.transformer.inverse_transform(val.detach().cpu().numpy())
 
     def uid_inverse_transform(self, val: torch.Tensor):
-        return self.uid_le.inverse_transform(val.detach().cpu().numpy())
+        return self.uid_le.inverse_transform(val.detach().cpu().numpy().squeeze())
 
     def mid_inverse_transform(self, val: torch.Tensor):
-        return self.mid_le.inverse_transform(val.detach().cpu().numpy())
+        return self.mid_le.inverse_transform(val.detach().cpu().numpy().squeeze())
 
     def training_step(self, batch, batch_idx):
         *_, y_pred, y_true, y_pred_real, y_true_real = self.step(batch)
