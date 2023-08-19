@@ -56,6 +56,7 @@ class ScoreDataModule(pl.LightningDataModule):
         n_test = int(len(df) * self.train_test_val[1])
         n_val = len(df) - (n_train + n_test)
 
+        torch.manual_seed(373)
         self.train_ds, self.test_ds, self.val_ds = random_split(ds, (n_train, n_test, n_val))
 
     @staticmethod
