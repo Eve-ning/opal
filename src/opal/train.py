@@ -19,10 +19,10 @@ def train(experiment_name: str, dataset: str = None):
     """
     if dataset is None:
         # This yields the most recent dataset by modified time
-        dataset = sorted(list(DATASET_DIR.glob("*.csv")), key=lambda x: x.stat().st_mtime_ns)[-1].stem
+        dataset = sorted(list(DATASET_DIR.glob("*.csv")), key=lambda x: x.stat().st_mtime_ns)[-1].name
 
     # The experiment artifacts will be saved to an experiment specific directory in the model directory
-    experiment_dir = MODEL_DIR / f"{experiment_name}_{dataset}"
+    experiment_dir = MODEL_DIR / experiment_name / dataset
     experiment_dir.mkdir(exist_ok=True, parents=True)
 
     dm = ScoreDataModule(dataset=dataset, batch_size=2 ** 10)
