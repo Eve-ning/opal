@@ -19,6 +19,7 @@ def train():
         mid_le=dm.mid_le,
         transformer=dm.transformer,
         emb_dim=16,
+        mlp_range=[1, ],
         lr=1e-3,
     )
 
