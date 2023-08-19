@@ -3,11 +3,12 @@
 
 **See below on how to load the model.**
 
-| Model      | R2     | MAE   | RMSE  | Error Distribution             |
-|------------|--------|-------|-------|--------------------------------|
-| V2_2023_01 | 81.48% | 1.18% | 1.71% | ![Error](V2_2023_01/error.png) |
-| V2_2023_04 | 71.88% | 1.14% | 1.68% | ![Error](V2_2023_04/error.png) |
-| V3_2023_05 | 73.76% | 1.09% | 1.62% | ![Error](V3_2023_05/error.png) |
+| Model      | R2     | MAE   | RMSE  | Error Distribution                                                                                                                |
+|------------|--------|-------|-------|-----------------------------------------------------------------------------------------------------------------------------------|
+| V2_2023_01 | 81.48% | 1.18% | 1.71% |                                                                                                                                   |
+| V2_2023_04 | 71.88% | 1.14% | 1.68% |                                                                                                                                   |
+| V3_2023_05 | 73.76% | 1.09% | 1.62% |                                                                                                                                   |
+| V4_2023_08 | 62.79% | 1.11% | 1.64% | ![error](V4/2023_08_01_performance_mania_top_10000_20230819163602.csv/lightning_logs/version_1/evaluation/error_distribution.png) |
 
 ## Limitations
 
@@ -54,3 +55,10 @@ V1 is the very first model deployed.
 
 - Remove maps with high presence of SVs.
 - Migrate datamodule to use MySQL database instead of csv.
+
+### V4
+
+- Fix issue with data leakage due to non-fixed split. (This tanks the accuracy significantly)
+- V4 is the first model to be trained on a new automated pipeline.
+- Substituted Matrix Factorization with a dot product of the user and map embeddings.
+- Merged Embedding Space for both MLP and MF.
