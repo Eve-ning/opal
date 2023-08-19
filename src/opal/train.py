@@ -9,16 +9,16 @@ from opal.score_datamodule import ScoreDataModule
 
 def train():
     dm = ScoreDataModule(
-        dataset="2023_08_01_performance_mania_top_10000",
+        dataset="2023_08_01_performance_mania_top_10000_20230818220650.csv",
         batch_size=2 ** 5
     )
 
-    epochs = 1
+    epochs = 3
     net = OpalNet(
         uid_le=dm.uid_le,
         mid_le=dm.mid_le,
         transformer=dm.transformer,
-        emb_dim=3,
+        emb_dim=16,
         lr=1e-3,
     )
 

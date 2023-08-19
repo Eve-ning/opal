@@ -1,6 +1,10 @@
 from pathlib import Path
+import platform
 
-ROOT_DIR = Path("/var/lib/opal/")
+if platform.system() == 'Windows':
+    ROOT_DIR = Path("../../")
+else:
+    ROOT_DIR = Path("/var/lib/opal/")
 DATASET_DIR = ROOT_DIR / "datasets"
 MODEL_DIR = ROOT_DIR / "models"
 

@@ -36,7 +36,7 @@ class ScoreDataModule(pl.LightningDataModule):
 
     def setup(self, stage: str = "") -> None:
         logging.info("Querying from DB")
-        df = pd.read_csv(DATASET_DIR / "2023_08_01_performance_mania_top_1000.csv")
+        df = pd.read_csv(DATASET_DIR / self.dataset)
 
         logging.info("Scaling Metrics")
         df = self.scale_metric(df, self.transformer, self.metric)
@@ -73,16 +73,16 @@ class ScoreDataModule(pl.LightningDataModule):
         )
 
     def train_dataloader(self):
-        return DataLoader(self.train_ds, shuffle=True, batch_size=self.batch_size)
+        return DataLoader(self.train_ds, shuffle=True, batch_size=self.batch_size, num_workers=4)
 
     def test_dataloader(self):
-        return DataLoader(self.test_ds, shuffle=False, batch_size=self.batch_size)
+        return DataLoader(self.test_ds, shuffle=False, batch_size=self.batch_size, num_workers=4)
 
     def val_dataloader(self):
-        return DataLoader(self.val_ds, shuffle=False, batch_size=self.batch_size)
+        return DataLoader(self.val_ds, shuffle=False, batch_size=self.batch_size, num_workers=4)
 
     def predict_dataloader(self):
-        return DataLoader(self.val_ds, shuffle=False, batch_size=self.batch_size)
+        return DataLoader(self.val_ds, shuffle=False, batch_size=self.batch_size, num_workers=4)
 
     @property
     def n_uid(self):
