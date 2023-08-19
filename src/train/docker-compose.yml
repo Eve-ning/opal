@@ -12,3 +12,4 @@ services:
       - ../lightning_logs/:/var/lib/opal/lightning_logs
     ports:
       - 6006:6006 # Tensorboard Port
+    entrypoint: python3 -m opal.train
