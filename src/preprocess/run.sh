@@ -8,19 +8,13 @@ compute_opal_tables() {
 
   # We'll check if opal_active_scores, the table to train opal, is present
   # If not, then we run the .sql to generate it, which takes a few minutes.
-  if docker exec osu.mysql mysql \
+  if ! docker exec osu.mysql mysql \
     -u root --password=p@ssw0rd1 -D osu \
     -e 'SELECT * FROM opal_active_scores LIMIT 1;' >>/dev/null 2>&1; then
-    echo -e "\e[33mopal_active_scores is present, skip creating opal tables\e[0m"
-  else
     echo -e "\e[33mopal_active_scores is absent, creating opal tables (~10mins)\e[0m"
 
     echo -e "\e[33m(1/3) Computing 1st opal table set\e[0m"
-    if ! docker exec osu.mysql mysql \
-      -u root --password=p@ssw0rd1 -D osu \
-      -e 'SELECT * FROM opal_beatmap_scores LIMIT 1;' >>/dev/null 2>&1; then
-      docker exec -i osu.mysql mysql -u root --password=p@ssw0rd1 -D osu <./compute_opal_tables_1.sql
-    fi
+    docker exec -i osu.mysql mysql -u root --password=p@ssw0rd1 -D osu <./compute_opal_tables_1.sql
 
     # We define a network between the osu.mysql and our svness calc
     if [ -z "$(docker network ls -f name=mysql-net -q)" ]; then
@@ -30,13 +24,9 @@ compute_opal_tables() {
 
     docker network connect mysql-net osu.mysql >> /dev/null 2>&1
     echo -e "\e[33(2/3) Computing SV-ness\e[0m"
-    if ! docker exec osu.mysql mysql \
-      -u root --password=p@ssw0rd1 -D osu \
-      -e 'SELECT * FROM opal_active_mid_svness LIMIT 1;' >>/dev/null 2>&1; then
-      docker build -t compute_opal_svness -f ./compute_opal_svness.Dockerfile .
-      docker run --rm --network mysql-net --mount type=bind,source="/var/lib/osu/",target="/var/lib/osu/" \
-        compute_opal_svness
-    fi
+    docker build -t compute_opal_svness -f ./compute_opal_svness.Dockerfile .
+    docker run --rm --network mysql-net --mount type=bind,source="/var/lib/osu/",target="/var/lib/osu/" \
+      compute_opal_svness
 
     echo -e "\e[33m(3/3) Computing 2nd opal table set\e[0m"
     docker exec -i osu.mysql mysql -u root --password=p@ssw0rd1 -D osu <./compute_opal_tables_2.sql
