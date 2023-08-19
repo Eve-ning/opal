@@ -11,7 +11,5 @@ services:
     volumes:
       - ../opal:/app/opal
       - ../datasets:/var/lib/opal/datasets
-      - ../lightning_logs/:/var/lib/opal/lightning_logs
-    ports:
-      - 6006:6006 # Tensorboard Port
+      - ../models/:/var/lib/opal/models
     entrypoint: python3 -m opal.train
