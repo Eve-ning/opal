@@ -78,7 +78,7 @@ export_opal_active_scores() {
       >"$1"
 }
 
-export DB_URL=https://data.ppy.sh/2023_08_01_performance_mania_top_1000.tar.bz2
+export DB_URL=https://data.ppy.sh/2023_08_01_performance_mania_top_10000.tar.bz2
 export FILES_URL=https://data.ppy.sh/2023_08_01_osu_files.tar.bz2
 EXPORT_CSV=../datasets/"$(basename "$DB_URL" .tar.bz2)"_$(date +"%Y%m%d%H%M%S").csv
 export EXPORT_CSV
