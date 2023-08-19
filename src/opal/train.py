@@ -1,6 +1,6 @@
 import pytorch_lightning as pl
 import torch
-from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping, ModelCheckpoint
+from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping, ModelCheckpoint, StochasticWeightAveraging
 
 from opal.conf import ROOT_DIR
 from opal.module import OpalNet
