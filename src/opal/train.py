@@ -2,18 +2,32 @@ import pytorch_lightning as pl
 import torch
 from pytorch_lightning.callbacks import LearningRateMonitor, EarlyStopping, ModelCheckpoint, StochasticWeightAveraging
 
-from opal.conf import ROOT_DIR
+from opal.conf import MODEL_DIR, DATASET_DIR
 from opal.module import OpalNet
 from opal.score_datamodule import ScoreDataModule
 
 
-def train():
-    dm = ScoreDataModule(
-        dataset="2023_08_01_performance_mania_top_10000_20230818220650.csv",
-        batch_size=2 ** 5
-    )
+def train(experiment_name: str, dataset: str = None):
+    """ Trains the OpalNet
 
-    epochs = 3
+    Args:
+        experiment_name: Experiment Name Tag. Can be a tag used before, this will append to the experiment.
+        dataset: Dataset to train on. If None, the most recent dataset is used.
+
+    Returns:
+
+    """
+    if dataset is None:
+        # This yields the most recent dataset by modified time
+        dataset = sorted(list(DATASET_DIR.glob("*.csv")), key=lambda x: x.stat().st_mtime_ns)[-1].stem
+
+    # The experiment artifacts will be saved to an experiment specific directory in the model directory
+    experiment_dir = MODEL_DIR / f"{experiment_name}_{dataset}"
+    experiment_dir.mkdir(exist_ok=True, parents=True)
+
+    dm = ScoreDataModule(dataset=dataset, batch_size=2 ** 10)
+
+    epochs = 25
     net = OpalNet(
         uid_le=dm.uid_le,
         mid_le=dm.mid_le,
@@ -27,7 +41,7 @@ def train():
         deterministic=True,
         max_epochs=epochs,
         accelerator='cpu',
-        default_root_dir=ROOT_DIR,
+        default_root_dir=experiment_dir,
         log_every_n_steps=50,
         callbacks=[
             EarlyStopping(
@@ -49,4 +63,4 @@ def train():
 
 if __name__ == '__main__':
     torch.set_float32_matmul_precision('high')
-    train()
+    train("V4")
