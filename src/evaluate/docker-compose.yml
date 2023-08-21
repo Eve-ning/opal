@@ -1,0 +1,15 @@
+version: "2.19.1"
+services:
+  pytorch.lightning.eval:
+    image: pytorch.lightning.evaluate
+    stdin_open: true
+    container_name: pytorch.lightning.evaluate
+    working_dir: /app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../opal:/app/opal
+      - ../datasets:/var/lib/opal/datasets
+      - ../models/:/var/lib/opal/models
+    entrypoint: python3 -m opal.evaluate
