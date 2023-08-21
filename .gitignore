@@ -7,7 +7,11 @@ data/
 .run/
 __pycache__/
 dist/
-opal.files/*
 
-lightning_logs
-*.csv
+src/datasets
+events.out.tfevents.*
+hparams.yaml
+*.ckpt
+!model.ckpt
+#*.csv
+#!src/models/**/*
