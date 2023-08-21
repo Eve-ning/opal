@@ -1,12 +1,13 @@
 import base64
 import json
+import os
+import sys
 from pathlib import Path
 
-import sys
 from google.cloud import firestore
 
 sys.path.append(Path(__file__).parents[1].as_posix())
-
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
 import altair as alt
 import numpy as np
 import pandas as pd
@@ -64,6 +65,20 @@ def predict(uid, mid):
 
 
 @st.cache_data
+def get_user_id(username: str):
+    url = f'https://osu.ppy.sh/api/get_user?k={osu_api_key}&u={username}&type=string'
+
+    response = requests.get(url)
+
+    try:
+        user_data = response.json()[0]
+        user_id = user_data['user_id']
+        return int(user_id)
+    except:
+        return
+
+
+@st.cache_data
 def get_username(user_id: int):
     url = f'https://osu.ppy.sh/api/get_user?k={osu_api_key}&u={user_id}'
 
@@ -99,10 +114,14 @@ YEARS_SEARCH = 10
 DEFAULT_USER_ID = "2193881"
 DEFAULT_MAP_ID = "767046"
 net = get_model()
+net = net.to('cpu')
 
 with st.sidebar:
     st.info("""
     **Judgements are out of 320, thus we underestimate.**\n\nSee FAQ (2) for more info 
+    """)
+    st.warning("""
+    :warning: If HT < NT or DT > NT, it's due to the modded plays not having enough samples.  
     """)
     st.header(":wave: Hey! [Try AlphaOsu!](https://alphaosu.keytoix.vip/)")
     st.caption("AlphaOsu is a pp recommender system with a website UI. ")
@@ -128,14 +147,18 @@ with st.container():
     left, right = st.columns(2)
     with left:
         st.button("Get Random Player", on_click=random_uid)
-        uid = st.text_input("User ID", key='uid', placeholder="2193881")
+        uid_username = st.text_input("User ID/Username", key='uid', placeholder="Evening")
     with right:
         st.button("Get Random Map", on_click=random_mid)
         mid = st.text_input("Map ID", key='mid', placeholder="767046")
 
     try:
-        uid = int(uid)
-        username = get_username(uid)
+        try:
+            uid = int(uid_username)
+            username = get_username(uid)
+        except ValueError:
+            username = uid_username
+            uid = get_user_id(username)
 
         mid = int(mid)
         map_metadata = get_beatmap_metadata(mid)
@@ -217,7 +240,6 @@ with st.container():
     )
 
     st.altair_chart(chart, use_container_width=True)
-
 
 st.caption(f"You can support me by adding a :star2: on the "
            f"<a href='https://github.com/Eve-ning/opal' style='text-decoration:none'>GitHub Page</a>. "
