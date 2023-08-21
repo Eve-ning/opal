@@ -11,7 +11,7 @@ import seaborn as sns
 from sklearn.metrics import r2_score
 from tqdm import tqdm
 
-from opal.conf import EXPERIMENT_DIR, MODEL_DIR
+from opal.conf import MODEL_DIR
 from opal.module import OpalNet
 from opal.score_datamodule import ScoreDataModule
 
