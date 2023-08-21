@@ -32,7 +32,7 @@ def train(experiment_name: str, dataset: str = None):
         uid_le=dm.uid_le,
         mid_le=dm.mid_le,
         transformer=dm.transformer,
-        emb_dim=16,
+        emb_dim=6,
         mlp_range=[1, ],
         lr=1e-3,
     )
