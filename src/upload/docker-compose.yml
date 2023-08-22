@@ -1,0 +1,13 @@
+version: "2.19.1"
+services:
+  poetry:
+    image: poetry
+    stdin_open: true
+    container_name: poetry
+    working_dir: /app/src
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../../:/app/
+    command: poetry build
