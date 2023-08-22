@@ -1,17 +1,15 @@
 [tool.poetry]
 name = "opal-net"
-version = "0.1.0"
+version = "2023.8.4"
 description = "osu!mania score prediction through AI collaborative filtering"
 authors = ["Evening"]
 license = "MIT"
 readme = "README.md"
-exclude = [
-    "opal/models/V2_2023_01", # Old Model
-    "opal/models/V2_2023_04", # Old Model
-    "**/*.ipynb",
-    "**/*.png"
+include = ["models/V4/*"]
+exclude = ["**/*.png"]
+packages = [
+    {include = "opal"},
 ]
-packages = [{include = "opal"}]
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.9.7 || >3.9.7,<4.0"
