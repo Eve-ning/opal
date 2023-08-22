@@ -9,7 +9,5 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ../opal:/app/opal
-      - ../datasets:/var/lib/opal/datasets
-      - ../models/:/var/lib/opal/models
+      - ../:/app/
     entrypoint: python3 -m opal.evaluate
