@@ -4,10 +4,10 @@ services:
     image: poetry
     stdin_open: true
     container_name: poetry
-    working_dir: /app/src
+    working_dir: /app
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ../../:/app/
-    command: poetry build
+      - ../:/app/
+    entrypoint: /entrypoint.sh
