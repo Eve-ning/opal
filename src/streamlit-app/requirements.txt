@@ -1,2 +1,2 @@
-opal-net=2023.8.4a0
+opal-net==2023.8.4a0
 google-cloud-firestore
