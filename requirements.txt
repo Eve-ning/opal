@@ -1,4 +1,0 @@
-scikit-learn
-pandas
-pytorch-lightning
-google-cloud-firestore

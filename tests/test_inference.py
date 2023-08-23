@@ -19,5 +19,5 @@ def test_inference_list(opal):
 
 def test_missing_inference(opal):
     with pytest.raises(ValueError):
-        opal.predict("2193881/2018", "767046/0")
+        opal.predict("2193881/2010", "767046/0")
 
