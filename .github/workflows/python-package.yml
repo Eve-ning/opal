@@ -42,8 +42,9 @@ jobs:
         run: |
           pytest tests/
 
-      - name: Upload dist to debug
+      - name: Upload dist to debug always
         uses: actions/upload-artifact@v2
+        if: always()
         with:
           name: dist
           path: src/dist/
