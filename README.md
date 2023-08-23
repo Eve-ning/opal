@@ -1,16 +1,13 @@
 # :arrow_forward: [**Try Out Opal on Streamlit**](https://opal-ai.streamlit.app/)
-![modelsize](https://img.shields.io/github/size/Eve-ning/opal/opal/models/V3_2023_05/model.ckpt)
+![modelsize](https://img.shields.io/github/size/Eve-ning/opal/src/opal/models/V4/2023_08_01_performance_mania_top_10000_20230819163602.csv/lightning_logs/version_1/evaluation/model.ckpt)
 ![version](https://img.shields.io/pypi/v/opal-net)
 ![pyversions](https://img.shields.io/pypi/pyversions/opal-net)
 [![https://img.shields.io/pypi/dm/opal-net](https://img.shields.io/pypi/dm/opal-net)](https://pypi.org/project/opal-net/)
 # :comet: opal-net
 opal is an accuracy-prediction model.
 
-It uses **Neural Collaborative Filtering** to learn associations between user and maps, then using those associations to
-predict new scores never before seen.
-
-**Performance Error Graph**
-![Performance Graph](opal/models/V3_2023_05/error.png)
+It uses a Matrix Factorization branch & Multi-layered Perceptron branch to learn associations between user and maps,
+then use those associations to predict new scores never before seen.
 
 ## :hourglass_flowing_sand: Project Status
 Currently, it's in its early access, that means, it'll have many problems!
@@ -39,6 +36,7 @@ pip install opal-net
 ```
 
 Then in a python script
+> Tip: GPU doesn't speed this up significantly, you can use a CPU.
 ```py
 from opal import OpalNet
 
