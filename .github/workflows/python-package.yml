@@ -40,15 +40,8 @@ jobs:
 
       - name: Remove local opal
         run: |
-          rm -rf src
+          rm -rf src/opal/
 
       - name: Test with pytest
         run: |
           pytest tests/
-
-      - name: Upload dist to debug always
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: dist
-          path: src/dist/
