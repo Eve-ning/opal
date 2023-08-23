@@ -1,0 +1,2 @@
+opal-net
+google-cloud-firestore
