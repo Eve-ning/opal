@@ -22,7 +22,7 @@ compute_opal_tables() {
       docker network create mysql-net
     fi
 
-    docker network connect mysql-net osu.mysql >> /dev/null 2>&1
+    docker network connect mysql-net osu.mysql >>/dev/null 2>&1
     echo -e "\e[33(2/3) Computing SV-ness\e[0m"
     docker build -t compute_opal_svness -f ./compute_opal_svness.Dockerfile .
     docker run --rm --network mysql-net --mount type=bind,source="/var/lib/osu/",target="/var/lib/osu/" \
@@ -78,13 +78,19 @@ export_opal_active_scores() {
       >"$1"
 }
 
-export DB_URL=https://data.ppy.sh/2023_08_01_performance_mania_top_10000.tar.bz2
-export FILES_URL=https://data.ppy.sh/2023_08_01_osu_files.tar.bz2
-EXPORT_CSV=../datasets/"$(basename "$DB_URL" .tar.bz2)"_$(date +"%Y%m%d%H%M%S").csv
-export EXPORT_CSV
+PIPELINE_RUN_CACHE="$1"
+echo "PIPELINE_RUN_CACHE=$PIPELINE_RUN_CACHE"
+source "$PIPELINE_RUN_CACHE"
+
+export DB_URL=https://data.ppy.sh/"${YYYY_MM}"_01_performance_mania_"${DATASET}".tar.bz2
+export FILES_URL=https://data.ppy.sh/"${YYYY_MM}"_01_osu_files.tar.bz2
+DATASET_NAME=$(basename "$DB_URL" .tar.bz2)_$(date +"%Y%m%d%H%M%S").csv
+DATASET_PATH=../datasets/$DATASET_NAME
+
+echo DATASET_NAME="$DATASET_NAME" >> "$PIPELINE_RUN_CACHE"
 
 cd_to_script
 docker_compose_up
 compute_opal_tables
-export_opal_active_scores "$EXPORT_CSV"
+export_opal_active_scores "$DATASET_PATH"
 docker_compose_down
