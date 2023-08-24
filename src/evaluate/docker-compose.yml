@@ -4,10 +4,10 @@ services:
     image: pytorch.lightning.evaluate
     stdin_open: true
     container_name: pytorch.lightning.evaluate
-    working_dir: /app
+    working_dir: /src
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ../:/app/
-    entrypoint: python3 -m opal.evaluate
+      - ../:/src/
+    entrypoint: /entrypoint.sh ${PIPELINE_RUN_CACHE}
