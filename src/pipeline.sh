@@ -26,13 +26,5 @@ source "$PIPELINE_RUN_CACHE"
 echo "Evaluating Model"
 PIPELINE_RUN_CACHE="$PIPELINE_RUN_CACHE" docker compose -f evaluate/docker-compose.yml up --build
 
-# Substitutes version = "..." with version = "$MODEL_NAME"
-sed -i "s|version = .*|version = \"$MODEL_NAME\"|" ./pyproject.toml
-grep -q "<VERSION>" pyproject.toml && echo "Version failed to substitute" && exit 1
-
-# Substitutes include = ["..."] with include = ["opal/$MODEL_NAME/*"]
-sed -i "s|include = \[.*\]|include = [\"opal/$MODEL_NAME/*\"]|" ./pyproject.toml
-grep -q "<MODEL_PATH>" pyproject.toml && echo "Model path failed to substitute" && exit 1
-
 echo "Publishing Model"
-docker compose -f build/docker-compose.yml up --build
+PIPELINE_RUN_CACHE="$PIPELINE_RUN_CACHE" docker compose -f build/docker-compose.yml up --build
