@@ -6,8 +6,8 @@ PIPELINE_RUN_CACHE=.pipeline_cache/"$(date +%s).env"
 mkdir -p "$(dirname "$PIPELINE_RUN_CACHE")"
 
 {
-  echo YYYY_MM="${YYYY_MM:="2023_08"}"
-  echo DATASET="${DATASET="top_1000"}"
+  echo DB_URL=https://data.ppy.sh/2023_08_01_performance_mania_top_1000.tar.bz2
+  echo FILES_URL=https://data.ppy.sh/2023_08_01_osu_files.tar.bz2
   echo MODEL_NAME="${MODEL_NAME="2023.8.4b"}"
 } >>"$PIPELINE_RUN_CACHE"
 

@@ -44,8 +44,6 @@ cd_to_script() {
 docker_compose_up() {
   # We have to run compose WITHIN the submod, so it can detect dependent sh files.
   cd osu-data-docker/ || exit 1
-  echo "Moving to osu-data-docker"
-  echo "Docker Compose Up"
   docker compose \
     --profile files \
     -f docker-compose.yml \
@@ -53,13 +51,10 @@ docker_compose_up() {
     --env-file ../osu-data-docker.env \
     up --wait --build
   cd .. || exit 1
-  echo "Moving to out of osu-data-docker"
 }
 
 docker_compose_down() {
   cd osu-data-docker/ || exit 1
-  echo "Moving to osu-data-docker"
-  echo "Docker Compose Stop"
   docker compose \
     --profile files \
     -f docker-compose.yml \
@@ -67,7 +62,6 @@ docker_compose_down() {
     --env-file ../osu-data-docker.env \
     stop
   cd .. || exit 1
-  echo "Moving to out of osu-data-docker"
 }
 
 # Exports the opal_active_scores table to a csv file.
@@ -82,8 +76,12 @@ PIPELINE_RUN_CACHE="$1"
 echo "PIPELINE_RUN_CACHE=$PIPELINE_RUN_CACHE"
 source "$PIPELINE_RUN_CACHE"
 
-export DB_URL=https://data.ppy.sh/"${YYYY_MM}"_01_performance_mania_"${DATASET}".tar.bz2
-export FILES_URL=https://data.ppy.sh/"${YYYY_MM}"_01_osu_files.tar.bz2
+# Ensure that the required variables are set
+[ -z "$DB_URL" ] && echo "DB_URL not set" && exit 1
+[ -z "$FILES_URL" ] && echo "FILES_URL not set" && exit 1
+
+export DB_URL FILES_URL
+
 DATASET_NAME=$(basename "$DB_URL" .tar.bz2)_$(date +"%Y%m%d%H%M%S").csv
 DATASET_PATH=../datasets/$DATASET_NAME
 
