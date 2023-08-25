@@ -7,10 +7,9 @@ SET @min_scores_per_uid := 50;
 
 DELIMITER //
 
+DROP PROCEDURE IF EXISTS `dropColumnIfExists`//
 CREATE PROCEDURE `dropColumnIfExists`(IN tableName VARCHAR(255), IN columnName VARCHAR(255))
 BEGIN
-  DECLARE errorMsg VARCHAR(200) DEFAULT '';
-
   SELECT COUNT(*) INTO @isExists
   FROM information_schema.columns
   WHERE table_name = tableName
@@ -23,13 +22,7 @@ BEGIN
     PREPARE stmt FROM @dsql;
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
-    SET errorMsg = CONCAT('Column "', columnName, '" dropped from table "', tableName, '"');
-  ELSE
-    SET errorMsg = CONCAT('Column "', columnName, '" does not exist in table "', tableName, '"');
   END IF;
-
-  SELECT errorMsg as Outcome;
-
 END //
 
 DELIMITER ;
