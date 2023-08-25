@@ -10,6 +10,13 @@ services:
         condition: service_healthy
       osu.files:
         condition: service_healthy
+    environment:
+      - SR_MIN=${SR_MIN}
+      - SR_MAX=${SR_MAX}
+      - ACC_MIN=${ACC_MIN}
+      - ACC_MAX=${ACC_MAX}
+      - MIN_SCORES_PER_MID=${MIN_SCORES_PER_MID}
+      - MIN_SCORES_PER_UID=${MIN_SCORES_PER_UID}
     working_dir: /src/preprocess
     volumes:
       - ../:/src/
@@ -35,6 +42,8 @@ services:
     depends_on:
       2.svness:
         condition: service_completed_successfully
+    environment:
+      - MAX_SVNESS=${MAX_SVNESS}
     working_dir: /src/preprocess
     volumes:
       - ../:/src/
@@ -49,4 +58,3 @@ services:
     volumes:
       - ../:/src/
     entrypoint: /src/preprocess/4_entrypoint.sh ${DATASET_NAME}
-
