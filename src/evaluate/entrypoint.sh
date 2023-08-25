@@ -10,4 +10,7 @@ PIPELINE_RUN_CACHE="$1"
 # Sources the run cache
 . $PIPELINE_RUN_CACHE
 
-python -m opal.evaluate --model_path "$MODEL_PATH" --dataset_name "$DATASET_NAME" || exit 1
+python -m opal.evaluate \
+--model_path "$MODEL_PATH" \
+--dataset_name "$DATASET_NAME" \
+|| exit 1
