@@ -6,16 +6,28 @@ PIPELINE_RUN_CACHE=.pipeline_cache/"$(date +%s).env"
 mkdir -p "$(dirname "$PIPELINE_RUN_CACHE")"
 
 {
-  echo DB_URL=https://data.ppy.sh/2023_08_01_performance_mania_top_1000.tar.bz2
-  echo FILES_URL=https://data.ppy.sh/2023_08_01_osu_files.tar.bz2
+  echo DB_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/sample.tar.bz2
+  echo FILES_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/sample_files.tar.bz2
   echo MODEL_NAME="${MODEL_NAME="2023.8.4b"}"
 } >>"$PIPELINE_RUN_CACHE"
+source "$PIPELINE_RUN_CACHE"
+
+DATASET_NAME=$(basename "$DB_URL" .tar.bz2)_$(date +"%Y%m%d%H%M%S").csv
+export DB_URL FILES_URL DATASET_NAME
 
 echo "Executing Preprocessing Step"
-./preprocess/run.sh "$PIPELINE_RUN_CACHE" || exit 1
+docker compose \
+--profile files \
+-f preprocess/docker-compose.yml \
+--env-file preprocess/osu-data-docker/.env \
+up --build
+
+exit 0
 
 source "$PIPELINE_RUN_CACHE"
 [ -z "$DATASET_NAME" ] && echo "DATASET_NAME not returned by preprocess" && exit 1
+
+exit 0
 
 echo "Training Model"
 PIPELINE_RUN_CACHE="$PIPELINE_RUN_CACHE" docker compose -f train/docker-compose.yml up --build

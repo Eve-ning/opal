@@ -1,0 +1,52 @@
+version: "2.20.2"
+include:
+  - osu-data-docker/docker-compose.yml
+
+services:
+  1.preprocess:
+    image: mysql
+    depends_on:
+      osu.mysql:
+        condition: service_healthy
+      osu.files:
+        condition: service_healthy
+    working_dir: /src/preprocess
+    volumes:
+      - ../:/src/
+    entrypoint: /src/preprocess/1_entrypoint.sh
+
+  2.svness:
+    image: python:3.9
+    depends_on:
+      1.preprocess:
+        condition: service_completed_successfully
+    build:
+      context: .
+      dockerfile: 2_svness.Dockerfile
+    working_dir: /src/preprocess
+    volumes:
+      - ../:/src/
+      - /var/lib/osu/osu.files/:/var/lib/osu/osu.files/
+    # We can possibly move this python file to the opal package
+    entrypoint: [ "python3", "-m", "2_svness" ]
+
+  3.preprocess:
+    image: mysql
+    depends_on:
+      2.svness:
+        condition: service_completed_successfully
+    working_dir: /src/preprocess
+    volumes:
+      - ../:/src/
+    entrypoint: /src/preprocess/3_entrypoint.sh
+
+  4.export:
+    image: mysql
+    depends_on:
+      3.preprocess:
+        condition: service_completed_successfully
+    working_dir: /src/preprocess/
+    volumes:
+      - ../:/src/
+    entrypoint: /src/preprocess/4_entrypoint.sh ${DATASET_NAME}
+
