@@ -16,6 +16,8 @@ DATASET_NAME=$(basename "$DB_URL" .tar.bz2)_$(date +"%Y%m%d%H%M%S").csv
 export DB_URL FILES_URL DATASET_NAME
 
 echo "Executing Preprocessing Step"
+export MIN_SCORES_PER_MID=0
+export MIN_SCORES_PER_UID=0
 docker compose \
 --profile files \
 -f preprocess/docker-compose.yml \
