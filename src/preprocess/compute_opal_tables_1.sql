@@ -5,6 +5,38 @@ SET @acc_max := 1.0;
 SET @min_scores_per_mid := 50;
 SET @min_scores_per_uid := 50;
 
+DELIMITER //
+
+CREATE PROCEDURE `dropColumnIfExists`(IN tableName VARCHAR(255), IN columnName VARCHAR(255))
+BEGIN
+  DECLARE errorMsg VARCHAR(200) DEFAULT '';
+
+  SELECT COUNT(*) INTO @isExists
+  FROM information_schema.columns
+  WHERE table_name = tableName
+  AND column_name = columnName
+
+  AND TABLE_SCHEMA = DATABASE();
+
+  IF @isExists > 0 THEN
+    SET @dsql = CONCAT('ALTER TABLE `', tableName, '` DROP `', columnName, '`');
+    PREPARE stmt FROM @dsql;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+    SET errorMsg = CONCAT('Column "', columnName, '" dropped from table "', tableName, '"');
+  ELSE
+    SET errorMsg = CONCAT('Column "', columnName, '" does not exist in table "', tableName, '"');
+  END IF;
+
+  SELECT errorMsg as Outcome;
+
+END //
+
+DELIMITER ;
+
+CALL dropColumnIfExists('osu_scores_mania_high', 'accuracy_320');
+CALL dropColumnIfExists('osu_scores_mania_high', 'speed');
+
 ALTER TABLE osu_scores_mania_high
     ADD COLUMN accuracy_320 FLOAT AS (
             (countgeki + count300 * 300 / 320 + countkatu * 200 / 320 + count100 * 100 / 320 + count50 * 50 / 320) /
@@ -80,9 +112,3 @@ SELECT uid, year
 FROM opal_beatmap_scores
 GROUP BY uid, year
 HAVING COUNT(0) > @min_scores_per_uid;
-
-# cleanup
-
-ALTER TABLE osu_scores_mania_high
-    DROP COLUMN accuracy_320,
-    DROP COLUMN speed;
