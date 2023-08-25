@@ -12,6 +12,5 @@ src/datasets
 events.out.tfevents.*
 hparams.yaml
 *.ckpt
+.pipeline_cache
 !model.ckpt
-#*.csv
-#!src/models/**/*
