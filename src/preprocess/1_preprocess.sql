@@ -1,9 +1,9 @@
-SET @sr_min := 2;
-SET @sr_max := 15;
-SET @acc_min := 0.85;
-SET @acc_max := 1.0;
-SET @min_scores_per_mid := 50;
-SET @min_scores_per_uid := 50;
+SET @sr_min := __SR_MIN__;
+SET @sr_max := __SR_MAX__;
+SET @acc_min := __ACC_MIN__;
+SET @acc_max := __ACC_MAX__;
+SET @min_scores_per_mid := __MIN_SCORES_PER_MID__;
+SET @min_scores_per_uid := __MIN_SCORES_PER_UID__;
 
 DELIMITER //
 
