@@ -116,7 +116,7 @@ def plot_error_distribution(y_preds: np.ndarray, y_trues: np.ndarray, save_path:
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog='train.py', description='Train OpalNet')
+    parser = argparse.ArgumentParser(prog='evaluate.py', description='Evaluate OpalNet Model')
     parser.add_argument('--model_path', type=str,
                         help='Path to the model checkpoint')
     parser.add_argument('--dataset_name', type=str,
