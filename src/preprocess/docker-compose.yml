@@ -27,6 +27,13 @@ services:
     depends_on:
       1.preprocess:
         condition: service_completed_successfully
+    environment:
+      - FILES_DIR=${FILES_DIR}
+      - DB_NAME=${DB_NAME}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
     build:
       context: .
       dockerfile: 2_svness.Dockerfile
