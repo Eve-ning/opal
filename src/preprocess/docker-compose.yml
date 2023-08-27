@@ -37,11 +37,10 @@ services:
     build:
       context: .
       dockerfile: 2_svness.Dockerfile
-    working_dir: /src/preprocess
+    working_dir: /src/opal/
     volumes:
       - ../:/src/
       - /var/lib/osu/osu.files/:/var/lib/osu/osu.files/
-    # We can possibly move this python file to the opal package
     entrypoint: /src/preprocess/2_entrypoint.sh
 
   3.preprocess:
@@ -61,7 +60,9 @@ services:
     depends_on:
       3.preprocess:
         condition: service_completed_successfully
+    environment:
+      - DATASET_NAME=${DATASET_NAME}
     working_dir: /src/preprocess/
     volumes:
       - ../:/src/
-    entrypoint: /src/preprocess/4_entrypoint.sh ${DATASET_NAME}
+    entrypoint: /src/preprocess/4_entrypoint.sh
