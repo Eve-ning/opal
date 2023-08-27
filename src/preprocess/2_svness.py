@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from datetime import datetime
+import argparse
+import sys
 from pathlib import Path
 from urllib.parse import quote_plus
 
@@ -86,17 +87,34 @@ def compute_maps_svness(mids: pd.Series, osu_files_path: Path) -> pd.DataFrame:
 
 
 if __name__ == '__main__':
-    db_name: str = "osu"
-    user_name: str = "root"
-    password: str = "p@ssw0rd1"
-    host: str = "osu.mysql"
-    port: int = 3307
-    quoted_password = quote_plus(password)
-    engine = create_engine(f'mysql+mysqlconnector://{user_name}:{quoted_password}@{host}:{port}/{db_name}')
+    parser = argparse.ArgumentParser(prog='2_svness.py', description='Evalaute SV-Ness of maps')
+    parser.add_argument('--files_path', type=str, help='Path to *.osu files')
+    parser.add_argument('--db_name', type=str, help='Database Name')
+    parser.add_argument('--db_username', type=str, help='Database User Name')
+    parser.add_argument('--db_password', type=str, help='Database Password')
+    parser.add_argument('--db_host', type=str, help='Database Host')
+    parser.add_argument('--db_port', type=str, help='Database Port')
+    args = parser.parse_args()
+
+    if not args.files_path:
+        parser.print_help()
+        sys.exit(1)
+
+    files_path: Path = Path(args.files_path)
+
+    db_name = args.db_name if args.db_name else "osu"
+    db_username = args.db_username if args.db_username else "root"
+    db_password = args.db_password if args.db_password else "p@ssw0rd1"
+    db_host = args.db_host if args.db_host else "osu.mysql"
+    db_port = args.db_port if args.db_port else 3307
+
+    engine = create_engine(
+        f'mysql+mysqlconnector://'
+        f'{db_username}:{quote_plus(db_password)}@{db_host}:{db_port}/{db_name}'
+    )
 
     con = engine.connect()
     mids = pd.read_sql_table("opal_active_mid", con=con)['mid'].unique()
-    files_dir = Path("/var/lib/osu/osu.files") / f"{datetime.now().strftime('%Y_%m')}_01_osu_files/"
 
-    df_vc = compute_maps_svness(mids, files_dir)
+    df_vc = compute_maps_svness(mids, files_path)
     df_vc.to_sql(name="opal_active_mid_svness", con=con, if_exists='replace', )
