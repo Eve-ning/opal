@@ -11,7 +11,7 @@ PIPELINE_RUN_CACHE="$1"
 . $PIPELINE_RUN_CACHE
 
 
-python -m 2_svness \
+python -m opal.svness \
 --files_path "${FILES_DIR}" \
 --db_name "${DB_NAME}" \
 --db_username "${DB_USERNAME}" \
