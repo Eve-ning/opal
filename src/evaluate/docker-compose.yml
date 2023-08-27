@@ -5,9 +5,12 @@ services:
     stdin_open: true
     container_name: pytorch.lightning.evaluate
     working_dir: /src
+    environment:
+      - MODEL_PATH=${MODEL_PATH}
+      - DATASET_NAME=${DATASET_NAME}
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
       - ../:/src/
-    entrypoint: /entrypoint.sh ${PIPELINE_RUN_CACHE}
+    entrypoint: /entrypoint.sh

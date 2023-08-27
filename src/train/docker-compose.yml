@@ -5,9 +5,13 @@ services:
     stdin_open: true
     container_name: pytorch.lightning
     working_dir: /src
+    environment:
+      - DATASET_NAME=${DATASET_NAME}
+      - MODEL_NAME=${MODEL_NAME}
+      - PIPELINE_RUN_CACHE=${PIPELINE_RUN_CACHE}
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
       - ../:/src/
-    entrypoint: /entrypoint.sh ${PIPELINE_RUN_CACHE}
+    entrypoint: /entrypoint.sh

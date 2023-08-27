@@ -25,7 +25,8 @@ def compute_test_predictions(dataset_path: Path, model_path: Path) -> tuple[np.n
     y = trainer.predict(net, datamodule=dm)
     y_preds = []
     y_trues = []
-    for x_uid_real, x_mid_real, y_pred, y_true in y:
+    # The -1 is to avoid stacking jagged arrays
+    for x_uid_real, x_mid_real, y_pred, y_true in y[:-1]:
         y_preds.append(y_pred)
         y_trues.append(y_true)
     return np.stack(y_preds).flatten(), np.stack(y_trues).flatten()
@@ -115,7 +116,7 @@ def plot_error_distribution(y_preds: np.ndarray, y_trues: np.ndarray, save_path:
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog='train.py', description='Train OpalNet')
+    parser = argparse.ArgumentParser(prog='evaluate.py', description='Evaluate OpalNet Model')
     parser.add_argument('--model_path', type=str,
                         help='Path to the model checkpoint')
     parser.add_argument('--dataset_name', type=str,
