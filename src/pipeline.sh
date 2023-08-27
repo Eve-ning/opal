@@ -20,19 +20,25 @@ docker compose \
 --profile files \
 -f preprocess/docker-compose.yml \
 --env-file preprocess/osu-data-docker/.env \
-up --build
+up --build || exit 1
 
 source "$PIPELINE_RUN_CACHE"
 [ -z "$DATASET_NAME" ] && echo "DATASET_NAME not returned by preprocess" && exit 1
 
 echo "Training Model"
-docker compose -f train/docker-compose.yml up --build
+docker compose \
+-f train/docker-compose.yml \
+up --build || exit 1
 
 source "$PIPELINE_RUN_CACHE"
 [ -z "$MODEL_PATH" ] && echo "MODEL_PATH not returned by train" && exit 1
 
 echo "Evaluating Model"
-docker compose -f evaluate/docker-compose.yml up --build
+docker compose \
+-f evaluate/docker-compose.yml \
+up --build || exit 1
 
 echo "Publishing Model"
-docker compose -f build/docker-compose.yml up --build
+docker compose \
+-f build/docker-compose.yml \
+up --build || exit 1
