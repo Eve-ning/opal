@@ -1,6 +1,6 @@
 #!/bin/bash
 
-python -m opal.svness \
+python -m svness \
   --files_path "${FILES_DIR}" \
   --db_name "${DB_NAME}" \
   --db_username "${DB_USERNAME}" \
