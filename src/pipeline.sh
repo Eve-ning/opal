@@ -4,14 +4,23 @@ cd "$(dirname "$(realpath "$0")")" || exit 1
 # Create unique pipeline run id
 PIPELINE_RUN_CACHE=.pipeline_cache/"$(date +%s).env"
 mkdir -p "$(dirname "$PIPELINE_RUN_CACHE")"
-{
-  echo DB_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/rsc/sample.tar.bz2
-  echo FILES_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/rsc/sample_files.tar.bz2
-  echo MODEL_NAME="${MODEL_NAME="2023.8.4b"}"
-  echo DATASET_NAME="$(basename "$DB_URL" .tar.bz2)_$(date +"%Y%m%d%H%M%S").csv"
-} >>"$PIPELINE_RUN_CACHE"
+
+cat << EOF >>"$PIPELINE_RUN_CACHE"
+DB_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/rsc/sample.tar.bz2
+FILES_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/rsc/sample_files.tar.bz2
+FILES_DIR=/var/lib/osu/osu.files/sample_files/
+MODEL_NAME="${MODEL_NAME="2023.8.4b"}"
+DATASET_NAME="$(basename "$DB_URL" .tar.bz2)_$(date +"%Y%m%d%H%M%S").csv"
+DB_NAME=osu
+DB_USERNAME=root
+DB_PASSWORD=p@ssw0rd1
+DB_HOST=osu.mysql
+DB_PORT=3307
+EOF
+
+
 source "$PIPELINE_RUN_CACHE"
-export PIPELINE_RUN_CACHE DB_URL FILES_URL MODEL_NAME DATASET_NAME
+export PIPELINE_RUN_CACHE DB_URL FILES_URL FILES_DIR MODEL_NAME DATASET_NAME
 
 echo "Preprocessing"
 export MIN_SCORES_PER_MID=0
