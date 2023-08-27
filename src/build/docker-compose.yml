@@ -5,9 +5,11 @@ services:
     stdin_open: true
     container_name: poetry
     working_dir: /opal/src
+    environment:
+      - MODEL_NAME=${MODEL_NAME}
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
       - ../../:/opal/
-    entrypoint: /entrypoint.sh ${PIPELINE_RUN_CACHE}
+    entrypoint: /entrypoint.sh
