@@ -5,8 +5,8 @@ cd "$(dirname "$(realpath "$0")")" || exit 1
 PIPELINE_RUN_CACHE=.pipeline_cache/"$(date +%s).env"
 mkdir -p "$(dirname "$PIPELINE_RUN_CACHE")"
 {
-  echo DB_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/sample.tar.bz2
-  echo FILES_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/sample_files.tar.bz2
+  echo DB_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/rsc/sample.tar.bz2
+  echo FILES_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/rsc/sample_files.tar.bz2
   echo MODEL_NAME="${MODEL_NAME="2023.8.4b"}"
   echo DATASET_NAME="$(basename "$DB_URL" .tar.bz2)_$(date +"%Y%m%d%H%M%S").csv"
 } >>"$PIPELINE_RUN_CACHE"
