@@ -84,6 +84,10 @@ if __name__ == '__main__':
                         help='Path to the pipeline run cache file. Optional, used for pipeline runs.')
     args = parser.parse_args()
 
+    if not (args.pipeline_run_cache or args.model_name or args.dataset_name):
+        parser.print_help()
+        sys.exit(1)
+
     MODEL_NAME = args.model_name
     DATASET_PATH = DATASET_DIR / args.dataset_name
     PIPELINE_RUN_CACHE = Path(args.pipeline_run_cache) if args.pipeline_run_cache else None
