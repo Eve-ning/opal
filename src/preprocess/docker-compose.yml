@@ -35,7 +35,7 @@ services:
       - ../:/src/
       - /var/lib/osu/osu.files/:/var/lib/osu/osu.files/
     # We can possibly move this python file to the opal package
-    entrypoint: [ "python3", "-m", "2_svness" ]
+    entrypoint: /src/preprocess/2_entrypoint.sh
 
   3.preprocess:
     image: mysql
