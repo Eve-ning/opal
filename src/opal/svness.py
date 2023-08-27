@@ -71,10 +71,14 @@ def compute_maps_svness(mids: pd.Series, osu_files_path: Path) -> pd.DataFrame:
 
     # Create the DF we'll populate with vc_ix
     df = pd.DataFrame(dict(mid=mids))
-
+    df.loc[:, 'svness'] = None
     for mid in tqdm(mids, desc="Evaluating SV-ness of Maps..."):
         # Get our osu map
         osu_path = osu_files_path / f"{mid}.osu"
+        # TODO: I think this might not be the best way to do this.
+        if not osu_path.exists():
+            print(f"Map {mid} does not exist in {osu_files_path}")
+            continue
         osu = OsuMap.read_file(osu_path)
 
         # Get visual_complexity
