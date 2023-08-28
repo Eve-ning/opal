@@ -1,13 +1,16 @@
 # This workflow will build opal, install its build, then runs the tests with pytest.
 
 
-name: Test Model Pipeline Inference 2
+name: Test Model Pipeline Inference
 
 on: [ pull_request ]
 jobs:
   build:
     timeout-minutes: 10
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout repository with submodules
         uses: actions/checkout@v3
@@ -17,10 +20,8 @@ jobs:
       - name: Execute Pipeline
         working-directory: src/
         run: |
-          rm -rf /var/lib/osu/
           chmod +x pipeline.sh
           ./pipeline.sh
-          shell: bash
 
       - name: Get Docker Logs on Fail
         working-directory: src/

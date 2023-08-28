@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Ensure all variables are set
 : "${MODEL_PATH:?MODEL_PATH not set}"

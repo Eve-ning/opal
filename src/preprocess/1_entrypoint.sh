@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 SQL_SCRIPT=$(cat ./1_preprocess.sql)
 
