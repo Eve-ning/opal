@@ -10,9 +10,10 @@ cd "$(dirname "$(realpath "$0")")" || exit 1
 
 # Create unique pipeline run id
 PIPELINE_RUN_CACHE=.pipeline_cache/${1:-$(date +%s)}.env
+mkdir -p .pipeline_cache
+mkdir -p datasets
 [ -f "$PIPELINE_RUN_CACHE" ] && \
 echo "Pipeline run cache ${PIPELINE_RUN_CACHE} already exists" && exit 1
-mkdir -p "$(dirname "$PIPELINE_RUN_CACHE")"
 
 # Set default values for variables
 DB_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/rsc/sample.tar.bz2
@@ -48,6 +49,7 @@ docker compose \
 --profile files \
 -f preprocess/docker-compose.yml \
 --env-file preprocess/osu-data-docker/.env \
+--env-file "$PIPELINE_RUN_CACHE" \
 up -d > output.log 2>&1 &
 
 # Wait until the dataset in ./datasets/$DATASET_NAME is created
