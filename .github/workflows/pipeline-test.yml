@@ -20,7 +20,9 @@ jobs:
       - name: Execute Pipeline
         working-directory: src/
         shell: bash
-        run: ./pipeline.sh cache
+        run: |
+          chmod +x pipeline.sh
+          ./pipeline.sh
 
       - name: Get Docker Logs on Fail
         working-directory: src/
@@ -33,12 +35,34 @@ jobs:
             --env-file preprocess/osu-data-docker/.env \
             logs $SVC > ${SVC}.log
           done
-
-      - name: Check Pipeline Cache
-        working-directory: src/.pipeline_cache
-        run: |
-          [ -f cache.env ] || { echo "Cache file not found"; exit 1; }
-          cat cache.env >> $GITHUB_ENV
+#
+#      - name: Check Pipeline Cache
+#        working-directory: src/.pipeline_cache
+#        run: |
+#          [ -f cache.env ] || { echo "Cache file not found"; exit 1; }
+#          cat cache.env >> $GITHUB_ENV
+#
+#      - name: Check all env variables are set
+#        run: |
+#          : "${PIPELINE_RUN_CACHE:?PIPELINE_RUN_CACHE not set}"
+#          : "${DB_URL:?DB_URL not set}"
+#          : "${FILES_URL:?FILES_URL not set}"
+#          : "${FILES_DIR:?FILES_DIR not set}"
+#          : "${MODEL_NAME:?MODEL_NAME not set}"
+#          : "${DATASET_NAME:?DATASET_NAME not set}"
+#          : "${DB_NAME:?DB_NAME not set}"
+#          : "${DB_USERNAME:?DB_USERNAME not set}"
+#          : "${DB_PASSWORD:?DB_PASSWORD not set}"
+#          : "${DB_HOST:?DB_HOST not set}"
+#          : "${DB_PORT:?DB_PORT not set}"
+#          : "${SR_MIN:?SR_MIN not set}"
+#          : "${SR_MAX:?SR_MAX not set}"
+#          : "${ACC_MIN:?ACC_MIN not set}"
+#          : "${ACC_MAX:?ACC_MAX not set}"
+#          : "${MIN_SCORES_PER_MID:?MIN_SCORES_PER_MID not set}"
+#          : "${MIN_SCORES_PER_UID:?MIN_SCORES_PER_UID not set}"
+#          : "${MAX_SVNESS:?MAX_SVNESS not set}"
+#          : "${MODEL_PATH:?MODEL_PATH not set}"
 
       - name: Export src as Artifact
         if: always()
