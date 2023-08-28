@@ -1,7 +1,7 @@
 # This workflow will build opal, install its build, then runs the tests with pytest.
 
 
-name: Test Model Pipeline Inference
+name: Test Model Pipeline Inference 2
 
 on: [ pull_request ]
 jobs:
