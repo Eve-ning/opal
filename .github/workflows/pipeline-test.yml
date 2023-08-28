@@ -19,7 +19,7 @@ jobs:
         shell: bash
         run: |
           chmod +x pipeline.sh
-          ./pipeline.sh
+          /bin/bash ./pipeline.sh
 
       - name: Get Docker Logs on Fail
         working-directory: src/
