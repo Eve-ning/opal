@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: |
           chmod +x pipeline.sh
-          sudo -E ./pipeline.sh
+          ./pipeline.sh
 
       - name: Get Docker Logs on Fail
         working-directory: src/
