@@ -9,7 +9,7 @@
 cd "$(dirname "$(realpath "$0")")" || exit 1
 
 # Create unique pipeline run id
-PIPELINE_RUN_CACHE=${1:-.pipeline_cache/"$(date +%s).env"}
+PIPELINE_RUN_CACHE=.pipeline_cache/${1:-$(date +%s)}.env
 mkdir -p "$(dirname "$PIPELINE_RUN_CACHE")"
 
 DB_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/rsc/sample.tar.bz2
