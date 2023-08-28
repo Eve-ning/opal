@@ -19,6 +19,18 @@ jobs:
         run: |
           ./pipeline.sh cache
 
+      - name: Get Docker Logs on Fail
+        working-directory: src/
+        if: failure()
+        run: |
+          for SVC in 1.preprocess 2.svness 3.preprocess 4.export; do
+            docker compose \
+            --profile files \
+            -f preprocess/docker-compose.yml \
+            --env-file preprocess/osu-data-docker/.env \
+            logs $SVC > ${SVC}.log
+          done
+
       - name: Check Pipeline Cache
         working-directory: src/.pipeline_cache
         run: |
