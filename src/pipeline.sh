@@ -10,8 +10,11 @@ cd "$(dirname "$(realpath "$0")")" || exit 1
 
 # Create unique pipeline run id
 PIPELINE_RUN_CACHE=.pipeline_cache/${1:-$(date +%s)}.env
+[ -f "$PIPELINE_RUN_CACHE" ] && \
+echo "Pipeline run cache ${PIPELINE_RUN_CACHE} already exists" && exit 1
 mkdir -p "$(dirname "$PIPELINE_RUN_CACHE")"
 
+# Set default values for variables
 DB_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/rsc/sample.tar.bz2
 FILES_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/rsc/sample_files.tar.bz2
 cat << EOF >>"$PIPELINE_RUN_CACHE"
@@ -35,6 +38,7 @@ MIN_SCORES_PER_UID=0
 MAX_SVNESS=0.05
 EOF
 
+# Source and Export variables
 set -a
 source "$PIPELINE_RUN_CACHE"
 set +a
