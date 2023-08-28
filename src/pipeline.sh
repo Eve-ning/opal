@@ -58,6 +58,7 @@ docker compose \
 # Wait until the dataset in ./datasets/$DATASET_NAME is created
 while [ ! -f "./datasets/$DATASET_NAME" ]; do
   echo "Waiting for dataset to be created... (Showing most recent log)"
+  echo "$PIPELINE_RUN_CACHE"
   tail -n 3 output.log
   sleep 10
 done
