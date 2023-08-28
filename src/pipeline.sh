@@ -47,13 +47,16 @@ source "$PIPELINE_RUN_CACHE"
 set +a
 
 echo "Preprocessing"
-cp "$PIPELINE_RUN_CACHE" preprocess/.env
+envsubst < preprocess/docker-compose.yml > preprocess/docker-compose.yml.tmp
+envsubst < preprocess/osu-data-docker/docker-compose.yml > preprocess/osu-data-docker/docker-compose.yml.tmp
+rm preprocess/docker-compose.yml
+mv preprocess/docker-compose.yml.tmp preprocess/docker-compose.yml
+rm preprocess/osu-data-docker/docker-compose.yml
+mv preprocess/osu-data-docker/docker-compose.yml.tmp preprocess/osu-data-docker/docker-compose.yml
 
 docker compose \
   --profile files \
   -f preprocess/docker-compose.yml \
-  --env-file preprocess/osu-data-docker/.env \
-  --env-file preprocess/.env \
   up --build -d >output.log 2>&1 &
 
 # Wait until the dataset in ./datasets/$DATASET_NAME is created
