@@ -19,6 +19,7 @@ jobs:
 
       - name: Execute Pipeline
         working-directory: src/
+        shell: bash
         run: |
           chmod +x pipeline.sh
           ./pipeline.sh
