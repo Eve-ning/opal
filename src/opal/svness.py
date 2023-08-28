@@ -91,7 +91,7 @@ def compute_maps_svness(mids: pd.Series, osu_files_path: Path) -> pd.DataFrame:
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog='2_svness.py', description='Evalaute SV-Ness of maps')
+    parser = argparse.ArgumentParser(prog='svness.py', description='Evalaute SV-Ness of maps')
     parser.add_argument('--files_path', type=str, help='Path to *.osu files')
     parser.add_argument('--db_name', type=str, help='Database Name')
     parser.add_argument('--db_username', type=str, help='Database User Name')
