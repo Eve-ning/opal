@@ -1,7 +1,7 @@
 # This workflow will build opal, install its build, then runs the tests with pytest.
 
 
-name: Test Model Inference
+name: Test Model Building Inference
 
 on: [ pull_request ]
 
@@ -31,6 +31,7 @@ jobs:
       - name: Build opal with Docker
         working-directory: src/build/
         run: |
+          export MODEL_NAME=V4 
           docker compose up --build
 
       - name: Install opal build
