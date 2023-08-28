@@ -1,6 +1,6 @@
 version: "2.20.2"
 include:
-  - path: osu-data-docker/docker-compose.yml
+  - osu-data-docker/docker-compose.yml
 
 services:
   1.preprocess:
