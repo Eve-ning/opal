@@ -44,6 +44,7 @@ EOF
 # Source and Export variables
 set -a
 source "$PIPELINE_RUN_CACHE"
+source preprocess/osu-data-docker/.env
 set +a
 
 echo "Preprocessing"
