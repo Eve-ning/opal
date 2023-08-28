@@ -21,6 +21,7 @@ jobs:
         working-directory: src/
         shell: bash
         run: |
+          docker system prune --all --force --volumes
           chmod +x pipeline.sh
           ./pipeline.sh
 
