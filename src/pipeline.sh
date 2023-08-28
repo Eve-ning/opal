@@ -49,14 +49,12 @@ docker compose \
 --profile files \
 -f preprocess/docker-compose.yml \
 --env-file preprocess/osu-data-docker/.env \
---env-file "$PIPELINE_RUN_CACHE" \
 build --no-cache || exit 1
 
 docker compose \
 --profile files \
 -f preprocess/docker-compose.yml \
 --env-file preprocess/osu-data-docker/.env \
---env-file "$PIPELINE_RUN_CACHE" \
 up -d > output.log 2>&1 &
 
 # Wait until the dataset in ./datasets/$DATASET_NAME is created
