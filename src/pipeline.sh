@@ -42,37 +42,18 @@ MAX_SVNESS="0.05"
 EOF
 
 # Source and Export variables
+set -a
 source "$PIPELINE_RUN_CACHE"
-export PIPELINE_RUN_CACHE
-export DB_URL
-export FILES_URL
-export FILES_DIR
-export MODEL_NAME
-export DATASET_NAME
-export DB_NAME
-export DB_USERNAME
-export DB_PASSWORD
-export DB_HOST
-export DB_PORT
-export SR_MIN
-export SR_MAX
-export ACC_MIN
-export ACC_MAX
-export MIN_SCORES_PER_MID
-export MIN_SCORES_PER_UID
-export MAX_SVNESS
+set +a
 
 echo "Preprocessing"
-docker compose \
-  --profile files \
-  -f preprocess/docker-compose.yml \
-  --env-file preprocess/osu-data-docker/.env \
-  build --no-cache || exit 1
+cp "$PIPELINE_RUN_CACHE" preprocess/.env
 
 docker compose \
   --profile files \
   -f preprocess/docker-compose.yml \
   --env-file preprocess/osu-data-docker/.env \
+  --env-file preprocess/.env \
   up -d >output.log 2>&1 &
 
 # Wait until the dataset in ./datasets/$DATASET_NAME is created
