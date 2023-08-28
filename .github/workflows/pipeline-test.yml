@@ -8,9 +8,6 @@ jobs:
   build:
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
     steps:
       - name: Checkout repository with submodules
         uses: actions/checkout@v3
