@@ -42,9 +42,25 @@ MAX_SVNESS=0.05
 EOF
 
 # Source and Export variables
-set -a
 source "$PIPELINE_RUN_CACHE"
-set +a
+export PIPELINE_RUN_CACHE
+export DB_URL
+export FILES_URL
+export FILES_DIR
+export MODEL_NAME
+export DATASET_NAME
+export DB_NAME
+export DB_USERNAME
+export DB_PASSWORD
+export DB_HOST
+export DB_PORT
+export SR_MIN
+export SR_MAX
+export ACC_MIN
+export ACC_MAX
+export MIN_SCORES_PER_MID
+export MIN_SCORES_PER_UID
+export MAX_SVNESS
 
 echo "Preprocessing"
 docker compose \
