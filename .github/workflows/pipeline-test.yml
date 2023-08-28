@@ -17,6 +17,14 @@ jobs:
         with:
           submodules: true
 
+      - name: Bump Compose
+        shell: bash
+        run: |
+          docker compose version
+          sudo apt-get update
+          sudo apt-get install docker-compose-plugin
+          docker compose version
+
       - name: Execute Pipeline
         working-directory: src/
         shell: bash
