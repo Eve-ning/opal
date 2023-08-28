@@ -1,0 +1,198 @@
+#0 building with "default" instance using docker driver
+
+#1 [osu.files internal] load .dockerignore
+#1 transferring context: 2B 0.0s done
+#1 DONE 0.0s
+
+#2 [osu.mysql.dl internal] load .dockerignore
+#2 transferring context: 2B 0.0s done
+#2 DONE 0.0s
+
+#3 [osu.files internal] load build definition from osu.files.Dockerfile
+#3 transferring dockerfile: 391B 0.0s done
+#3 DONE 0.0s
+
+#4 [osu.mysql.dl internal] load build definition from osu.mysql.dl.Dockerfile
+#4 transferring dockerfile: 1.31kB 0.0s done
+#4 DONE 0.0s
+
+#5 [osu.mysql.dl internal] load metadata for docker.io/library/alpine:latest
+#5 ...
+
+#6 [osu.files auth] library/alpine:pull token for registry-1.docker.io
+#6 DONE 0.0s
+
+#5 [osu.mysql.dl internal] load metadata for docker.io/library/alpine:latest
+#5 DONE 2.7s
+
+#7 [osu.mysql.dl 1/6] FROM docker.io/library/alpine:latest@sha256:7144f7bab3d4c2648d7e59409f15ec52a18006a128c733fcff20d3a4a54ba44a
+#7 DONE 0.0s
+
+#8 [osu.mysql.dl internal] load build context
+#8 transferring context: 2.44kB 0.0s done
+#8 DONE 0.0s
+
+#9 [osu.files internal] load build context
+#9 transferring context: 1.09kB 0.0s done
+#9 DONE 0.0s
+
+#10 [osu.mysql.dl 3/6] RUN if [ -z "https://github.com/Eve-ning/opal/raw/pipeline-automation/rsc/sample.tar.bz2" ];     then echo "DB_URL must be set." && exit 1;     fi
+#10 CACHED
+
+#11 [osu.mysql.dl 2/6] WORKDIR /var/lib/osu/osu.mysql
+#11 CACHED
+
+#12 [osu.mysql.dl 4/6] RUN apk add --no-cache tar bzip2
+#12 CACHED
+
+#13 [osu.mysql.dl 5/6] COPY osu.mysql.dl.entrypoint.sh /osu.mysql.dl.entrypoint.sh
+#13 CACHED
+
+#14 [osu.mysql.dl 6/6] RUN ["chmod", "+x", "/osu.mysql.dl.entrypoint.sh"]
+#14 CACHED
+
+#15 [osu.files 3/6] COPY osu.files.entrypoint.sh /osu.files.entrypoint.sh
+#15 CACHED
+
+#16 [osu.files 5/6] RUN ["chmod", "+x", "/osu.files.entrypoint.sh"]
+#16 CACHED
+
+#17 [osu.files 2/6] RUN apk add --no-cache tar bzip2
+#17 CACHED
+
+#18 [osu.files 4/6] COPY osu.files.healthcheck.sh /osu.files.healthcheck.sh
+#18 CACHED
+
+#19 [osu.files 6/6] RUN ["chmod", "+x", "/osu.files.healthcheck.sh"]
+#19 CACHED
+
+#20 [osu.mysql.dl] exporting to image
+#20 exporting layers done
+#20 writing image sha256:1dcb55bd9cd45fed11ae892a2ca8b3688e0390955feaa237bd82a55573ac24be done
+#20 naming to docker.io/library/osu.mysql.dl done
+#20 DONE 0.0s
+
+#21 [osu.files] exporting to image
+#21 exporting layers done
+#21 writing image sha256:b9ff359777f638fbe93a16b34b9745344e5d43728de55ee1e53385e88341cfde done
+#21 naming to docker.io/library/osu.files done
+#21 DONE 0.0s
+
+#22 [osu.mysql internal] load .dockerignore
+#22 transferring context: 2B done
+#22 DONE 0.0s
+
+#23 [osu.mysql internal] load build definition from osu.mysql.Dockerfile
+#23 transferring dockerfile: 203B 0.0s done
+#23 DONE 0.0s
+
+#24 [osu.mysql internal] load metadata for docker.io/library/mysql:latest
+#24 DONE 0.0s
+
+#25 [osu.mysql 1/4] FROM docker.io/library/mysql
+#25 DONE 0.0s
+
+#26 [osu.mysql internal] load build context
+#26 transferring context: 670B 0.0s done
+#26 DONE 0.0s
+
+#27 [osu.mysql 2/4] COPY osu.mysql.healthcheck.sh /osu.mysql.healthcheck.sh
+#27 DONE 0.0s
+
+#28 [osu.mysql 3/4] COPY osu.mysql.cnf /etc/mysql/my.cnf
+#28 DONE 0.0s
+
+#29 [osu.mysql 4/4] RUN ["chmod", "+x", "/osu.mysql.healthcheck.sh"]
+#29 DONE 0.3s
+
+#30 [osu.mysql] exporting to image
+#30 exporting layers 0.0s done
+#30 writing image sha256:f214c47beb405a065f76c295107163d394d7690355c252b664e596f9ed37ce52 done
+#30 naming to docker.io/library/mysql done
+#30 DONE 0.0s
+
+#31 [2.svness internal] load .dockerignore
+#31 transferring context: 2B done
+#31 DONE 0.0s
+
+#32 [2.svness internal] load build definition from 2_svness.Dockerfile
+#32 transferring dockerfile: 137B 0.0s done
+#32 DONE 0.0s
+
+#33 [2.svness internal] load metadata for docker.io/library/python:3.9
+#33 DONE 0.0s
+
+#34 [2.svness 1/2] FROM docker.io/library/python:3.9
+#34 DONE 0.0s
+
+#35 [2.svness 2/2] RUN pip3 install pandas mysql-connector-python reamber tqdm SQLAlchemy
+#35 0.862 Requirement already satisfied: pandas in /usr/local/lib/python3.9/site-packages (2.0.3)
+#35 0.862 Requirement already satisfied: mysql-connector-python in /usr/local/lib/python3.9/site-packages (8.1.0)
+#35 0.863 Requirement already satisfied: reamber in /usr/local/lib/python3.9/site-packages (0.1.8)
+#35 0.863 Requirement already satisfied: tqdm in /usr/local/lib/python3.9/site-packages (4.66.1)
+#35 0.864 Requirement already satisfied: SQLAlchemy in /usr/local/lib/python3.9/site-packages (2.0.20)
+#35 0.945 Requirement already satisfied: pytz>=2020.1 in /usr/local/lib/python3.9/site-packages (from pandas) (2023.3)
+#35 0.946 Requirement already satisfied: numpy>=1.20.3 in /usr/local/lib/python3.9/site-packages (from pandas) (1.25.2)
+#35 0.947 Requirement already satisfied: tzdata>=2022.1 in /usr/local/lib/python3.9/site-packages (from pandas) (2023.3)
+#35 0.948 Requirement already satisfied: python-dateutil>=2.8.2 in /usr/local/lib/python3.9/site-packages (from pandas) (2.8.2)
+#35 0.956 Requirement already satisfied: protobuf<=4.21.12,>=4.21.1 in /usr/local/lib/python3.9/site-packages (from mysql-connector-python) (4.21.12)
+#35 0.964 Requirement already satisfied: Pillow<10.0.0,>=9.5.0 in /usr/local/lib/python3.9/site-packages (from reamber) (9.5.0)
+#35 0.965 Requirement already satisfied: Unidecode<2.0.0,>=1.3.6 in /usr/local/lib/python3.9/site-packages (from reamber) (1.3.6)
+#35 0.966 Requirement already satisfied: PyYAML<7.0,>=6.0 in /usr/local/lib/python3.9/site-packages (from reamber) (6.0.1)
+#35 0.966 Requirement already satisfied: osrparse<7.0.0,>=6.0.2 in /usr/local/lib/python3.9/site-packages (from reamber) (6.0.2)
+#35 0.967 Requirement already satisfied: matplotlib<4.0.0,>=3.7.1 in /usr/local/lib/python3.9/site-packages (from reamber) (3.7.2)
+#35 1.015 Requirement already satisfied: greenlet!=0.4.17 in /usr/local/lib/python3.9/site-packages (from SQLAlchemy) (2.0.2)
+#35 1.015 Requirement already satisfied: typing-extensions>=4.2.0 in /usr/local/lib/python3.9/site-packages (from SQLAlchemy) (4.7.1)
+#35 1.029 Requirement already satisfied: cycler>=0.10 in /usr/local/lib/python3.9/site-packages (from matplotlib<4.0.0,>=3.7.1->reamber) (0.11.0)
+#35 1.030 Requirement already satisfied: contourpy>=1.0.1 in /usr/local/lib/python3.9/site-packages (from matplotlib<4.0.0,>=3.7.1->reamber) (1.1.0)
+#35 1.031 Requirement already satisfied: importlib-resources>=3.2.0 in /usr/local/lib/python3.9/site-packages (from matplotlib<4.0.0,>=3.7.1->reamber) (6.0.1)
+#35 1.032 Requirement already satisfied: packaging>=20.0 in /usr/local/lib/python3.9/site-packages (from matplotlib<4.0.0,>=3.7.1->reamber) (23.1)
+#35 1.033 Requirement already satisfied: pyparsing<3.1,>=2.3.1 in /usr/local/lib/python3.9/site-packages (from matplotlib<4.0.0,>=3.7.1->reamber) (3.0.9)
+#35 1.034 Requirement already satisfied: kiwisolver>=1.0.1 in /usr/local/lib/python3.9/site-packages (from matplotlib<4.0.0,>=3.7.1->reamber) (1.4.5)
+#35 1.034 Requirement already satisfied: fonttools>=4.22.0 in /usr/local/lib/python3.9/site-packages (from matplotlib<4.0.0,>=3.7.1->reamber) (4.42.1)
+#35 1.054 Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.9/site-packages (from python-dateutil>=2.8.2->pandas) (1.16.0)
+#35 1.126 Requirement already satisfied: zipp>=3.1.0 in /usr/local/lib/python3.9/site-packages (from importlib-resources>=3.2.0->matplotlib<4.0.0,>=3.7.1->reamber) (3.16.2)
+#35 1.185 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#35 1.191 
+#35 1.191 [notice] A new release of pip is available: 23.0.1 -> 23.2.1
+#35 1.191 [notice] To update, run: pip install --upgrade pip
+#35 DONE 1.3s
+
+#36 [2.svness] exporting to image
+#36 exporting layers 0.0s done
+#36 writing image sha256:e8b7a4d06e8ba24668e77144a8fec0c6f03ba8498412761e716fed328cc4569e done
+#36 naming to docker.io/library/python:3.9 done
+#36 DONE 0.0s
+ Network preprocess_default  Creating
+ Network preprocess_default  Created
+ Container osu.mysql.dl  Creating
+ Container osu.files  Creating
+ Container osu.mysql.dl  Created
+ Container osu.mysql  Creating
+ Container osu.files  Created
+ Container osu.mysql  Created
+ Container preprocess-1.preprocess-1  Creating
+ Container preprocess-1.preprocess-1  Created
+ Container preprocess-2.svness-1  Creating
+ Container preprocess-2.svness-1  Created
+ Container preprocess-3.preprocess-1  Creating
+ Container preprocess-3.preprocess-1  Created
+ Container preprocess-4.export-1  Creating
+ Container preprocess-4.export-1  Created
+ Container osu.files  Starting
+ Container osu.mysql.dl  Starting
+ Container osu.files  Started
+ Container osu.mysql.dl  Started
+ Container osu.mysql.dl  Waiting
+ Container osu.mysql.dl  Exited
+ Container osu.mysql  Starting
+ Container osu.mysql  Started
+ Container osu.mysql  Waiting
+ Container osu.files  Waiting
+ Container osu.files  Healthy
+ Container osu.mysql  Healthy
+ Container preprocess-1.preprocess-1  Starting
+ Container preprocess-1.preprocess-1  Started
+ Container preprocess-1.preprocess-1  Waiting
+ Container preprocess-1.preprocess-1  Exited
+service "1.preprocess" didn't complete successfully: exit 127

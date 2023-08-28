@@ -53,8 +53,7 @@ docker compose \
   --profile files \
   -f preprocess/docker-compose.yml \
   --env-file preprocess/osu-data-docker/.env \
-  --env-file preprocess/.env \
-  up -d >output.log 2>&1 &
+  up --build -d >output.log 2>&1 &
 
 # Wait until the dataset in ./datasets/$DATASET_NAME is created
 while [ ! -f "./datasets/$DATASET_NAME" ]; do
@@ -62,7 +61,7 @@ while [ ! -f "./datasets/$DATASET_NAME" ]; do
   tail -n 3 output.log
   sleep 10
 done
-
+exit 1
 docker compose \
   --profile files \
   -f preprocess/docker-compose.yml \
