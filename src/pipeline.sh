@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # This script runs the entire pipeline, from preprocessing to publishing.
 #
 # Usage: ./pipeline.sh [PIPELINE_RUN_ID]
@@ -12,13 +14,13 @@ cd "$(dirname "$(realpath "$0")")" || exit 1
 PIPELINE_RUN_CACHE=.pipeline_cache/${1:-$(date +%s)}.env
 mkdir -p .pipeline_cache
 mkdir -p datasets
-[ -f "$PIPELINE_RUN_CACHE" ] && \
-echo "Pipeline run cache ${PIPELINE_RUN_CACHE} already exists" && exit 1
+[ -f "$PIPELINE_RUN_CACHE" ] &&
+  echo "Pipeline run cache ${PIPELINE_RUN_CACHE} already exists" && exit 1
 
 # Set default values for variables
-DB_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/rsc/sample.tar.bz2
-FILES_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/rsc/sample_files.tar.bz2
-cat << EOF >>"$PIPELINE_RUN_CACHE"
+DB_URL=https://github.com/Eve-ning/opal/raw/fix-pipeline2/rsc/sample.tar.bz2
+FILES_URL=https://github.com/Eve-ning/opal/raw/fix-pipeline2/rsc/sample_files.tar.bz2
+cat <<EOF >>"$PIPELINE_RUN_CACHE"
 PIPELINE_RUN_CACHE=$PIPELINE_RUN_CACHE
 DB_URL=$DB_URL
 FILES_URL=$FILES_URL
@@ -46,18 +48,16 @@ set +a
 
 echo "Preprocessing"
 docker compose \
---profile files \
--f preprocess/docker-compose.yml \
---env-file preprocess/osu-data-docker/.env \
---env-file "$PIPELINE_RUN_CACHE" \
-build --no-cache || exit 1
+  --profile files \
+  -f preprocess/docker-compose.yml \
+  --env-file preprocess/osu-data-docker/.env \
+  build --no-cache || exit 1
 
 docker compose \
---profile files \
--f preprocess/docker-compose.yml \
---env-file preprocess/osu-data-docker/.env \
---env-file "$PIPELINE_RUN_CACHE" \
-up -d > output.log 2>&1 &
+  --profile files \
+  -f preprocess/docker-compose.yml \
+  --env-file preprocess/osu-data-docker/.env \
+  up -d >output.log 2>&1 &
 
 # Wait until the dataset in ./datasets/$DATASET_NAME is created
 while [ ! -f "./datasets/$DATASET_NAME" ]; do
@@ -67,10 +67,10 @@ while [ ! -f "./datasets/$DATASET_NAME" ]; do
 done
 
 docker compose \
---profile files \
--f preprocess/docker-compose.yml \
---env-file preprocess/osu-data-docker/.env \
-stop || exit 1
+  --profile files \
+  -f preprocess/docker-compose.yml \
+  --env-file preprocess/osu-data-docker/.env \
+  stop || exit 1
 
 source "$PIPELINE_RUN_CACHE"
 [ -z "$DATASET_NAME" ] && echo "DATASET_NAME not returned by preprocess" && exit 1
@@ -78,8 +78,8 @@ export DATASET_NAME
 
 echo "Training Model"
 docker compose \
--f train/docker-compose.yml \
-up --build || exit 1
+  -f train/docker-compose.yml \
+  up --build || exit 1
 
 source "$PIPELINE_RUN_CACHE"
 [ -z "$MODEL_PATH" ] && echo "MODEL_PATH not returned by train" && exit 1
@@ -87,10 +87,10 @@ export MODEL_PATH
 
 echo "Evaluating Model"
 docker compose \
--f evaluate/docker-compose.yml \
-up --build || exit 1
+  -f evaluate/docker-compose.yml \
+  up --build || exit 1
 
 echo "Publishing Model"
 docker compose \
--f build/docker-compose.yml \
-up --build || exit 1
+  -f build/docker-compose.yml \
+  up --build || exit 1

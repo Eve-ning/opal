@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 compute_opal_tables() {
   if ! docker ps | grep -q osu.mysql; then

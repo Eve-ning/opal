@@ -6,8 +6,11 @@ name: Test Model Pipeline Inference
 on: [ pull_request ]
 jobs:
   build:
-    timeout-minutes: 5
+    timeout-minutes: 10
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout repository with submodules
         uses: actions/checkout@v3
@@ -16,9 +19,10 @@ jobs:
 
       - name: Execute Pipeline
         working-directory: src/
+        shell: bash
         run: |
           chmod +x pipeline.sh
-          ./pipeline.sh 
+          ./pipeline.sh
 
       - name: Get Docker Logs on Fail
         working-directory: src/

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Ensure all variables are set
 : "${MODEL_NAME:?MODEL_NAME not set}"

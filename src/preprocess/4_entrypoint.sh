@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Ensure all variables are set
 : "${DATASET_NAME:?DATASET_NAME not set}"

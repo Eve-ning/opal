@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 python -m svness \
   --files_path "${FILES_DIR}" \
