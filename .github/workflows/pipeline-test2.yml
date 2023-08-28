@@ -20,6 +20,7 @@ jobs:
           rm -rf /var/lib/osu/
           chmod +x pipeline.sh
           ./pipeline.sh
+          shell: bash
 
       - name: Get Docker Logs on Fail
         working-directory: src/
