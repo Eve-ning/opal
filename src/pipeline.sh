@@ -18,8 +18,8 @@ mkdir -p datasets
   echo "Pipeline run cache ${PIPELINE_RUN_CACHE} already exists" && exit 1
 
 # Set default values for variables
-DB_URL=https://github.com/Eve-ning/opal/raw/fix-pipeline2/rsc/sample.tar.bz2
-FILES_URL=https://github.com/Eve-ning/opal/raw/fix-pipeline2/rsc/sample_files.tar.bz2
+export DB_URL=https://github.com/Eve-ning/opal/raw/fix-pipeline2/rsc/sample.tar.bz2
+export FILES_URL=https://github.com/Eve-ning/opal/raw/fix-pipeline2/rsc/sample_files.tar.bz2
 cat <<EOF >>"$PIPELINE_RUN_CACHE"
 PIPELINE_RUN_CACHE=$PIPELINE_RUN_CACHE
 DB_URL=$DB_URL
