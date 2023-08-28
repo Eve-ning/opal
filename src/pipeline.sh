@@ -67,7 +67,7 @@ while [ ! -f "./datasets/$DATASET_NAME" ]; do
   tail -n 3 output.log
   sleep 10
 done
-exit 1
+exit 0
 docker compose \
   --profile files \
   -f preprocess/docker-compose.yml \
