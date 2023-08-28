@@ -44,6 +44,10 @@ set -a
 source "$PIPELINE_RUN_CACHE"
 set +a
 
+echo $DB_URL
+
+exit 0
+
 echo "Preprocessing"
 docker compose \
 --profile files \
