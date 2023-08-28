@@ -46,15 +46,16 @@ set -a
 source "$PIPELINE_RUN_CACHE"
 set +a
 
+cp "$PIPELINE_RUN_CACHE" preprocess/.env
+
 echo "Preprocessing"
-DB_URL=$DB_URL FILES_URL=$FILES_URL docker compose \
+docker compose \
   --profile files \
   -f preprocess/docker-compose.yml \
   --env-file preprocess/osu-data-docker/.env \
-  --env-file "$PIPELINE_RUN_CACHE" \
   build --no-cache || exit 1
 
-DB_URL=$DB_URL FILES_URL=$FILES_URL docker compose \
+docker compose \
   --profile files \
   -f preprocess/docker-compose.yml \
   --env-file preprocess/osu-data-docker/.env \
