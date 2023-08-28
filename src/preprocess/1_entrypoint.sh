@@ -16,11 +16,8 @@ SQL_SCRIPT=${SQL_SCRIPT//__ACC_MAX__/"$ACC_MAX"}
 SQL_SCRIPT=${SQL_SCRIPT//__MIN_SCORES_PER_MID__/"$MIN_SCORES_PER_MID"}
 SQL_SCRIPT=${SQL_SCRIPT//__MIN_SCORES_PER_UID__/"$MIN_SCORES_PER_UID"}
 
-# Ping mysql until it's ready with 3 retries of 5s interval
-for _ in {1..3}; do
-  if mysqladmin ping -h osu.mysql -P 3307 -u root -pp@ssw0rd1; then
-    break
-  fi
+# Ping mysql until it's ready with 5s interval
+until mysqladmin ping -h osu.mysql -P 3307 -u root -pp@ssw0rd1; do
   echo "Waiting for osu.mysql to be ready..."
   sleep 5
 done
