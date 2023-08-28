@@ -4,7 +4,7 @@
 name: Test Model Pipeline Inference
 
 on: [ pull_request ]
-
+timeout-minutes: 5
 
 jobs:
   build:
