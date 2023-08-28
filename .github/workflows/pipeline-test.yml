@@ -17,6 +17,7 @@ jobs:
       - name: Execute Pipeline
         working-directory: src/
         run: |
+          chmod +x pipeline.sh
           ./pipeline.sh 
 
       - name: Get Docker Logs on Fail
