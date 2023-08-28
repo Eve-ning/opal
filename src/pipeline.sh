@@ -1,8 +1,15 @@
+# This script runs the entire pipeline, from preprocessing to publishing.
+#
+# Usage: ./pipeline.sh [PIPELINE_RUN_ID]
+#
+# The PIPELINE_RUN_ID is a unique identifier for this pipeline run.
+# If not specified, it will be set to the current unix timestamp.
+
 # Change directory to current script directory
 cd "$(dirname "$(realpath "$0")")" || exit 1
 
 # Create unique pipeline run id
-PIPELINE_RUN_CACHE=.pipeline_cache/"$(date +%s).env"
+PIPELINE_RUN_CACHE=${1:-.pipeline_cache/"$(date +%s).env"}
 mkdir -p "$(dirname "$PIPELINE_RUN_CACHE")"
 
 DB_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/rsc/sample.tar.bz2
