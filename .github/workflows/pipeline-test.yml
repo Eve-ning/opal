@@ -17,8 +17,9 @@ jobs:
       - name: Execute Pipeline
         working-directory: src/
         run: |
+          rm -rf /var/lib/osu/
           chmod +x pipeline.sh
-          ./pipeline.sh 
+          ./pipeline.sh
 
       - name: Get Docker Logs on Fail
         working-directory: src/
