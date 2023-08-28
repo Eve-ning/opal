@@ -1,10 +1,6 @@
 version: "2.20.2"
 include:
   - path: osu-data-docker/docker-compose.yml
-    project_directory: ./
-    env_file:
-      - osu-data-docker/.env
-      - $PIPELINE_RUN_CACHE
 
 services:
   1.preprocess:
