@@ -49,17 +49,17 @@ set +a
 echo "Preprocessing"
 cp "$PIPELINE_RUN_CACHE" preprocess/.env
 
-sudo -E docker compose \
+docker compose \
   --profile files \
   -f preprocess/docker-compose.yml \
   --env-file preprocess/osu-data-docker/.env \
   --env-file preprocess/.env \
-  up -d | tee output.log 2>&1 &
+  up -d >output.log 2>&1 &
 
 # Wait until the dataset in ./datasets/$DATASET_NAME is created
 while [ ! -f "./datasets/$DATASET_NAME" ]; do
   echo "Waiting for dataset to be created... (Showing most recent log)"
-  tail -n 1 output.log
+  tail -n 3 output.log
   sleep 10
 done
 
