@@ -22,4 +22,16 @@ until mysqladmin ping -h osu.mysql -P 3307 -u root -pp@ssw0rd1; do
   sleep 5
 done
 
+# Wait until tables are ready
+until mysql -h osu.mysql -P 3307 -u root -pp@ssw0rd1 -D osu \
+  -e 'SELECT * FROM osu_scores_mania_high LIMIT 1;' >>/dev/null 2>&1; do
+  echo "Waiting for osu_scores_mania_high to be ready..."
+  sleep 5
+done
+until mysql -h osu.mysql -P 3307 -u root -pp@ssw0rd1 -D osu \
+  -e 'SELECT * FROM osu_beatmaps LIMIT 1;' >>/dev/null 2>&1; do
+  echo "Waiting for osu_beatmaps to be ready..."
+  sleep 5
+done
+
 echo "$SQL_SCRIPT" | mysql -h osu.mysql -P 3307 -u root -pp@ssw0rd1 -D osu
