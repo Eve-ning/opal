@@ -48,6 +48,7 @@ jobs:
           : "${MODEL_PATH:?MODEL_PATH not set}"
 
       - name: Export src as Artifact
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: src
