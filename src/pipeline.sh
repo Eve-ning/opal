@@ -10,6 +10,15 @@
 # Change directory to current script directory
 cd "$(dirname "$(realpath "$0")")" || exit 1
 
+# Substitute environment variables in a file
+envdotsub() {
+  filename=$(basename "$1")
+  dir=$(dirname "$1")
+  dotfile=".$filename"
+  dotfilepath="$dir/$dotfile"
+  envsubst <"$1" >"$dotfilepath"
+}
+
 # Create unique pipeline run id
 PIPELINE_RUN_CACHE=.pipeline_cache/${1:-$(date +%s)}.env
 mkdir -p .pipeline_cache
@@ -48,16 +57,13 @@ source preprocess/osu-data-docker/.env
 set +a
 
 echo "Preprocessing"
-envsubst < preprocess/docker-compose.yml > preprocess/docker-compose.yml.tmp
-envsubst < preprocess/osu-data-docker/docker-compose.yml > preprocess/osu-data-docker/docker-compose.yml.tmp
-rm preprocess/docker-compose.yml
-mv preprocess/docker-compose.yml.tmp preprocess/docker-compose.yml
-rm preprocess/osu-data-docker/docker-compose.yml
-mv preprocess/osu-data-docker/docker-compose.yml.tmp preprocess/osu-data-docker/docker-compose.yml
+envdotsub preprocess/docker-compose.yml
+sed -i 's|osu-data-docker/docker-compose.yml|osu-data-docker/.docker-compose.yml|g' preprocess/.docker-compose.sub.yml
+envdotsub preprocess/osu-data-docker/docker-compose.yml
 
 docker compose \
   --profile files \
-  -f preprocess/docker-compose.yml \
+  -f preprocess/.docker-compose.yml \
   up --build -d >output.log 2>&1 &
 
 # Wait until the dataset in ./datasets/$DATASET_NAME is created
@@ -67,33 +73,34 @@ while [ ! -f "./datasets/$DATASET_NAME" ]; do
   tail -n 3 output.log
   sleep 10
 done
-exit 0
+
 docker compose \
   --profile files \
-  -f preprocess/docker-compose.yml \
+  -f preprocess/.docker-compose.yml \
   --env-file preprocess/osu-data-docker/.env \
   --env-file preprocess/.env \
   stop || exit 1
 
 source "$PIPELINE_RUN_CACHE"
 [ -z "$DATASET_NAME" ] && echo "DATASET_NAME not returned by preprocess" && exit 1
-export DATASET_NAME
 
 echo "Training Model"
+envdotsub train/docker-compose.yml
 docker compose \
-  -f train/docker-compose.yml \
+  -f train/.docker-compose.yml \
   up --build || exit 1
 
 source "$PIPELINE_RUN_CACHE"
 [ -z "$MODEL_PATH" ] && echo "MODEL_PATH not returned by train" && exit 1
-export MODEL_PATH
 
 echo "Evaluating Model"
+envdotsub evaluate/docker-compose.yml
 docker compose \
-  -f evaluate/docker-compose.yml \
+  -f evaluate/.docker-compose.yml \
   up --build || exit 1
 
 echo "Publishing Model"
+envdotsub build/docker-compose.yml
 docker compose \
-  -f build/docker-compose.yml \
+  -f build/.docker-compose.yml \
   up --build || exit 1
