@@ -30,7 +30,7 @@ envdotsub() {
 preprocess() {
   envdotsub preprocess/docker-compose.yml
   sed -i 's|osu-data-docker/docker-compose.yml|osu-data-docker/.docker-compose.yml|g' \
-   preprocess/.docker.compose.yml || exit 1
+   preprocess/.docker-compose.yml || exit 1
   envdotsub preprocess/osu-data-docker/docker-compose.yml
 
   # Without -d, this script will hang until the docker compose process is killed
