@@ -104,8 +104,8 @@ make_pipeline_cache() {
 
 load_env() {
   # Set default values for variables
-  export DB_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/rsc/sample.tar.bz2
-  export FILES_URL=https://github.com/Eve-ning/opal/raw/pipeline-automation/rsc/sample_files.tar.bz2
+  export DB_URL=https://github.com/Eve-ning/opal/raw/master/rsc/sample.tar.bz2
+  export FILES_URL=https://github.com/Eve-ning/opal/raw/master/rsc/sample_files.tar.bz2
   cat <<EOF >>"$PIPELINE_RUN_CACHE"
 PIPELINE_RUN_CACHE="$PIPELINE_RUN_CACHE"
 DB_URL="$DB_URL"
