@@ -44,7 +44,7 @@ jobs:
         if: always()
         working-directory: src/dist/
         run: |
-          dist=$(ls *.tar.gz2 2>/dev/null | head -n 1)
+          dist=$(ls *.tar.gz 2>/dev/null | head -n 1)
           [ -f "$dist" ] || { echo "Dist file not found"; exit 1; }
           [ -s "$dist" ] || { echo "Dist file is empty"; exit 1; }
 
