@@ -66,3 +66,49 @@ jobs:
         with:
           name: src
           path: src/
+
+      - name: Export built wheel as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: src/dist/
+
+  model:
+    needs: [ pipeline ]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.9", "3.10", "3.11" ]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Get Dist
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: src/dist/
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest
+
+      - name: Install opal build
+        working-directory: src/dist/
+        run: |
+          python -m pip install *.whl
+
+      - name: Remove local opal
+        run: |
+          rm -rf src/
+
+      - name: Test with pytest
+        run: |
+          pytest tests/
