@@ -41,7 +41,12 @@ preprocess() {
 
   while [ ! -f "./datasets/$DATASET_NAME" ]; do
     echo "Waiting for dataset to be created... (Showing most recent log)"
-    echo "$PIPELINE_RUN_CACHE"
+
+    if grep -q "exit 1" preprocess.log; then
+      echo "Preprocess exited with errors. See preprocess.log."
+      exit 1
+    fi
+
     tail -n 3 preprocess.log
     sleep 10
   done
