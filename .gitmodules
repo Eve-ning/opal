@@ -1,3 +1,4 @@
 [submodule "src/preprocess/osu-data-docker"]
 	path = src/preprocess/osu-data-docker
 	url = https://github.com/Eve-ning/osu-data-docker
+    ignore = dirty
