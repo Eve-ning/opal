@@ -29,7 +29,7 @@ envdotsub() {
 # Sets the DATASET_NAME variable in the pipeline run cache.
 preprocess() {
   envdotsub preprocess/docker-compose.yml
-  sed -i 's|osu-data-docker/docker-compose.yml|osu-data-docker/.docker-compose.yml|g' preprocess/.docker-compose.sub.yml
+  sed -i 's|osu-data-docker/docker-compose.yml|osu-data-docker/.docker-compose.yml|g' preprocess/.docker-compose.yml
   envdotsub preprocess/osu-data-docker/docker-compose.yml
 
   # Without -d, this script will hang until the docker compose process is killed
