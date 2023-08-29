@@ -15,3 +15,4 @@ hparams.yaml
 .pipeline_cache
 !model.ckpt
 .docker-compose.yml
+preprocess.log
