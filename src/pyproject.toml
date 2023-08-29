@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "opal-net"
-version = "2023.8.4a"
+version = "<VERSION>"
 description = "osu!mania score prediction through AI collaborative filtering"
 authors = ["Evening"]
 license = "MIT"
-readme = "../README.md"
-include = ["opal/models/V4/*"]
+readme = "README.md"
+include = ["<MODEL_PATH>"]
 exclude = ["**/*.png"]
 packages = [
     {include = "opal"},

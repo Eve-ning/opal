@@ -4,10 +4,14 @@ services:
     image: pytorch.lightning
     stdin_open: true
     container_name: pytorch.lightning
-    working_dir: /app
+    working_dir: /src
+    environment:
+      - DATASET_NAME=${DATASET_NAME}
+      - MODEL_NAME=${MODEL_NAME}
+      - PIPELINE_RUN_CACHE=${PIPELINE_RUN_CACHE}
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ../:/app/
-    entrypoint: python3 -m opal.train
+      - ../:/src/
+    entrypoint: /entrypoint.sh

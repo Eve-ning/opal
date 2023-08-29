@@ -1,5 +1,6 @@
 import logging
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Sequence
 
 import pandas as pd
@@ -9,16 +10,15 @@ from sklearn.base import TransformerMixin
 from sklearn.preprocessing import LabelEncoder, QuantileTransformer
 from torch.utils.data import DataLoader, TensorDataset, random_split
 
-from opal.conf import DATASET_DIR
-
 
 @dataclass
 class ScoreDataModule(pl.LightningDataModule):
+    dataset_path: Path
+
     train_test_val: Sequence[float] = field(default_factory=lambda: (0.8, 0.1, 0.1))
     transformer: QuantileTransformer = QuantileTransformer(output_distribution='normal')
     batch_size: int = 32
     metric: str = 'accuracy'
-    dataset: str = "2023_08_01_performance_mania_top_1000.csv"
 
     uid_le: LabelEncoder = field(default_factory=LabelEncoder, init=False)
     mid_le: LabelEncoder = field(default_factory=LabelEncoder, init=False)
@@ -36,7 +36,7 @@ class ScoreDataModule(pl.LightningDataModule):
 
     def setup(self, stage: str = "") -> None:
         logging.info("Querying from DB")
-        df = pd.read_csv(DATASET_DIR / self.dataset)
+        df = pd.read_csv(self.dataset_path)
 
         logging.info("Scaling Metrics")
         df = self.scale_metric(df, self.transformer, self.metric)

@@ -1,9 +1,34 @@
-SET @sr_min := 2;
-SET @sr_max := 15;
-SET @acc_min := 0.85;
-SET @acc_max := 1.0;
-SET @min_scores_per_mid := 50;
-SET @min_scores_per_uid := 50;
+SET @sr_min := __SR_MIN__;
+SET @sr_max := __SR_MAX__;
+SET @acc_min := __ACC_MIN__;
+SET @acc_max := __ACC_MAX__;
+SET @min_scores_per_mid := __MIN_SCORES_PER_MID__;
+SET @min_scores_per_uid := __MIN_SCORES_PER_UID__;
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS `dropColumnIfExists`//
+CREATE PROCEDURE `dropColumnIfExists`(IN tableName VARCHAR(255), IN columnName VARCHAR(255))
+BEGIN
+  SELECT COUNT(*) INTO @isExists
+  FROM information_schema.columns
+  WHERE table_name = tableName
+  AND column_name = columnName
+
+  AND TABLE_SCHEMA = DATABASE();
+
+  IF @isExists > 0 THEN
+    SET @dsql = CONCAT('ALTER TABLE `', tableName, '` DROP `', columnName, '`');
+    PREPARE stmt FROM @dsql;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+  END IF;
+END //
+
+DELIMITER ;
+
+CALL dropColumnIfExists('osu_scores_mania_high', 'accuracy_320');
+CALL dropColumnIfExists('osu_scores_mania_high', 'speed');
 
 ALTER TABLE osu_scores_mania_high
     ADD COLUMN accuracy_320 FLOAT AS (
@@ -80,9 +105,3 @@ SELECT uid, year
 FROM opal_beatmap_scores
 GROUP BY uid, year
 HAVING COUNT(0) > @min_scores_per_uid;
-
-# cleanup
-
-ALTER TABLE osu_scores_mania_high
-    DROP COLUMN accuracy_320,
-    DROP COLUMN speed;

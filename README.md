@@ -3,6 +3,8 @@
 ![version](https://img.shields.io/pypi/v/opal-net)
 ![pyversions](https://img.shields.io/pypi/pyversions/opal-net)
 [![https://img.shields.io/pypi/dm/opal-net](https://img.shields.io/pypi/dm/opal-net)](https://pypi.org/project/opal-net/)
+
+[![Test Model Pipeline Inference](https://github.com/Eve-ning/opal/actions/workflows/pipeline-test.yml/badge.svg?branch=master)](https://github.com/Eve-ning/opal/actions/workflows/pipeline-test.yml)
 # :comet: opal-net
 opal is an accuracy-prediction model.
 

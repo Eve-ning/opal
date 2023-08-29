@@ -4,10 +4,12 @@ services:
     image: poetry
     stdin_open: true
     container_name: poetry
-    working_dir: /app/src
+    working_dir: /opal/src
+    environment:
+      - MODEL_NAME=${MODEL_NAME}
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ../../:/app/
+      - ../../:/opal/
     entrypoint: /entrypoint.sh
