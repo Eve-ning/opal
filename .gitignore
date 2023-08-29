@@ -14,3 +14,4 @@ hparams.yaml
 *.ckpt
 .pipeline_cache
 !model.ckpt
+.docker-compose.yml
