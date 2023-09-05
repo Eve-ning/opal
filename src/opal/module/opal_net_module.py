@@ -3,7 +3,7 @@ import torch.nn as nn
 
 
 class OpalNetBlock(nn.Module):
-    def __init__(self, in_chn, out_chn, dropout: float = 0.1):
+    def __init__(self, in_chn, out_chn):
         super().__init__()
         self.net = nn.Sequential(
             nn.Linear(in_chn, out_chn),
@@ -16,9 +16,7 @@ class OpalNetBlock(nn.Module):
 
 
 class OpalNetModule(nn.Module):
-    def __init__(self, n_uid, n_mid, emb_dim: int,
-                 mlp_range: list[int] = (128, 64, 32, 8),
-                 ):
+    def __init__(self, n_uid, n_mid, emb_dim: int):
         super(OpalNetModule, self).__init__()
 
         self.u_emb = nn.Embedding(n_uid, emb_dim)
@@ -27,12 +25,14 @@ class OpalNetModule(nn.Module):
         self.bn_u_emb = nn.BatchNorm1d(emb_dim)
         self.bn_m_emb = nn.BatchNorm1d(emb_dim)
 
-        self.mlp_net = nn.Sequential(
-            OpalNetBlock(emb_dim * 2, mlp_range[0]),
-            *[OpalNetBlock(i, j) for i, j in zip(mlp_range[:-1], mlp_range[1:])]
+        self.mlp_bn = nn.BatchNorm1d(emb_dim * 2)
+        self.mf_bn = nn.BatchNorm1d(emb_dim)
+        self.fc = nn.Sequential(
+            nn.Linear(emb_dim * 3, emb_dim * 3),
+            nn.BatchNorm1d(emb_dim * 3),
+            nn.SiLU(),
+            nn.Linear(emb_dim * 3, 1),
         )
-
-        self.linear = nn.Linear(mlp_range[-1] + 1, 1)
 
     def forward(self, uid, mid):
         """
@@ -63,15 +63,14 @@ class OpalNetModule(nn.Module):
         m_emb: torch.Tensor = self.bn_m_emb(m_emb)
 
         # [Batch Size, Embed Size * 2]
-        x_mlp = torch.concat([u_emb, m_emb], dim=1)
-        x_mlp = self.mlp_net(x_mlp)
+        x_mlp = self.mlp_bn(torch.concat([u_emb, m_emb], dim=1))
 
-        # [Batch Size, 1]
-        x_mf = torch.bmm(torch.unsqueeze(u_emb, 1),
-                         torch.unsqueeze(m_emb, 2))[:, 0, :]
-        x_mf = torch.relu(x_mf)
+        # [Batch Size, Embed Size * 1]
+        # x_mf = torch.bmm(torch.unsqueeze(u_emb, 1),
+        #                  torch.unsqueeze(m_emb, 2))[:, 0, :]
+        x_mf = self.mf_bn(u_emb * m_emb)
 
-        # [Batch Size, MLP Range[-1] + 1]
+        # [Batch Size, Embed Size * 3]
         x = torch.concat((x_mlp, x_mf), dim=1)
-        x = self.linear(x)
+        x = self.fc(x)
         return x

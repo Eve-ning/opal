@@ -1,5 +1,4 @@
 import argparse
-import os
 import sys
 from pathlib import Path
 
@@ -33,8 +32,7 @@ def train(model_name: str, dataset_path: Path, pipeline_run_cache: Path = None):
         uid_le=dm.uid_le,
         mid_le=dm.mid_le,
         transformer=dm.transformer,
-        emb_dim=6,
-        mlp_range=[1, ],
+        emb_dim=8,
         lr=1e-3,
     )
 

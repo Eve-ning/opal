@@ -111,7 +111,7 @@ PIPELINE_RUN_CACHE="$PIPELINE_RUN_CACHE"
 DB_URL="$DB_URL"
 FILES_URL="$FILES_URL"
 FILES_DIR="/var/lib/osu/osu.files/$(basename "$FILES_URL" .tar.bz2)/"
-MODEL_NAME="2023.8.4b"
+MODEL_NAME="2023.9.4"
 DATASET_NAME="$(basename "$DB_URL" .tar.bz2)_$(date +"%Y%m%d%H%M%S").csv"
 DB_NAME="osu"
 DB_USERNAME="root"
@@ -137,5 +137,8 @@ make_pipeline_cache "$1" || exit 1
 load_env || exit 1
 preprocess || exit 1
 train || exit 1
+set -a
+source "$PIPELINE_RUN_CACHE"
+set +a
 evaluate || exit 1
 publish || exit 1
