@@ -137,5 +137,8 @@ make_pipeline_cache "$1" || exit 1
 load_env || exit 1
 preprocess || exit 1
 train || exit 1
+set -a
+source "$PIPELINE_RUN_CACHE"
+set +a
 evaluate || exit 1
 publish || exit 1
