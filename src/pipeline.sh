@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 
 # This script runs the entire pipeline, from preprocessing to publishing.
-#
-# Usage: ./pipeline.sh [PIPELINE_RUN_ID]
-#
-# The PIPELINE_RUN_ID is a unique identifier for this pipeline run.
-# If not specified, it will be set to the current unix timestamp.
 
 # Dev Info
 # On the Docker Compose Substitution:
@@ -17,7 +12,7 @@
 cd "$(dirname "$(realpath "$0")")" || exit 1
 
 # Preprocesses the Dataset.
-# Sets the DATASET_NAME variable in the pipeline run cache.
+# Sets the DATASET_NAME variable in the env file.
 preprocess() {
   cd preprocess || exit 1
   ./run.sh ../.env || exit 1
@@ -25,7 +20,7 @@ preprocess() {
 }
 
 # Trains the Model.
-# Sets the MODEL_PATH variable in the pipeline run cache.
+# Sets the MODEL_PATH variable in the env file.
 train() {
   cd train || exit 1
   ./run.sh ../.env || exit 1
