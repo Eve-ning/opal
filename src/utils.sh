@@ -31,8 +31,6 @@ check_env_set() {
     if [ -z "${!var}" ]; then
       echo -e "\e[31mVariable $var is not set\e[0m"
       ANY_UNSET=true
-    else
-      echo "$var: ${!var}"
     fi
   done
 
