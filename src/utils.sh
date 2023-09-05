@@ -43,3 +43,24 @@ check_env_set() {
   fi
 }
 
+# Usage: env_add [FILE_PATH] [ENV_VAR_NAME] [ENV_VAR_VALUE]
+# Append an env var to the file if it doesn't exist, else replace it.
+env_add() {
+  if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
+    echo "Usage: env_add [FILE_PATH] [ENV_VAR_NAME] [ENV_VAR_VALUE]"
+    exit 1
+  fi
+
+  # Assign arguments to variables
+  FILE_PATH="$1"
+  ENV_VAR_NAME="$2"
+  ENV_VAR_VALUE="$3"
+
+  if grep -q "$ENV_VAR_NAME" "$FILE_PATH"; then
+    # If the variable already exists, replace it
+    sed -i "s/$ENV_VAR_NAME=.*/$ENV_VAR_NAME=$ENV_VAR_VALUE/g" "$1"
+  else
+    # Else, append it to the end of the file
+    echo "$ENV_VAR_NAME=$ENV_VAR_VALUE" >>"$FILE_PATH"
+  fi
+}
