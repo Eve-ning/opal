@@ -56,7 +56,7 @@ env_add() {
 
   if grep -q "$ENV_VAR_NAME" "$FILE_PATH"; then
     # If the variable already exists, replace it
-    sed -i "s/$ENV_VAR_NAME=.*/$ENV_VAR_NAME=$ENV_VAR_VALUE/g" "$1"
+    sed -i "s|$ENV_VAR_NAME=.*|$ENV_VAR_NAME=$ENV_VAR_VALUE|g" "$1" || exit 1
   else
     # Else, append it to the end of the file
     echo "$ENV_VAR_NAME=$ENV_VAR_VALUE" >>"$FILE_PATH"
