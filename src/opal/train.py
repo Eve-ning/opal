@@ -74,7 +74,7 @@ if __name__ == '__main__':
                         help='Dataset Name, must be in ../datasets/<DATASET_NAME>')
     args = parser.parse_args()
 
-    if not (args.pipeline_run_cache or args.model_name or args.dataset_name):
+    if not (args.model_name or args.dataset_name):
         parser.print_help()
         sys.exit(1)
 

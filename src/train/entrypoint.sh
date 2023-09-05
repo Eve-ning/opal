@@ -10,6 +10,4 @@
 # This internally sets the MODEL_PATH env var in the pipeline run cache
 python -m opal.train \
   --dataset_name "$DATASET_NAME" \
-  --model_name "$MODEL_NAME" \
-  --pipeline_run_cache "$PIPELINE_RUN_CACHE" ||
-  exit 1
+  --model_name "$MODEL_NAME" || exit 1
