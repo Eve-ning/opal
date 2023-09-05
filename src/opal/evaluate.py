@@ -21,7 +21,7 @@ def compute_test_predictions(dataset_path: Path, model_path: Path) -> tuple[np.n
     dm = ScoreDataModule(batch_size=16, dataset_path=dataset_path)
     net = OpalNet.load_from_checkpoint(model_path)
     net.eval()
-    trainer = pl.Trainer(accelerator='cpu', limit_predict_batches=512, logger=False)
+    trainer = pl.Trainer(accelerator='cpu', logger=False)
     y = trainer.predict(net, datamodule=dm)
     y_preds = []
     y_trues = []
@@ -37,6 +37,8 @@ def plot_overview(y_preds: np.ndarray, y_trues: np.ndarray, dataset_path: Path, 
     r2 = r2_score(y_preds, y_trues)
     mae = np.abs(y_preds - y_trues).mean()
     rmse = ((y_preds - y_trues) ** 2).mean() ** 0.5
+    y_preds = y_preds[:1000]
+    y_trues = y_trues[:1000]
 
     plt.rcParams.update({'font.size': 14})
     plt.figure(figsize=(10, 10))
