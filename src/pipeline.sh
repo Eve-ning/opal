@@ -16,14 +16,7 @@
 # Change directory to current script directory
 cd "$(dirname "$(realpath "$0")")" || exit 1
 
-# Substitute environment variables in a file
-envdotsub() {
-  filename=$(basename "$1")
-  dir=$(dirname "$1")
-  dotfile=".$filename"
-  dotfilepath="$dir/$dotfile"
-  envsubst <"$1" >"$dotfilepath"
-}
+. ./utils
 
 # Preprocesses the Dataset.
 # Sets the DATASET_NAME variable in the pipeline run cache.
@@ -104,33 +97,17 @@ make_pipeline_cache() {
 
 load_env() {
   # Set default values for variables
-  export DB_URL=https://github.com/Eve-ning/opal/raw/master/rsc/sample.tar.bz2
-  export FILES_URL=https://github.com/Eve-ning/opal/raw/master/rsc/sample_files.tar.bz2
-  cat <<EOF >>"$PIPELINE_RUN_CACHE"
-PIPELINE_RUN_CACHE="$PIPELINE_RUN_CACHE"
-DB_URL="$DB_URL"
-FILES_URL="$FILES_URL"
-FILES_DIR="/var/lib/osu/osu.files/$(basename "$FILES_URL" .tar.bz2)/"
-MODEL_NAME="2023.9.4"
-DATASET_NAME="$(basename "$DB_URL" .tar.bz2)_$(date +"%Y%m%d%H%M%S").csv"
-DB_NAME="osu"
-DB_USERNAME="root"
-DB_PASSWORD="p@ssw0rd1"
-DB_HOST="osu.mysql"
-DB_PORT="3307"
-SR_MIN="2"
-SR_MAX="15"
-ACC_MIN="0.85"
-ACC_MAX="1.0"
-MIN_SCORES_PER_MID="0"
-MIN_SCORES_PER_UID="0"
-MAX_SVNESS="0.05"
-EOF
+  set -a
+  source .env
+  set +a
+
   # Source and Export variables
   set -a
-  source "$PIPELINE_RUN_CACHE"
   source preprocess/osu-data-docker/.env
   set +a
+
+  FILES_DIR="/var/lib/osu/osu.files/$(basename "$FILES_URL" .tar.bz2)/"
+  DATASET_NAME="$(basename "$DB_URL" .tar.bz2)_$(date +"%Y%m%d%H%M%S").csv"
 }
 
 make_pipeline_cache "$1" || exit 1
