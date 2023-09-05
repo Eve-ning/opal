@@ -101,11 +101,6 @@ load_env() {
   source .env
   set +a
 
-  # Source and Export variables
-  set -a
-  source preprocess/osu-data-docker/.env
-  set +a
-
   FILES_DIR="/var/lib/osu/osu.files/$(basename "$FILES_URL" .tar.bz2)/"
   DATASET_NAME="$(basename "$DB_URL" .tar.bz2)_$(date +"%Y%m%d%H%M%S").csv"
 }
