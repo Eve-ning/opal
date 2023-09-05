@@ -1,6 +1,6 @@
-# Usage: ./run.sh [ENV_FILE_PATH]
+# Usage: ./run.sh ENV_FILE_PATH
 #
-# The ENV_FILE_PATH is the path to the .env file to source.
+# The ENV_FILE_PATH is the path to the .env file to source and add variables to.
 # The .env file should contain the following variables:
 # - SR_MIN
 # - SR_MAX
@@ -48,16 +48,15 @@ fi
 create_dataset_name
 export FILES_DIR="/var/lib/osu/osu.files/$(basename "$FILES_URL" .tar.bz2)/"
 
-# Check if the dataset already exists
-if [ -f "../datasets/$DATASET_NAME" ]; then
-  # brown echo
-  echo -e "\e[33mDataset already exists: $DATASET_NAME\e[0m"
-  exit 0
-fi
-
 # Check if all necessary env vars are set
 check_env_set docker-compose.yml || exit 1
 check_env_set osu-data-docker/docker-compose.yml || exit 1
+
+# Check if the dataset already exists
+if [ -f "../datasets/$DATASET_NAME" ]; then
+  echo -e "\e[33mDataset already exists: $DATASET_NAME\e[0m"
+  exit 0
+fi
 
 envdotsub docker-compose.yml || exit 1
 envdotsub osu-data-docker/docker-compose.yml || exit 1
