@@ -100,9 +100,6 @@ load_env() {
   set -a
   source .env
   set +a
-
-  FILES_DIR="/var/lib/osu/osu.files/$(basename "$FILES_URL" .tar.bz2)/"
-  DATASET_NAME="$(basename "$DB_URL" .tar.bz2)_$(date +"%Y%m%d%H%M%S").csv"
 }
 
 make_pipeline_cache "$1" || exit 1
