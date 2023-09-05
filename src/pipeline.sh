@@ -29,16 +29,9 @@ preprocess() {
 # Trains the Model.
 # Sets the MODEL_PATH variable in the pipeline run cache.
 train() {
-  envdotsub train/docker-compose.yml
-  docker compose \
-    -f train/.docker-compose.yml \
-    up --build || exit 1
-
-  source "$PIPELINE_RUN_CACHE"
-  if [ -z "$MODEL_PATH" ]; then
-    echo "MODEL_PATH not returned by train"
-    exit 1
-  fi
+  cd train || exit 1
+  ./run.sh ../.env || exit 1
+  cd .. || exit 1
 }
 
 # Evaluates the Model.
