@@ -16,8 +16,6 @@
 # Change directory to current script directory
 cd "$(dirname "$(realpath "$0")")" || exit 1
 
-. ./utils.sh
-
 # Preprocesses the Dataset.
 # Sets the DATASET_NAME variable in the pipeline run cache.
 preprocess() {
@@ -36,26 +34,19 @@ train() {
 
 # Evaluates the Model.
 evaluate() {
-  echo "Evaluating Model"
-  envdotsub evaluate/docker-compose.yml
-  docker compose \
-    -f evaluate/.docker-compose.yml \
-    up --build || exit 1
+  cd evaluate || exit 1
+  ./run.sh ../.env || exit 1
+  cd .. || exit 1
 }
 
 # Publishes the Model via PyPI.
 publish() {
-  echo "Publishing Model"
-  envdotsub build/docker-compose.yml
-  docker compose \
-    -f build/.docker-compose.yml \
-    up --build || exit 1
+  cd build || exit 1
+  ./run.sh ../.env || exit 1
+  cd .. || exit 1
 }
 
 preprocess || exit 1
-#train || exit 1
-#set -a
-#source "$PIPELINE_RUN_CACHE"
-#set +a
-#evaluate || exit 1
-#publish || exit 1
+train || exit 1
+evaluate || exit 1
+publish || exit 1
