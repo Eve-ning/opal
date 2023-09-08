@@ -11,7 +11,7 @@ from opal.module import OpalNet
 from opal.score_datamodule import ScoreDataModule
 
 
-def train(model_name: str, dataset_path: Path, pipeline_run_cache: Path = None):
+def train(model_name: str, dataset_path: Path):
     """ Trains the OpalNet
 
     Args:
@@ -63,12 +63,6 @@ def train(model_name: str, dataset_path: Path, pipeline_run_cache: Path = None):
 
     trainer.fit(net, datamodule=dm)
 
-    # This is only used for pipeline runs
-    if pipeline_run_cache:
-        model_path = Path(trainer.checkpoint_callback.best_model_path)
-        with open(pipeline_run_cache, 'a') as f:
-            f.write(f'MODEL_PATH={model_path}\n')
-
 
 if __name__ == '__main__':
     torch.set_float32_matmul_precision('high')
@@ -78,18 +72,15 @@ if __name__ == '__main__':
                         help='Experiment Name Tag. Can be a tag used before, this will append to the experiment dir.')
     parser.add_argument('--dataset_name', type=str,
                         help='Dataset Name, must be in ../datasets/<DATASET_NAME>')
-    parser.add_argument('--pipeline_run_cache', type=str,
-                        help='Path to the pipeline run cache file. Optional, used for pipeline runs.')
     args = parser.parse_args()
 
-    if not (args.pipeline_run_cache or args.model_name or args.dataset_name):
+    if not (args.model_name or args.dataset_name):
         parser.print_help()
         sys.exit(1)
 
     MODEL_NAME = args.model_name
     DATASET_PATH = DATASET_DIR / args.dataset_name
-    PIPELINE_RUN_CACHE = Path(args.pipeline_run_cache) if args.pipeline_run_cache else None
     assert MODEL_NAME, "Model Name must be provided."
     assert DATASET_PATH.exists(), f"Dataset {DATASET_PATH.as_posix()} does not exist."
 
-    train(MODEL_NAME, DATASET_PATH, PIPELINE_RUN_CACHE)
+    train(MODEL_NAME, DATASET_PATH)
