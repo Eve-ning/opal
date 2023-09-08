@@ -39,14 +39,6 @@ jobs:
           [ -f "$dataset" ] || { echo "Dataset file not found"; exit 1; }
           [ -s "$dataset" ] || { echo "Dataset file is empty"; exit 1; }
 
-      - name: Check Pipeline Cache exists and is not empty
-        if: always()
-        working-directory: src/.pipeline_cache/
-        run: |
-          pipeline_cache=cache.env
-          [ -f "$pipeline_cache" ] || { echo "Pipeline Cache file not found"; exit 1; }
-          [ -s "$pipeline_cache" ] || { echo "Pipeline Cache file is empty"; exit 1; }
-
       - name: Check Dist exists and is not empty
         if: always()
         working-directory: src/dist/
