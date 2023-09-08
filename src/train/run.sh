@@ -9,6 +9,7 @@ if [ -f "$1" ]; then
   set +a
 else
   echo "Usage: ./run.sh [ENV_FILE_PATH]"
+  echo "The ENV_FILE_PATH must be relative to this script."
   exit 1
 fi
 
