@@ -13,11 +13,11 @@ cd "$(dirname "$(realpath "$0")")" || exit 1
 
 # Preprocesses the Dataset.
 # Sets the DATASET_NAME variable in the env file.
-(preprocess/run.sh .env)|| exit 1
+(preprocess/run.sh ../.env)|| exit 1
 # Trains the Model.
 # Sets the MODEL_PATH variable in the env file.
-(train/run.sh .env) || exit 1
+(train/run.sh ../.env) || exit 1
 # Evaluates the Model.
-(evaluate/run.sh .env) || exit 1
+(evaluate/run.sh ../.env) || exit 1
 # Build & Publishes the Model via PyPI.
-(build/run.sh .env) || exit 1
+(build/run.sh ../.env) || exit 1
