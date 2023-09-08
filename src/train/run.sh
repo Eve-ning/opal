@@ -1,3 +1,5 @@
+cd "$(dirname "$0")" || exit 1
+
 # Check if the .env file path is the first argument and source it
 if [ -f "$1" ]; then
   ENV_FILE_PATH="$1"

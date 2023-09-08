@@ -17,6 +17,8 @@
 # - MAX_SVNESS
 # - DATASET_NAME
 
+cd "$(dirname "$0")" || exit 1
+
 create_dataset_name() {
   SQL_HASH=$(find . -type f -name "*.sql" -exec cat {} \; | sort | md5sum | cut -c1-8)
   DATASET_HASH=$(echo "$SR_MIN$SR_MAX$ACC_MIN$ACC_MAX$MIN_SCORES_PER_MID$MIN_SCORES_PER_UID$MAX_SVNESS" | md5sum | cut -c1-8)
