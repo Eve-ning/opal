@@ -2,16 +2,17 @@
 
 **See below on how to load the model.**
 
-| Model      | R2     | MAE   | RMSE  |
-|------------|--------|-------|-------|
-| V2_2023_01 | 81.48% | 1.18% | 1.71% |
-| V2_2023_04 | 71.88% | 1.14% | 1.68% |
-| V3_2023_05 | 73.76% | 1.09% | 1.62% |
-| V4_2023_08 | 62.07% | 1.10% | 1.64% |
-| V4_2023_09 | 60.17% | 1.15% | 1.71% |
+| Model       | R2     | MAE   | RMSE  |
+|-------------|--------|-------|-------|
+| V2_2023_01  | 81.48% | 1.18% | 1.71% |
+| V2_2023_04  | 71.88% | 1.14% | 1.68% |
+| V3_2023_05  | 73.76% | 1.09% | 1.62% |
+| V4_2023_08  | 62.07% | 1.10% | 1.64% |
+| V4_2023_09  | 60.17% | 1.15% | 1.71% |
+| V5_2023_09b | 63.79% | 1.10% | 1.64% |
 
 **Latest Error Distribution**
-![](2023.9.4/2023_09_01_performance_mania_top_10000_20230904212037.csv/lightning_logs/version_20/evaluation/error_distribution.png)
+![](2023.9.5b/2023_09_01_performance_mania_top_10000_44e44645_84947aba.csv/lightning_logs/version_2/evaluation/error_distribution.png)
 
 ## Limitations
 
@@ -64,3 +65,6 @@ V1 is the very first model deployed.
 - V4 is the first model to be trained on a new automated pipeline.
 - Substituted Matrix Factorization with a dot product of the user and map embeddings.
 - Merged Embedding Space for both MLP and MF.
+
+### V5
+- Trained with new pipeline
