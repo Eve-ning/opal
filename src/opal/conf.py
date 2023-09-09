@@ -7,6 +7,6 @@ EXPERIMENT_DIR = ROOT_DIR / "lightning_logs"
 
 LATEST_MODEL_CKPT = (
         MODEL_DIR /
-        "2023.9.4/2023_09_01_performance_mania_top_10000_20230904212037.csv/lightning_logs/version_20/evaluation"
+        "2023.9.5b/2023_09_01_performance_mania_top_10000_44e44645_84947aba.csv/lightning_logs/version_2/evaluation"
         "/model.ckpt"
 )
