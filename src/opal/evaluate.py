@@ -37,8 +37,8 @@ def plot_overview(y_preds: np.ndarray, y_trues: np.ndarray, dataset_path: Path, 
     r2 = r2_score(y_preds, y_trues)
     mae = np.abs(y_preds - y_trues).mean()
     rmse = ((y_preds - y_trues) ** 2).mean() ** 0.5
-    y_preds = y_preds[:1000]
-    y_trues = y_trues[:1000]
+    y_preds = y_preds[:10000]
+    y_trues = y_trues[:10000]
 
     plt.rcParams.update({'font.size': 14})
     plt.figure(figsize=(10, 10))
